@@ -1,0 +1,15 @@
+dyn.load("maximaexe.so")
+mexe <- function(x) {
+.C("maximaexe", as.character(x))
+}
+cmd = as.character("float(1/3);")
+mexe(cmd)
+cmd = as.character("sin(%pi/2)+cos(%pi/3);")
+mexe(cmd)
+cmd = as.character("f(x,y):= sin(x)+cos(y);")
+mexe(cmd)
+cmd = as.character("plot3d(f(x,y),[x,-5,5],[y,-5,5]);")
+mexe(cmd)
+cmd = as.character("diff(sin(x),x);")
+mexe(cmd)
+dyn.load("maximaexe.so")
