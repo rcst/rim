@@ -1,7 +1,6 @@
 #ifndef MAXIMACHAIN_H_INCLUDED
 #define MAXIMACHAIN_H_INCLUDED
 
-
 #include <cstddef>
 #include <string>
 #include <deque>
@@ -19,87 +18,108 @@ using std::size_t;
 namespace Maxima
 {
 
-class MaximaChain {
-	public:
-        class MaximaIOHook
-        {
-        public:
-            virtual ~MaximaIOHook();
-            virtual std::string handle(const std::string &first,
-                const std::string &second) = 0;
-        };
+class MaximaChain
+{
+    public:
 
-        MaximaChain(const std::string &maximaPath,    // full path to Maxima exe-file
-            const std::string &workingDir = ".",         // working directory of new process
-            const std::string &utilsDir = ".");          // utils directory where is display.lisp
+        MaximaChain(const std::string &maximaPath,          // Full path to the Maxima executable
+                    const std::string &workingDir = ".",    // Working directory for output files
+                    const std::string &utilsDir = ".");     // Utils directory that contains display.lisp
 
-		~MaximaChain();
+        ~MaximaChain();
 
-		std::string executeCommand(const std::string &command); //sends command to Maxima and returs Maxima output after last command
+	std::string executeCommand(const std::string &command); 
 
-		std::string executeInteractive(const std::string &command); // sends command to Maxima and returns raw Maxima output
+	std::string executeCommandList(const std::string &command); 
 
+        // Command must end with ';' or '$'. In annother case we append ';'
+        void sendCommand(std::string command);              
 
-		bp::process::id_type getId() const;
+	bp::process::id_type getId() const;
+        
         const fs::path &getWorkingDirectory() const;
 
-        void setMaximaIOHook(const std::string &hookRegex, MaximaIOHook *hook);
+        class MaximaIOHook
+        {
+          public:
+            virtual ~MaximaIOHook();
+     
+            virtual std::string handle(const std::string &first,
+                                       const std::string &second) = 0;
+        };
 
-    private:
-        struct Reply {
+        void setMaximaIOHook(const std::string &hookRegex, MaximaIOHook *hook);
+ 
+   private:
+        struct Reply
+        {
             typedef std::deque<char> RawReply;
+
             typedef RawReply::iterator It;
+
             typedef std::pair<It, It> Range;
 
             RawReply reply;
 
             Range prompt;
+
             std::deque<Range> outs;
+
             std::deque<Range> betweens;
 
             Reply(std::istream &in);
 
             std::string concatenateParts();
 
-            bool CheckPrompt() const { return validPrompt; } // true if prompt is valid (%i\d+)
+            // True if prompt is valid (%i\d+)
+            bool CheckPrompt() const { return validPrompt; } 
 
             size_t getPromptId() const { return promptId; }
 
             bool isInterrupted() const;
 
+
         private:
             Reply(const Reply &);
+
             void operator=(const Reply &);
 
             bool validPrompt;
+
             size_t promptId;
         };
 
         typedef boost::shared_ptr<MaximaChain::Reply> ReplyPtr;
 
-        static size_t readData(std::istream &in, Reply::RawReply &reply); // returns the number of bytes read
+        // Returns the number of bytes read
+        static size_t readData(std::istream &in, Reply::RawReply &reply);
 
+        // Sends command and get reply in Maxima style
+        ReplyPtr crudeExecute(const std::string &command); 
 
-        ReplyPtr executeCommandRaw(const std::string &command); // sends command and get reply
-
-        void sendCommand(std::string command); // command must end with ';' or '$'. In annother case we append ';'
-
-        int checkInputExpression(char nextChar, int checkerState) const; // check if the input expression valid
+        // Check if the input expression valid
+        int checkInput(char nextChar, int checkerState) const;
 
         ReplyPtr readReply();
 
-		void readPid();
+	void getPid();
 
         boost::scoped_ptr<bp::child> process;
-        MaximaIOHook *maximaIOHook;
+
+        MaximaIOHook* maximaIOHook;
+
         boost::regex maximaIOHookRegex;
+
         fs::path workingDirectory;
+
         fs::path utilsDirectory;
+
         size_t lastPromptId;
-		size_t pid;
+
+	size_t pid;
 };
 
-}
+} // namespace Maxima
 
 
 #endif // MAXIMACHAIN_H_INCLUDED
