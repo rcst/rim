@@ -1,0 +1,12 @@
+Package: rmaxima
+Type: Package
+Title: An interface to maxima, bringing symbolic computation into R
+Version: 1.0
+Date: 2021-02-14
+Author: Kseniia Shumelchyk, Hans W. Borchers, Eric Stemmler
+Maintainer: Eric Stemmler <rcst@posteo.de>
+Description: rmaxima provides an interface to the powerful and fairly complete computer algebra system maxima
+        or more full sentences.
+License: GPL (>= 3)
+Imports: methods, Rcpp (>= 1.0.6)
+LinkingTo: Rcpp
