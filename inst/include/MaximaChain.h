@@ -6,7 +6,7 @@
 #include <deque>
 
 #include <boost/process.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -28,9 +28,11 @@ class MaximaChain
 
         ~MaximaChain();
 
-	std::string executeCommand(const std::string &command); 
+	std::string executeCommand(const std::string &command, bool tex = false); 
 
 	std::string executeCommandList(const std::string &command); 
+
+	void loadModule(const std::string &module);
 
         // Command must end with ';' or '$'. In annother case we append ';'
         void sendCommand(std::string command);              
@@ -128,7 +130,8 @@ class MaximaChain
 
         MaximaIOHook* maximaIOHook;
 
-        boost::regex maximaIOHookRegex;
+	std::string maximaIOHookRegexStr;
+	std::regex maximaIOHookRegex;
 
         fs::path workingDirectory;
 

@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
+#include<regex>
 
 namespace alg = boost::algorithm;
 
@@ -39,6 +40,10 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 
     args.push_back((utilsDirectory / "display.lisp").string());
 
+    // work-around since std::regex has no member function empty()
+	maximaIOHookRegexStr = std::string();
+	maximaIOHookRegex = std::regex(maximaIOHookRegexStr);
+
     // bp::context has been deprecated
     // bp now has it's own pipe and i/o/error stream implementations
     // also it has nothing to do with asynchronous I/O, which anyway was dismissed as a method to provide maxima interaction from R
@@ -69,7 +74,11 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
      // flush the pipe stream
      readReply();
 
-     crudeExecute(std::string("load(\"mactex-utilities\")$"));
+     // activate latex output when tex() is used
+     // crudeExecute(std::string("load(\"mactex-utilities\")$"));
+     // crudeExecute(std::string("load(\"alt-display.mac\")$"));
+     loadModule("mactex-utilities");
+     loadModule("alt-display.mac");
 }
 
 MaximaChain::~MaximaChain()
@@ -88,9 +97,9 @@ void MaximaChain::getPid()
 	// std::getline(process->get_stdout(), pidStr);
 	std::getline(is, pidStr);
 
-	boost::regex pidRegex("(pid=)?(\\d+)");
-	boost::match_results<std::string::iterator> pidRegexMatch;
-        if (boost::regex_match(pidStr.begin(),
+	std::regex pidRegex("(pid=)?(\\d+)");
+	std::match_results<std::string::iterator> pidRegexMatch;
+        if (std::regex_match(pidStr.begin(),
                                pidStr.end(),
                                pidRegexMatch,pidRegex))
         {
@@ -154,17 +163,17 @@ void MaximaChain::sendCommand(std::string command)
         command += ";";
     }
 
-    // maximaIOHookRegex is a boost::regex object
+    // maximaIOHookRegex is a boost::std::regex object
     // it is empty in the state of current implementation
     // test: Rcpp::Rcout << "maximaIOHookRegex.empty(): " << maximaIOHookRegex.empty() << std::endl;
     // returns: maximaIOHookRegex.empty(): 1
-    if (!maximaIOHookRegex.empty())
+    if (!maximaIOHookRegexStr.empty())
     {
-        boost::match_results<std::string::iterator> m;
+        std::match_results<std::string::iterator> m;
         std::string::iterator start = command.begin();
         std::string::iterator end = command.end();
 
-        while (boost::regex_search(start, end, m, maximaIOHookRegex))
+        while (std::regex_search(start, end, m, maximaIOHookRegex))
         {
             std::string rep = maximaIOHook->handle(
             std::string(m[1].first, m[1].second),
@@ -191,9 +200,9 @@ MaximaChain::Reply::Reply()
 MaximaChain::Reply::Reply(bp::ipstream &in)
 {
 	// this function seems to filter the output stream of maxima to isolate returned maxima-values
-    boost::regex promptExpr("prompt;>>(.*)<<prompt;");
+	std::regex promptExpr("prompt;>>(.*)<<prompt;");
 
-    boost::match_results<Reply::It> promptMatch;
+    std::match_results<Reply::It> promptMatch;
 
     // Reads in character by character until the reply both 
     // (a) contains the promptExpr expression 
@@ -214,21 +223,21 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
         // if it was successfully read, it is inserted at the back of the deque
         reply.push_back(c);
     }
-    while (!(reply.back() == ';' && boost::regex_search(
+    while (!(reply.back() == ';' && std::regex_search(
            reply.begin(), reply.end(), promptMatch, promptExpr)));
 
 	prompt = promptMatch[1];
 
-	boost::regex outExpr("out;>>(.*?)<<out;");
+	std::regex outExpr("out;>>(.*?)<<out;");
 	Reply::It start = reply.begin();
 	Reply::It end = promptMatch[0].first;
 
-	boost::match_results<Reply::It> what;
+	std::match_results<Reply::It> what;
 
 	// loops over pairs of outExpr as declared in the display.lisp file
 	// i.e. out;>> and <<out;
 	// stores outputs in ... "outs"
-	while(boost::regex_search(start, end, what, outExpr))
+	while(std::regex_search(start, end, what, outExpr))
 	{
 		outs.push_back(what[1]);
 		betweens.push_back(Reply::Range(start, what[0].first));
@@ -236,18 +245,18 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
 	}
 
 	betweens.push_back(Reply::Range(start, end));
-	boost::match_results<Reply::It> outInPrompt;
+	std::match_results<Reply::It> outInPrompt;
 
-	if (boost::regex_search(promptMatch[1].first, promptMatch[1].second,
+	if (std::regex_search(promptMatch[1].first, promptMatch[1].second,
 		outInPrompt, outExpr))
 	{
 		prompt = outInPrompt[1];
 	}
 
-    boost::regex validPrompt_("\\s*\\(%i(\\d+)\\)\\s*");
-    boost::match_results<Reply::It>validPromptMatch;
+    std::regex validPrompt_("\\s*\\(%i(\\d+)\\)\\s*");
+    std::match_results<Reply::It>validPromptMatch;
 
-    if (boost::regex_match(prompt.first, prompt.second, validPromptMatch,
+    if (std::regex_match(prompt.first, prompt.second, validPromptMatch,
         validPrompt_))
     {
     validPrompt = true;
@@ -286,7 +295,7 @@ MaximaChain::ReplyPtr MaximaChain::readReply()
     return result;
 }
 
-std::string MaximaChain::executeCommand(const std::string &command)
+std::string MaximaChain::executeCommand(const std::string &command, bool tex)
 {
     ReplyPtr reply = crudeExecute(command);
 
@@ -294,6 +303,10 @@ std::string MaximaChain::executeCommand(const std::string &command)
     // for(auto i = reply->betweens.front().first; i != reply->betweens.front().second; ++i)
     //         Rcpp::Rcout << *i;
     // Rcpp::Rcout << std::endl;
+
+    for(auto i = reply->reply.cbegin(); i != reply->reply.cend(); ++i)
+            Rcpp::Rcout << *i;
+    Rcpp::Rcout << std::endl;
 
     if (reply->outs.empty())
     {
@@ -323,16 +336,23 @@ std::string MaximaChain::executeCommand(const std::string &command)
 				reply->betweens.back().second));
     }
 
-    boost::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
+    std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
 
     Reply::Range lastOut = reply->outs.back();
 
-    boost::match_results<Reply::It> what;
+    std::match_results<Reply::It> what;
     
-    // output results of command to R-console if the result is truely valid, i.e. after (%o..)
-    if (boost::regex_match(lastOut.first, lastOut.second, what, validOut))
+    if(tex)
     {
-        return alg::trim_copy(std::string(what[1].first, what[1].second));
+	    return alg::trim_copy(std::string(reply->betweens.front().first, reply->betweens.front().second));
+    }
+    else
+    {
+	    // output results of command to R-console if the result is truely valid, i.e. after (%o..)
+	    if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
+	    {
+		return alg::trim_copy(std::string(what[1].first, what[1].second));
+	    }
     }
 
     crudeExecute(";");
@@ -357,10 +377,10 @@ std::string MaximaChain::Reply::concatenateParts()
 
 bool MaximaChain::Reply::isInterrupted() const
 {
-    boost::regex interrupt("Console interrupt|User break|Interactive interrupt");
-    boost::match_results<Reply::It> match;
+    std::regex interrupt("Console interrupt|User break|Interactive interrupt");
+    std::match_results<Reply::It> match;
 
-    return boost::regex_search(betweens.back().first,
+    return std::regex_search(betweens.back().first,
 			       betweens.back().second,
       			       match, interrupt);
 }
@@ -378,7 +398,7 @@ boost::process::pid_t MaximaChain::getId() const
 void MaximaChain::setMaximaIOHook(const std::string &hookRegex, MaximaIOHook *hook)
 {
     maximaIOHook = hook;
-    maximaIOHookRegex = boost::regex(hookRegex);
+    maximaIOHookRegex = std::regex(hookRegex);
 }
 
 int MaximaChain::checkInput(char c, int state) const
@@ -441,4 +461,12 @@ int MaximaChain::checkInput(char c, int state) const
 const fs::path &MaximaChain::getWorkingDirectory() const
 {
     return workingDirectory;
+}
+
+void MaximaChain::loadModule(const std::string &module)
+{
+	if(!module.empty()) 
+		crudeExecute("load(\"" + module + "\")$");
+	else
+		Rcpp::stop("Please provide a valid module name");
 }
