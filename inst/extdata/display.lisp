@@ -8,5 +8,5 @@
 
 (setf *maxima-prolog* (format nil "pid=~a~%" (getpid)))
 (setf *alt-display2d* 'mydispla)
-(set *prompt-prefix* "prompt;>>")
+(setf *prompt-prefix* "prompt;>>")
 (setf *prompt-suffix* "<<prompt;")
