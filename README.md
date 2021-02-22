@@ -11,6 +11,11 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## Usability
+- handle Maxima errors. Currently Maxima Errors crash current R session
+- enable replacing latex math delimiters "$$" by more space-consistent variants, e.g. "\[" or `align` environment
+- executing help functions (?, decribe, apropos, ...) crashes the current R session via segmentation fault
+- Provide an interface to plot2d() and plot3d() enableling storing of graphics and usage in RMarkdown documents
+- Handle asksign and similar feedback interuptions
 - Workflow for working with TeX and MathML output:
 	- enable: dynamically change output display: 1d, tex, mathml
 - Add documentation
