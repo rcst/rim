@@ -27,7 +27,8 @@ MaximaChain::MaximaIOHook::~MaximaIOHook()
 
 MaximaChain::MaximaChain(const std::string &maximaPath,
                          const std::string &workingDir,
-                         const std::string &utilsDir)
+                         const std::string &utilsDir,
+			 const std::string &display)
   : workingDirectory(fs::system_complete(workingDir)),
     utilsDirectory(fs::system_complete(utilsDir)),
     lastPromptId(1),
@@ -36,13 +37,15 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
     std::vector<std::string> args;
     args.push_back(maximaPath);
     args.push_back("-q");
-    args.push_back("-p");
+    //args.push_back("-p");
+    args.push_back("--userdir=" + utilsDirectory.string());
 
-    args.push_back((utilsDirectory / "display.lisp").string());
+    // args.push_back((utilsDirectory / "display.lisp").string());
+    args.push_back("--init=maxima-init-tex");
 
-    // work-around since std::regex has no member function empty()
-	maximaIOHookRegexStr = std::string();
-	maximaIOHookRegex = std::regex(maximaIOHookRegexStr);
+    // work-around since std::regex has no member function empty() 
+    maximaIOHookRegexStr = std::string(); 
+    maximaIOHookRegex = std::regex(maximaIOHookRegexStr);
 
     // bp::context has been deprecated
     // bp now has it's own pipe and i/o/error stream implementations
@@ -77,8 +80,8 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
      // activate latex output when tex() is used
      // crudeExecute(std::string("load(\"mactex-utilities\")$"));
      // crudeExecute(std::string("load(\"alt-display.mac\")$"));
-     loadModule("mactex-utilities");
-     loadModule("alt-display.mac");
+     //loadModule("mactex-utilities");
+     //loadModule("alt-display.mac");
 }
 
 MaximaChain::~MaximaChain()
@@ -221,24 +224,38 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
         }
 
         // if it was successfully read, it is inserted at the back of the deque
-        reply.push_back(c);
+	// ... unless it is a newline charachter
+	if(c!='\n') 
+		reply.push_back(c);
     }
     while (!(reply.back() == ';' && std::regex_search(
            reply.begin(), reply.end(), promptMatch, promptExpr)));
 
 	prompt = promptMatch[1];
 
+	//std::regex outExpr("out;>>(.*?)<<out;");
 	std::regex outExpr("out;>>(.*?)<<out;");
 	Reply::It start = reply.begin();
 	Reply::It end = promptMatch[0].first;
 
 	std::match_results<Reply::It> what;
 
+	// Rcpp::Rcout << "Printing reply: begin -> promptMatch[0].first ..." << std::endl;
+	//     for(auto i = start; i != end; ++i)
+	// 	    Rcpp::Rcout << *i;
+	//     Rcpp::Rcout << std::endl;
+	// Rcpp::Rcout << "End reply ..." << std::endl;
+
 	// loops over pairs of outExpr as declared in the display.lisp file
 	// i.e. out;>> and <<out;
 	// stores outputs in ... "outs"
 	while(std::regex_search(start, end, what, outExpr))
 	{
+		// Rcpp::Rcout << "inside outs-regex-search" << std::endl;
+		// Rcpp::Rcout << "what[0]: " << what[0] << std::endl;
+		// Rcpp::Rcout << "what[1]: " << what[1] << std::endl;
+		// Rcpp::Rcout << std::endl;
+
 		outs.push_back(what[1]);
 		betweens.push_back(Reply::Range(start, what[0].first));
 		start = what[0].second;
@@ -295,7 +312,7 @@ MaximaChain::ReplyPtr MaximaChain::readReply()
     return result;
 }
 
-std::string MaximaChain::executeCommand(const std::string &command, bool tex)
+std::string MaximaChain::executeCommand(const std::string &command)
 {
     ReplyPtr reply = crudeExecute(command);
 
@@ -304,9 +321,9 @@ std::string MaximaChain::executeCommand(const std::string &command, bool tex)
     //         Rcpp::Rcout << *i;
     // Rcpp::Rcout << std::endl;
 
-    for(auto i = reply->reply.cbegin(); i != reply->reply.cend(); ++i)
-            Rcpp::Rcout << *i;
-    Rcpp::Rcout << std::endl;
+    // for(auto i = reply->reply.cbegin(); i != reply->reply.cend(); ++i)
+    //         Rcpp::Rcout << *i;
+    // Rcpp::Rcout << std::endl;
 
     if (reply->outs.empty())
     {
@@ -327,9 +344,9 @@ std::string MaximaChain::executeCommand(const std::string &command, bool tex)
         //                          std::string(reply->betweens.back().first,
         //                                      reply->betweens.back().second));
 
-	Rcpp::Rcout << "Maxima error: " << 
-		std::string(reply->betweens.back().first, reply->betweens.back().second) << 
-		std::endl;
+	// Rcpp::Rcout << "Maxima error: " << 
+	// 	std::string(reply->betweens.back().first, reply->betweens.back().second) << 
+	// 	std::endl;
 
 	Rcpp::stop(std::string("Maxima error: ") +
 			std::string(reply->betweens.back().first,
@@ -342,17 +359,10 @@ std::string MaximaChain::executeCommand(const std::string &command, bool tex)
 
     std::match_results<Reply::It> what;
     
-    if(tex)
+    // output results of command to R-console if the result is truely valid, i.e. after (%o..)
+    if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
     {
-	    return alg::trim_copy(std::string(reply->betweens.front().first, reply->betweens.front().second));
-    }
-    else
-    {
-	    // output results of command to R-console if the result is truely valid, i.e. after (%o..)
-	    if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
-	    {
-		return alg::trim_copy(std::string(what[1].first, what[1].second));
-	    }
+	return alg::trim_copy(std::string(what[1].first, what[1].second));
     }
 
     crudeExecute(";");

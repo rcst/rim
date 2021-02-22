@@ -11,10 +11,6 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## Usability
-- Add initialization files for customizing output display
-	- write a file maxima-init.mac
-	- place maxima-init.mac into search path or leave it inside package directory (we have to make sure that it is in the search path). Alternatively, we can set a MAXIMA_USERDIR to package installation directory where maxima-init.mac is located
-	- use maxima-init.mac to set the display. Use `:lisp [command]` to issue lisp commands
 - Workflow for working with TeX and MathML output:
 	- enable: dynamically change output display: 1d, tex, mathml
 - Add documentation
@@ -28,6 +24,10 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - Remove unneccassary variable conversions from `std::string` to `boost::filesystem::path` and vice versa
 
 # Version History
+
+## 22.02.2021
+- implemented output display as tex (not yet user-friendly)
+- added initialization files
 
 ## 19.02.2021
 - added function void `loadModule(const std::string &s)`

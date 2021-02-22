@@ -22,13 +22,14 @@ class MaximaChain
 {
     public:
 
-        MaximaChain(const std::string &maximaPath,          // Full path to the Maxima executable
-                    const std::string &workingDir = ".",    // Working directory for output files
-                    const std::string &utilsDir = ".");     // Utils directory that contains display.lisp
+        MaximaChain(const std::string &maximaPath,          	// Full path to the Maxima executable
+                    const std::string &workingDir = ".",    	// Working directory for output files
+                    const std::string &utilsDir = ".",		// Utils directory that contains display.lisp
+		    const std::string &display = "");     
 
         ~MaximaChain();
 
-	std::string executeCommand(const std::string &command, bool tex = false); 
+	std::string executeCommand(const std::string &command); 
 
 	std::string executeCommandList(const std::string &command); 
 
