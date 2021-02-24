@@ -1,3 +1,16 @@
+//' RMaxima class for interacting with maxima
+//'
+//' This class provides access to maxima and in addition
+//' provides convenience functions to execute special types of
+//' commands
+//'
+//' @export
+//' @examples
+//' m <- new(RMaxima)
+//'
+//' m$execute("2+2")
+//' m$loadModule("mac-tex-utilities")
+
 #include <Rcpp.h>
 #include "MaximaChain.h"
 #include "boost/process.hpp"
@@ -20,7 +33,8 @@ class RMaxima
 
 	Environment env("package:base");
 	Function f = env["system.file"];
-	fs::path p(Rcpp::as<std::string>(f("extdata", "display.lisp", Named("package") = "Rmaxima")));
+	// fs::path p(Rcpp::as<std::string>(f("extdata", "display.lisp", Named("package") = "Rmaxima")));
+	fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima")));
         std::string utilsDir = p.parent_path().string();
 
         myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
