@@ -10,8 +10,10 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - Boost library (>=1.67.0) 
 
 # TODO
+## General
+- If command terminates with `\$` then this causes a segmentation fault, which kills the R process. 
+
 ## Usability
-- handle Maxima errors. Currently Maxima Errors crash current R session
 - enable replacing latex math delimiters "$$" by more space-consistent variants, e.g. "\[" or `align` environment
 - executing help functions (?, decribe, apropos, ...) crashes the current R session via segmentation fault
 - Provide an interface to plot2d() and plot3d() enableling storing of graphics and usage in RMarkdown documents
@@ -26,6 +28,7 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - fix and test for windows, test for MacOS
 
 ## Efficiency
+- Add test files
 - Remove unneccassary variable conversions from `std::string` to `boost::filesystem::path` and vice versa
 
 ## Documentation
