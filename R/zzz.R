@@ -11,6 +11,7 @@
 ## a load action, so this does not have to be placed in .onLoad() or evalqOnLoad().
 loadModule("Maxima", TRUE)
 
-maxima <- new(RMaxima)
-maxima.execute <<- maxima$execute
-maxima.load <<- maxima$loadModule
+.onAttach <- function(libname, pkgname) {
+	maxima <<- new(RMaxima)
+}
+
