@@ -38,13 +38,16 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - fix and test for windows, test for MacOS
 
 ## Efficiency
-- Add test files
+- fix failing call to `system.file()` inside Rmaxima class constructor when using `devtools::load_all()`
 - Remove unneccassary variable conversions from `std::string` to `boost::filesystem::path` and vice versa
 
 ## Documentation
 - Add roxygen2 documentation to C++-classes or wrap c++ calls in more userfriendly R-function calls
 
 # Version History
+
+## 26.02.2021
+- Add test files
 
 ## 22.02.2021
 - implemented output display as tex (not yet user-friendly)
