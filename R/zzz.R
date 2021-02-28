@@ -9,9 +9,16 @@
 
 ## For R 2.15.1 and later this also works. Note that calling loadModule() triggers
 ## a load action, so this does not have to be placed in .onLoad() or evalqOnLoad().
+
+#' @importFrom Rcpp loadModule
 loadModule("Maxima", TRUE)
 
-.onAttach <- function(libname, pkgname) {
-	maxima <<- new(RMaxima)
-}
+# .onAttach <- function(libname, pkgname) {
+# 	"package:base" %in% search()
+# 	maxima.start <<- function() maxima <<- new(RMaxima)
+# 	maxima.tell <<- function(command) maxima$execute(command) 
+# }
 
+.onUnload <- function (libpath) {
+  library.dynam.unload("rmaxima", libpath)
+}

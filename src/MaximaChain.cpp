@@ -33,69 +33,40 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
     utilsDirectory(fs::system_complete(utilsDir)),
     lastPromptId(1),
     pid(0)
-{
-    std::vector<std::string> args;
-    args.push_back(maximaPath);
-    args.push_back("-q");
-    //args.push_back("-p");
-    args.push_back("--userdir=" + utilsDirectory.string());
-
-    // args.push_back((utilsDirectory / "display.lisp").string());
-    args.push_back("--init=maxima-init-tex");
-
-    // work-around since std::regex has no member function empty() 
-    maximaIOHookRegexStr = std::string(); 
-    maximaIOHookRegex = std::regex(maximaIOHookRegexStr);
-
-    // bp::context has been deprecated
-    // bp now has it's own pipe and i/o/error stream implementations
-    // also it has nothing to do with asynchronous I/O, which anyway was dismissed as a method to provide maxima interaction from R
-    // so we basically do this:
-    // bp::ipstream is;
-    // bp::opstream os;
-    // bp::child(maximaPath, args, bp::std_out > os, bp::std_in < is, bp::std_err > os)
-
-    // bp::context ctx;
-    // ctx.stdin_behavior = bp::capture_stream();
-    // ctx.stdout_behavior = bp::capture_stream();
-    // ctx.stderr_behavior = bp::redirect_stream_to_stdout();
-    // ctx.work_directory = workingDirectory.external_directory_string();
-    // ctx.environment = bp::self::get_environment();
-
-    // process.reset(new bp::child(bp::launch(maximaPath, args, ctx)));
-    // process.reset(new bp::child(maximaPath, args, bp::std_out > is, bp::std_in < os, bp::std_err > is));
-    process.reset(new bp::child(maximaPath, args, (bp::std_out & bp::std_err) > is, bp::std_in < os));
-
-    getPid();
-
-    // get_stdout() is not a member function of current bp::child class implementation
-    // maybe simply store it is a private class variable 
-    // Reply(process->get_stdout());
-
-     Reply(is);
-
-     // flush the pipe stream
-     readReply();
-
-     // activate latex output when tex() is used
-     // crudeExecute(std::string("load(\"mactex-utilities\")$"));
-     // crudeExecute(std::string("load(\"alt-display.mac\")$"));
-     //loadModule("mactex-utilities");
-     //loadModule("alt-display.mac");
+{ 
+	std::vector<std::string> args; 
+	args.push_back(maximaPath); 
+	args.push_back("-q"); 
+	args.push_back("--userdir=" + utilsDirectory.string()); 
+	args.push_back("--init=maxima-init-tex"); 
+	
+	// work-around since std::regex has no member function empty() 
+	maximaIOHookRegexStr = std::string(); 
+	maximaIOHookRegex = std::regex(maximaIOHookRegexStr); 
+	
+	process.reset(new bp::child(maximaPath, 
+				args, 
+				(bp::std_out & bp::std_err) > is, 
+				bp::std_in < os)); 
+	getPid(); 
+	
+	Reply(is); 
+	
+	// flush the pipe stream 
+	readReply();
 }
 
 MaximaChain::~MaximaChain()
-{
-    sendCommand("quit()");
-    // process->get_stdin().close();
-    os.pipe().close();
-    process->wait();
+{ 
+	sendCommand("quit()"); 
+	os.pipe().close(); 
+	process->wait();
 }
 
 void MaximaChain::getPid()
-{
-	// variable pid is actually not read within MaximaChain class
-    #ifdef _WIN32
+{ 
+	// variable pid is actually not read within MaximaChain class 
+	#ifdef _WIN32
 	std::string pidStr;
 	// std::getline(process->get_stdout(), pidStr);
 	std::getline(is, pidStr);
@@ -110,55 +81,56 @@ void MaximaChain::getPid()
                                          pidRegexMatch[2].second));
             pidStream >> pid;
 	    return;
-        }
-    #endif
+        } 
+#endif
 
-    // pid = process->get_id();
-    pid = process->id();
+	// pid = process->get_id(); 
+	pid = process->id();
 }
 
 size_t MaximaChain::readData(std::istream &in, Reply::RawReply &reply)
-{
-    const size_t bufSize = 4096;
-    char buf[bufSize];
+{ 
+	const size_t bufSize = 4096; 
+	char buf[bufSize]; 
+	
+	size_t readTotal = 0; 
+	size_t charsRead; 
+	
+	do 
+	{ 
+		//std::readsome reads "bufSize" characters from istream "in" 
+		//and writes them into character array "buf" 
+		charsRead = in.readsome(buf, bufSize); 
+		reply.insert(reply.end(), buf, buf + charsRead); 
+		readTotal += charsRead; 
+	} while (charsRead != 0);
 
-    size_t readTotal = 0;
-    size_t charsRead;
-
-    do
-    {
-	    //std::readsome reads "bufSize" characters from istream "in" and writes them into character array "buf"
-        charsRead = in.readsome(buf, bufSize);
-	reply.insert(reply.end(), buf, buf + charsRead);
-	readTotal += charsRead;
-    }
-    while (charsRead != 0);
-
-    return readTotal;
+	return readTotal;
 }
 
 void MaximaChain::sendCommand(std::string command)
-{
-	// remove leading and trailing spaces from command
-    alg::trim(command);
-    int state = 0;
-
-    // this loop solely checks whether the command issued terminates correctly
-    for (size_t i = 0; i < command.size(); ++i)
-    {
-	    // get check ith character from string:
-	    // if a termination character (; or $) occures at position next-to-last it is concluded
-	    // that there are two termination characters and an exception gets thrown
-	    // cause a command is obliged to END with a termination character
-        state = checkInput(command[i], state);
-        if (state == STATE_END && (i + 1) != command.size())
-        {
-            // throw std::runtime_error("Bad expression: "
-            // "only one ;|$ terminated expression at a time is allowed");
+{ 
+	// remove leading and trailing spaces from command 
+	alg::trim(command); 
+	int state = 0; 
+	
+	// this loop solely checks whether the command issued terminates correctly 
+	for (size_t i = 0; i < command.size(); ++i) 
+	{
+		// get check ith character from string:
+		// if a termination character (; or $) 
+		// occures at position next-to-last it is concluded
+		// that there are two termination characters and an exception gets thrown
+		// cause a command is obliged to END with a termination character
+		state = checkInput(command[i], state);
+		if (state == STATE_END && (i + 1) != command.size())
+		{
+		// throw std::runtime_error("Bad expression: "
+		// "only one ;|$ terminated expression at a time is allowed");
 		Rcpp::stop("Bad expression: "
 				"only one ;|$ termination expression at a time is allowed");
-        }
-    }
+		} 
+	}
 
     //if there is no termination character at all add ";"
     if (state != STATE_END)

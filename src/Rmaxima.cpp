@@ -1,16 +1,3 @@
-//' RMaxima class for interacting with maxima
-//'
-//' This class provides access to maxima and in addition
-//' provides convenience functions to execute special types of
-//' commands
-//'
-//' @export
-//' @examples
-//' m <- new(RMaxima)
-//'
-//' m$execute("2+2")
-//' m$loadModule("mac-tex-utilities")
-
 #include <Rcpp.h>
 #include "MaximaChain.h"
 #include "boost/process.hpp"
@@ -31,11 +18,13 @@ class RMaxima
         std::string maxpath = bp::search_path("maxima").string();
         std::string workDir = fs::current_path().string();
 
-	Environment env("package:base");
-	Function f = env["system.file"];
-	// fs::path p(Rcpp::as<std::string>(f("extdata", "display.lisp", Named("package") = "Rmaxima")));
-	fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima")));
+	// Environment env("package:base");
+	// Function f = env["system.file"];
+	Function f("system.file");
+	fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
         std::string utilsDir = p.parent_path().string();
+
+	Rcout << "Init script directory: " << utilsDir << std::endl;
 
         myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
     }
@@ -47,19 +36,23 @@ class RMaxima
 
     std::string execute(std::string command)
     {
-        // try
-        // {
-        //     std::string result = myMaxima->executeCommand(command);
-        //     return result;
-        // }
-
-        // catch (const std::exception &ex)
-        // {
-        //     forward_exception_to_r(ex);
-        // }
             std::string result = myMaxima->executeCommand(command);
             return result;
     }
+
+    std::string loadModule(std::string module)
+    {
+	    if(module.empty())
+	    {
+		    Rcpp::stop("Please provide a valid module name!");
+	    }
+	    else
+	    { 
+		    std::string result = myMaxima->executeCommand("load(" + module + ");"); 
+		    return result;
+	    }
+    }
+ 
 
   private:
     Maxima::MaximaChain* myMaxima;
@@ -79,7 +72,14 @@ RCPP_MODULE(Maxima)
     class_<RMaxima>("RMaxima")
     .constructor()
     .method("execute", &RMaxima::execute)
-    // .finalizer(&rmaxima_finalizer)
+    .method("loadModule", &RMaxima::loadModule)
+    .finalizer(&rmaxima_finalizer)
     ;
 } 
 
+/*** R
+
+# avoid forcing user to create object from class RMaxima
+# fixing interface object to reference class named "maxima"
+
+*/
