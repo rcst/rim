@@ -11,6 +11,7 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## General
+- If command terminates with `\$` then this causes a segmentation fault, which kills the R process. The cause being that maxima returns immediatley with the next input prompt
 - dealing with documentation/ help functions
 	- write corresponding class functions
 	- Help functions in maxima:
@@ -21,7 +22,6 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 	- catch exceptions
 		- `?? ...` return message that ?? ... or descripe(..., inexact) are not supporte since it enters a user dialog and where user needs to choose different option and this is not compatible with using it in documents
 
-- If command terminates with `\$` then this causes a segmentation fault, which kills the R process. The cause being that maxima returns immediatley with the next input prompt
 
 ## Usability
 - Handle asksign and similar feedback interuptions
@@ -30,6 +30,14 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - Workflow for working with TeX and MathML output:
 	- enable: dynamically change output display: 1d, tex, mathml
 - Add documentation
+- implement maxima return type class (S3, S4 or RC?)
+	- maxima returns always a class of this type
+	- the type stores different format types of output strings, i.e. linear, latex, MathML,
+	- the type also stores a reference output label
+	- this would be a nice way to handle surpressed outputs from maxima
+	- maybe be implement certain operations on thos classes
+		- insert parameter values and return calculated function values
+		- enable to reinsert objects of this time back into latex
 
 ## Portability
 - Remove third party linking entirely
