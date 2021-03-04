@@ -5,5 +5,8 @@
 #' @return No return value
 #' @family rmaxima functions
 #' @export
-maxima.start <- function() maxima <<- new(RMaxima)
+maxima.start <- function() { 
+	if(!exists("maxima")) maxima <<- new(RMaxima) 
+	else print("maxima is already running")
+}
 

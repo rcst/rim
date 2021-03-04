@@ -31,7 +31,8 @@ class RMaxima
 
     ~RMaxima()
     {
-        delete myMaxima;
+	    Rcout << "Destructor" << std::endl; 
+	    delete myMaxima;
     }
 
     std::string execute(std::string command)
@@ -52,7 +53,6 @@ class RMaxima
 		    return result;
 	    }
     }
- 
 
   private:
     Maxima::MaximaChain* myMaxima;

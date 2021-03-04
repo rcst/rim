@@ -11,7 +11,7 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## General
-- If command terminates with `\$` then this causes a segmentation fault, which kills the R process. The cause being that maxima returns immediatley with the next input prompt
+- Implement stop function to end maxima child process for debugging purposes
 - dealing with documentation/ help functions
 	- write corresponding class functions
 	- Help functions in maxima:

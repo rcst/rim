@@ -197,8 +197,10 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
 
         // if it was successfully read, it is inserted at the back of the deque
 	// ... unless it is a newline charachter
-	if(c!='\n') 
+	// if(c!='\n') 
+	// {
 		reply.push_back(c);
+	// }
     }
     while (!(reply.back() == ';' && std::regex_search(
            reply.begin(), reply.end(), promptMatch, promptExpr)));
@@ -206,7 +208,7 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
 	prompt = promptMatch[1];
 
 	//std::regex outExpr("out;>>(.*?)<<out;");
-	std::regex outExpr("out;>>(.*?)<<out;");
+	std::regex outExpr("out;>>([[:space:]|[:print:]]*?)<<out;");
 	Reply::It start = reply.begin();
 	Reply::It end = promptMatch[0].first;
 
@@ -289,10 +291,6 @@ std::string MaximaChain::executeCommand(const std::string &command)
     ReplyPtr reply = crudeExecute(command);
 
     // print content of reply
-    // for(auto i = reply->betweens.front().first; i != reply->betweens.front().second; ++i)
-    //         Rcpp::Rcout << *i;
-    // Rcpp::Rcout << std::endl;
-
     // for(auto i = reply->reply.cbegin(); i != reply->reply.cend(); ++i)
     //         Rcpp::Rcout << *i;
     // Rcpp::Rcout << std::endl;
@@ -312,20 +310,14 @@ std::string MaximaChain::executeCommand(const std::string &command)
 		Rcpp::stop("Command execution was interrupted.");
         }
 
-	// throw std::runtime_error("Maxima error: " +
-        //                          std::string(reply->betweens.back().first,
-        //                                      reply->betweens.back().second));
-
-	// Rcpp::Rcout << "Maxima error: " << 
-	// 	std::string(reply->betweens.back().first, reply->betweens.back().second) << 
-	// 	std::endl;
-
-	Rcpp::stop(std::string("Maxima error: ") +
-			std::string(reply->betweens.back().first,
-				reply->betweens.back().second));
+	//Rcpp::stop(std::string("Maxima error: ") +
+	//		std::string(reply->betweens.back().first,
+	//			reply->betweens.back().second));
+	return std::string("");
     }
 
-    std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
+    //std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
+    std::regex validOut("\\s*\\(%o\\d+\\)\\s*([[:space:]|[:print:]]*)\\s*");
 
     Reply::Range lastOut = reply->outs.back();
 
