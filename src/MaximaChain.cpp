@@ -300,19 +300,14 @@ std::string MaximaChain::executeCommand(const std::string &command)
         if (!reply->CheckPrompt())
         {
             crudeExecute(";");
-            // throw std::runtime_error("Unsupported: " + reply->concatenateParts());
 	    Rcpp::stop("Unsupported: " + reply->concatenateParts());
         }
 
         if (reply->isInterrupted())
         {
-            // throw std::runtime_error("Command execution was interrupted.");
 		Rcpp::stop("Command execution was interrupted.");
         }
 
-	//Rcpp::stop(std::string("Maxima error: ") +
-	//		std::string(reply->betweens.back().first,
-	//			reply->betweens.back().second));
 	return std::string("");
     }
 
@@ -331,7 +326,6 @@ std::string MaximaChain::executeCommand(const std::string &command)
 
     crudeExecute(";");
 
-    //throw std::runtime_error("Unsupported: " + reply->concatenateParts());
     Rcpp::stop("Unsupported: " + reply->concatenateParts());
 }
 

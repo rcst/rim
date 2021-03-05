@@ -16,20 +16,32 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 	- write corresponding class functions
 	- Help functions in maxima:
 		- `example(...)`
+			- example can be executed, but maxima.tell() only returns the last output
+			- implement function `example()` that returns multiple outputs
+			- implement output as R-list that captures both inputs and output statements
 		- `describe(...)` and variants `? ...` aka describe(..., exact) and `?? ...` aka describe(..., inexact)
+			- `describe()` is currently save to use with tell (no quotation needed)
+			- `describe()` returns it's actual output in between prompts
 		- `apropos("...")`
+			- `apropos("...")` requires a string input, needs separate function (`maxima.apropos()`)
+			- simply use maxima$execute
 		- `demo("...")`
+			- `demo("...")` needs separate function: `maxima.demo()`
+			- needs it's own execution function:
+				- after initial execution the input prompt is changed to "_". As long as the input prompt has this form, the user sends ";" as input to step through the demo.
+				- implement function `maxima.demo()` that automates this process
+				- the output is the same as for `example()`: return list of the inputs and outputs back to R
 	- catch exceptions
-		- `?? ...` return message that ?? ... or descripe(..., inexact) are not supporte since it enters a user dialog and where user needs to choose different option and this is not compatible with using it in documents
+		- `?? ...` return message that ?? ... or describe(..., inexact) are not supporte since it enters a user dialog and where user needs to choose different option and this is not compatible with using it in documents
 
 
 ## Usability
 - Handle asksign and similar feedback interuptions
+	- implement test
 - enable replacing latex math delimiters "$$" by more space-consistent variants, e.g. "\[" or `align` environment
 - Provide an interface to plot2d() and plot3d() enableling storing of graphics and usage in RMarkdown documents
 - Workflow for working with TeX and MathML output:
 	- enable: dynamically change output display: 1d, tex, mathml
-- Add documentation
 - implement maxima return type class (S3, S4 or RC?)
 	- maxima returns always a class of this type
 	- the type stores different format types of output strings, i.e. linear, latex, MathML,
@@ -48,3 +60,4 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 - Remove unneccassary variable conversions from `std::string` to `boost::filesystem::path` and vice versa
 
 ## Documentation
+- write README.Rmd to evaluate to README.md
