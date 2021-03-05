@@ -54,6 +54,12 @@ class RMaxima
 	    }
     }
 
+    std::string apropos(std::string keystring)
+    {
+	    std::string result = myMaxima->executeCommand("apropos(\"" + keystring + "\");");
+	    return result;
+    }
+
   private:
     Maxima::MaximaChain* myMaxima;
 
@@ -73,6 +79,7 @@ RCPP_MODULE(Maxima)
     .constructor()
     .method("execute", &RMaxima::execute)
     .method("loadModule", &RMaxima::loadModule)
+    .method("apropos", &RMaxima::apropos)
     .finalizer(&rmaxima_finalizer)
     ;
 } 

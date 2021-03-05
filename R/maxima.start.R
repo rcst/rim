@@ -7,6 +7,6 @@
 #' @export
 maxima.start <- function() { 
 	if(!exists("maxima")) maxima <<- new(RMaxima) 
-	else print("maxima is already running")
+	else cat("maxima is already running")
 }
 

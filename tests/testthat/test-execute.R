@@ -20,5 +20,4 @@ test_that("execution returns formatted strings", {
 
   # test re-evaluation of defined variable
   expect_match(maxima.tell("''V;"), "^\\$\\$[[:space:]|[:print:]]*\\$\\$$")
-
 })

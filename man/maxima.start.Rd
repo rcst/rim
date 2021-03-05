@@ -12,4 +12,8 @@ No return value
 \description{
 Calling this function starts maxima in a child process in the background and configures the display output of maxima
 }
+\seealso{
+Other rmaxima functions: 
+\code{\link{maxima.stop}()}
+}
 \concept{rmaxima functions}

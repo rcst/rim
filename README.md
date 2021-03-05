@@ -22,9 +22,6 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 		- `describe(...)` and variants `? ...` aka describe(..., exact) and `?? ...` aka describe(..., inexact)
 			- `describe()` is currently save to use with tell (no quotation needed)
 			- `describe()` returns it's actual output in between prompts
-		- `apropos("...")`
-			- `apropos("...")` requires a string input, needs separate function (`maxima.apropos()`)
-			- simply use maxima$execute
 		- `demo("...")`
 			- `demo("...")` needs separate function: `maxima.demo()`
 			- needs it's own execution function:
