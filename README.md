@@ -42,9 +42,9 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 	- the type stores different format types of output strings, i.e. linear, latex, MathML,
 	- the type also stores a reference output label
 	- this would be a nice way to handle surpressed outputs from maxima
-	- maybe be implement certain operations on thos classes
+	- maybe be implement certain operations on those classes
 		- insert parameter values and return calculated function values
-		- enable to reinsert objects of this time back into latex
+		- enable to reinsert objects of this type back into latex
 
 ## Portability
 - Remove third party linking entirely
