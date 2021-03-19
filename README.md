@@ -11,6 +11,7 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## General
+- implement knitr-engine for maxima using this interface
 - Implement stop function to end maxima child process for debugging purposes
 - dealing with documentation/ help functions
 	- write corresponding class functions
@@ -33,6 +34,7 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 
 ## Usability
+- remove maxima.start(), maxima should be started if it hasn't when commands are to be executed
 - enable replacing latex math delimiters "$$" by more space-consistent variants, e.g. "\[" or `align` environment
 - Provide an interface to plot2d() and plot3d() enableling storing of graphics and usage in RMarkdown documents
 - Workflow for working with TeX and MathML output:
