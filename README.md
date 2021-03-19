@@ -33,8 +33,6 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 
 ## Usability
-- Handle asksign and similar feedback interuptions
-	- implement test
 - enable replacing latex math delimiters "$$" by more space-consistent variants, e.g. "\[" or `align` environment
 - Provide an interface to plot2d() and plot3d() enableling storing of graphics and usage in RMarkdown documents
 - Workflow for working with TeX and MathML output:
