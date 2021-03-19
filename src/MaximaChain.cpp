@@ -38,7 +38,7 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	args.push_back(maximaPath); 
 	args.push_back("-q"); 
 	args.push_back("--userdir=" + utilsDirectory.string()); 
-	args.push_back("--init=maxima-init-tex"); 
+	args.push_back("--init=maxima-init-tex2"); 
 	
 	// work-around since std::regex has no member function empty() 
 	maximaIOHookRegexStr = std::string(); 
@@ -173,76 +173,61 @@ MaximaChain::Reply::Reply()
 }
 
 MaximaChain::Reply::Reply(bp::ipstream &in)
-{
-	// this function seems to filter the output stream of maxima to isolate returned maxima-values
-	std::regex promptExpr("prompt;>>(.*)<<prompt;");
-
+{ 
+    //std::regex promptExpr("prompt;>>(.*)<<prompt;"); 
+    std::regex promptExpr("prompt;>>([[:space:]|[:print:]]*)<<prompt;"); 
     std::match_results<Reply::It> promptMatch;
 
-    // Reads in character by character until the reply both 
-    // (a) contains the promptExpr expression 
-    // (b) reply ends with ";", however this is already given by (a)
-    do
-    {
-        char c;
+    do 
+    { 
+        char c; 
+	if (!in.get(c)) 
+	{ 
+            std::string wasRead(reply.begin(), reply.end()); 
+	    // throw std::runtime_error("Read failed. Was read: " + wasRead);
 
-        // checks whether reading the first character of the (i)stream "in" was successfully read
-        // otherwise throws an error
-        if (!in.get(c))
-        {
-            std::string wasRead(reply.begin(), reply.end());
-            // throw std::runtime_error("Read failed. Was read: " + wasRead);
-            Rcpp::stop("Read failed. Was read: " + wasRead);
-        }
-
-        // if it was successfully read, it is inserted at the back of the deque
-	// ... unless it is a newline charachter
-	// if(c!='\n') 
-	// {
-		reply.push_back(c);
-	// }
+	    Rcpp::stop("Read failed. Was read: " + wasRead); 
+	} 
+	
+	reply.push_back(c);
     }
     while (!(reply.back() == ';' && std::regex_search(
            reply.begin(), reply.end(), promptMatch, promptExpr)));
 
-	prompt = promptMatch[1];
+    prompt = promptMatch[1]; 
+    
+    std::regex outExpr("out;>>([[:space:]|[:print:]]*?)<<out;");
+    Reply::It start = reply.begin();
+    Reply::It end = promptMatch[0].first;
+    std::match_results<Reply::It> what; 
+    
+    while(std::regex_search(start, end, what, outExpr)) 
+    { 
+                outs.push_back(what[1]); 
+                betweens.push_back(Reply::Range(start, what[0].first)); 
+                start = what[0].second; 
+    }
+    
+    //std::regex outExpr("out;>>(.*?)<<out;");
+    
+    // Rcpp::Rcout << "Printing reply: begin -> promptMatch[0].first ..." << std::endl;
+    //     for(auto i = start; i != end; ++i)
+    // 	    Rcpp::Rcout << *i;
+    //     Rcpp::Rcout << std::endl;
+    // Rcpp::Rcout << "End reply ..." << std::endl;
+    
+    // loops over pairs of outExpr as declared in the display.lisp file
+    // i.e. out;>> and <<out;
+    // stores outputs in ... "outs"
 
-	//std::regex outExpr("out;>>(.*?)<<out;");
-	std::regex outExpr("out;>>([[:space:]|[:print:]]*?)<<out;");
-	Reply::It start = reply.begin();
-	Reply::It end = promptMatch[0].first;
+    betweens.push_back(Reply::Range(start, end)); 
+    std::match_results<Reply::It> outInPrompt;
 
-	std::match_results<Reply::It> what;
-
-	// Rcpp::Rcout << "Printing reply: begin -> promptMatch[0].first ..." << std::endl;
-	//     for(auto i = start; i != end; ++i)
-	// 	    Rcpp::Rcout << *i;
-	//     Rcpp::Rcout << std::endl;
-	// Rcpp::Rcout << "End reply ..." << std::endl;
-
-	// loops over pairs of outExpr as declared in the display.lisp file
-	// i.e. out;>> and <<out;
-	// stores outputs in ... "outs"
-	while(std::regex_search(start, end, what, outExpr))
-	{
-		// Rcpp::Rcout << "inside outs-regex-search" << std::endl;
-		// Rcpp::Rcout << "what[0]: " << what[0] << std::endl;
-		// Rcpp::Rcout << "what[1]: " << what[1] << std::endl;
-		// Rcpp::Rcout << std::endl;
-
-		outs.push_back(what[1]);
-		betweens.push_back(Reply::Range(start, what[0].first));
-		start = what[0].second;
-	}
-
-	betweens.push_back(Reply::Range(start, end));
-	std::match_results<Reply::It> outInPrompt;
-
-	if (std::regex_search(promptMatch[1].first, promptMatch[1].second,
-		outInPrompt, outExpr))
-	{
-		prompt = outInPrompt[1];
-	}
+    if (std::regex_search(promptMatch[1].first, promptMatch[1].second, 
+			    outInPrompt, outExpr)) 
+    { 
+	    prompt = outInPrompt[1]; 
+    }
 
     std::regex validPrompt_("\\s*\\(%i(\\d+)\\)\\s*");
     std::match_results<Reply::It>validPromptMatch;
@@ -297,6 +282,10 @@ std::string MaximaChain::executeCommand(const std::string &command)
 
     if (reply->outs.empty())
     {
+	    std::match_results<Reply::It> match;
+	    if(reply->requireUser(match)) 
+		    return(std::string(match[1].first, match[1].second));
+
         if (!reply->CheckPrompt())
         {
             crudeExecute(";");
@@ -351,6 +340,13 @@ bool MaximaChain::Reply::isInterrupted() const
     return std::regex_search(betweens.back().first,
 			       betweens.back().second,
       			       match, interrupt);
+}
+
+bool MaximaChain::Reply::requireUser(std::match_results<Reply::It> &match) const
+{
+    std::regex askExpr("TEXT;>>([[:space:]|[:print:]]*?)<<TEXT;");
+    
+    return std::regex_search(prompt.first, prompt.second, match, askExpr);
 }
 
 std::string MaximaChain::executeCommandList(const std::string &command)
