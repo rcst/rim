@@ -19,5 +19,6 @@ Imports:
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr (>= 1.30)
 Config/testthat/edition: 3

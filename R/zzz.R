@@ -13,11 +13,14 @@
 #' @importFrom Rcpp loadModule
 loadModule("Maxima", TRUE)
 
-# .onAttach <- function(libname, pkgname) {
-# 	"package:base" %in% search()
-# 	maxima.start <<- function() maxima <<- new(RMaxima)
-# 	maxima.tell <<- function(command) maxima$execute(command) 
-# }
+.onAttach <- function(libname, pkgname) {
+	maxima <<- new(RMaxima)
+	if(requireNamespace("knitr", quietly = TRUE)) {
+		knitr::knit_engines$set(maxima = maxima.engine)
+		packageStartupMessage("Maxima successfully registered as knitr engine!")
+	} else
+		packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
+}
 
 .onUnload <- function (libpath) {
   library.dynam.unload("rmaxima", libpath)

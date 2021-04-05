@@ -1,0 +1,19 @@
+---
+title: |
+   | rmaxima
+subtitle: |
+   | test page
+pagetitle: test 
+date: "`r format(Sys.time(), '%d.%m.%Y')`"
+---
+
+```{r}
+# library(rmaxima)
+```
+
+```{maxima, results='asis'}
+integrate(x^3, x);
+L: sqrt(1 - 1/(R^2));
+assume(R>=0)
+integrate(x, x, 0, L);
+```
