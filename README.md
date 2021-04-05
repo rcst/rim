@@ -23,9 +23,6 @@ currently not maintained.
 
 ## General
 
--   implement knitr-engine for maxima using this interface
--   Implement stop function to end maxima child process for debugging
-    purposes
 -   dealing with documentation/ help functions
     -   write corresponding class functions
     -   Help functions in maxima:

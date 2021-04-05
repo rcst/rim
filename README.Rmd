@@ -17,8 +17,6 @@ This repository is a fork from the original version created by Kseniia Shumelchy
 
 # TODO
 ## General
-- implement knitr-engine for maxima using this interface
-- Implement stop function to end maxima child process for debugging purposes
 - dealing with documentation/ help functions
 	- write corresponding class functions
 	- Help functions in maxima:

@@ -1,5 +1,7 @@
 # rmaxima 0.0.0.9000
 
+- implement knitr-engine for maxima using this interface
+- Implement stop function to end maxima child process for debugging purposes
 - Handles asksign and similar feedback interuptions
 - Added interface to maxima's apropos()-function
 - Fixed: If command terminates with `\$` then this causes a segmentation fault, which kills the R process. The cause being that maxima returns immediatley with the next input prompt

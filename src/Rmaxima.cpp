@@ -15,29 +15,37 @@ class RMaxima
   public:
     RMaxima()
     {
-        std::string maxpath = bp::search_path("maxima").string();
-        std::string workDir = fs::current_path().string();
+        Rcpp::Rcout << "Inside Constructor" << std::endl;
+	running = false;
+        maxpath = bp::search_path("maxima").string();
+        workDir = fs::current_path().string();
 
-	// Environment env("package:base");
-	// Function f = env["system.file"];
 	Function f("system.file");
 	fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
-        std::string utilsDir = p.parent_path().string();
+        utilsDir = p.parent_path().string();
 
-	Rcout << "Init script directory: " << utilsDir << std::endl;
+	startMaxima();
 
-        myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
+	Rcpp::Rcout << "myMaxima pointer: " << myMaxima << std::endl;
     }
 
     ~RMaxima()
     {
-	    Rcout << "Destructor" << std::endl; 
-	    delete myMaxima;
+	    Rcpp::Rcout << "inside destructor" << std::endl;
+
+            stopMaxima();
     }
 
     std::string execute(std::string command)
     {
-            std::string result = myMaxima->executeCommand(command);
+	    if(!running) 
+	    {
+		    Rcpp::Rcout << "Starting maxima ..." << std::endl;
+		    startMaxima();
+	    }
+	    
+	    std::string result = myMaxima->executeCommand(command);
+
             return result;
     }
 
@@ -49,38 +57,81 @@ class RMaxima
 	    }
 	    else
 	    { 
-		    std::string result = myMaxima->executeCommand("load(" + module + ");"); 
+		    std::string result = execute("load(" + module + ");"); 
 		    return result;
 	    }
     }
 
     std::string apropos(std::string keystring)
     {
-	    std::string result = myMaxima->executeCommand("apropos(\"" + keystring + "\");");
+	    std::string result = execute("apropos(\"" + keystring + "\");");
 	    return result;
+    }
+
+    void startMaxima(bool restart = false)
+    {
+	    if(running) 
+	    { 
+		    if(restart) 
+		    { 
+			    stopMaxima(); 
+			    myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir); 
+		    }
+		    else 
+			    Rcout << "Maxima is already running." << std::endl;
+	    } else
+	    {
+		    myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
+		    running = true;
+	    }
+    }
+
+    void stopMaxima()
+    { 
+        Rcout << "inside stopMaxima() "; 
+        
+        if(running)
+        {
+                Rcout << "deleting myMaxima at " << myMaxima << std::endl; 
+
+                delete myMaxima; 
+                myMaxima = nullptr;
+	        running = false;
+	} 
+        else Rcout << "Maxima is not running." << std::endl;
     }
 
   private:
     Maxima::MaximaChain* myMaxima;
+    std::string maxpath;
+    std::string workDir;
+    std::string utilsDir;
 
+    bool running;
 };
 
-static void rmaxima_finalizer(RMaxima* ptr)
-{
-    if (ptr)
-    { 
-        delete ptr;
-    }
-}
+// static void rmaxima_finalizer(RMaxima* ptr)
+// {
+//     Rcpp::Rcout << "inside finalizer" << std::endl; 
+//     Rcpp::Rcout << "RMaxima pointer: " << ptr << std::endl;
+// 
+//     if(ptr)
+//     { 
+//         Rcpp::Rcout << "deleting RMaxima pointer" << std::endl;
+//         delete ptr;
+//     }
+// }
 
 RCPP_MODULE(Maxima)
 {
     class_<RMaxima>("RMaxima")
     .constructor()
+    .method("startMaxima", &RMaxima::startMaxima)
+    .method("stopMaxima", &RMaxima::stopMaxima)
     .method("execute", &RMaxima::execute)
     .method("loadModule", &RMaxima::loadModule)
     .method("apropos", &RMaxima::apropos)
-    .finalizer(&rmaxima_finalizer)
+    //.finalizer(&rmaxima_finalizer)
     ;
 } 
 

@@ -4,7 +4,7 @@
 \alias{maxima.start}
 \title{Starting maxima}
 \usage{
-maxima.start()
+maxima.start(restart = FALSE)
 }
 \value{
 No return value
