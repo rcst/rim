@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 #include "MaximaChain.h"
 #include "boost/process.hpp"
-#include "boost/filesystem.hpp"
 
 
 using namespace Rcpp;
@@ -17,12 +16,22 @@ class RMaxima
     {
         Rcpp::Rcout << "Inside Constructor" << std::endl;
 	running = false;
-        maxpath = bp::search_path("maxima").string();
-        workDir = fs::current_path().string();
 
 	Function f("system.file");
-	fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
-        utilsDir = p.parent_path().string();
+	Function dirname("dirname");
+	Function normalizepath("normalizePath");
+	Function SysWhich("Sys.which");
+	Function getwd("getwd");
+
+	maxpath = Rcpp::as<std::string>(SysWhich("maxima"));
+        // maxpath = bp::search_path("maxima").string();
+
+	workDir = Rcpp::as<std::string>(getwd());
+        // workDir = fs::current_path().string();
+
+	utilsDir = Rcpp::as<std::string>(normalizepath(dirname(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true))));
+	// fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
+        // utilsDir = p.parent_path().string();
 
 	startMaxima();
 

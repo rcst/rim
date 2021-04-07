@@ -16,4 +16,35 @@ integrate(x^3, x);
 L: sqrt(1 - 1/(R^2));
 assume(R>=0)
 integrate(x, x, 0, L);
-` ``
+```
+
+```{maxima, results='asis'}
+inv_gamma(x, alpha, beta) := beta^alpha / gamma(alpha) * (1/x)^(alpha + 1) * %e^(-beta / x);
+assume(s>0)$
+assume(nu>0)$
+inv_scaled_chisq(x, nu, s) := inv_gamma(x, nu/2, nu/2 * s^2);
+norm(x, mu, sigma) := 1 / (sigma * sqrt(2 * %pi)) * %e^(-1/2 * ((x - mu)/sigma)^2);
+t(x, nu) := gamma((nu + 1)/2) / (sqrt(nu * %pi) * gamma(nu / 2)) * (1 + x^2/nu)^-((nu + 1)/2);
+```
+
+The predictive distribution of the mean of the missing data is
+
+$$
+\bar{y}^\text{miss} \mid \mu, \sigma^2, \bar{y}^\text{obs} \sim N\left(\mu, \frac{\sigma^2}{\left(N - n\right)}\right)
+$$
+
+Averaging over $\mu$:
+
+```{maxima, results='asis'}
+assume(sigma > 0, n > 0, N > 0)$
+ratsubstflag: true$ 
+integrate(norm(ymiss, mu, sigma/sqrt(N - n)) * norm(mu, yobs, sigma/sqrt(n)), mu, minf, inf); 
+```
+
+and averaging over $\sigma^2$:
+
+```{maxima, results='asis'}
+% * inv_scaled_chisq(sigma^2, n-1, s^2);
+ratsubst(sqrt(t), sigma, %);
+integrate(%, t, 0, inf);
+```

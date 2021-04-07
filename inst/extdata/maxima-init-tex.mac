@@ -4,4 +4,3 @@ set_prompt('prefix, "prompt;>>")$
 set_prompt('suffix, "<<prompt;")$
 my_display(x):=(?princ("out;>>"), ?princ("(%o"), ?princ(linenum), ?princ(") "), tex(?caddr(x)), ?princ("<<out;"))$
 set_alt_display(2, my_display)$
-

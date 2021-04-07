@@ -29,8 +29,8 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
                          const std::string &workingDir,
                          const std::string &utilsDir,
 			 const std::string &display)
-  : workingDirectory(fs::system_complete(workingDir)),
-    utilsDirectory(fs::system_complete(utilsDir)),
+  : workingDirectory(workingDir),
+    utilsDirectory(utilsDir),
     lastPromptId(1),
     pid(0)
 { 
