@@ -1,3 +1,5 @@
+maxima.env <- new.env()
+
 #' knitr maxima engine
 #'
 #' An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}. 
@@ -7,9 +9,6 @@
 #' @import knitr
 #' @param options A list of chunk options
 #' @return This functions prints the resulting output from maxima together with it's code 
-
-maxima.env <- new.env()
-
 maxima.engine <- function(options) {
 	if(!exists("mx", envir = maxima.env)) { 
 		message("starting maxima")
