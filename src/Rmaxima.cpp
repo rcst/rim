@@ -14,12 +14,11 @@ class RMaxima
   public:
     RMaxima()
     {
-        Rcpp::Rcout << "Inside Constructor" << std::endl;
 	running = false;
 
-	Function f("system.file");
-	Function dirname("dirname");
-	Function normalizepath("normalizePath");
+	Function a("normalizePath");
+	Function b("dirname");
+	Function c("system.file");
 	Function SysWhich("Sys.which");
 	Function getwd("getwd");
 
@@ -29,27 +28,22 @@ class RMaxima
 	workDir = Rcpp::as<std::string>(getwd());
         // workDir = fs::current_path().string();
 
-	utilsDir = Rcpp::as<std::string>(normalizepath(dirname(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true))));
+	utilsDir = Rcpp::as<std::string>(a(b(c("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true))));
 	// fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
         // utilsDir = p.parent_path().string();
 
 	startMaxima();
-
-	Rcpp::Rcout << "myMaxima pointer: " << myMaxima << std::endl;
     }
 
     ~RMaxima()
     {
-	    Rcpp::Rcout << "inside destructor" << std::endl;
-
-            stopMaxima();
+            delete myMaxima;
     }
 
     std::string execute(std::string command)
     {
 	    if(!running) 
 	    {
-		    Rcpp::Rcout << "Starting maxima ..." << std::endl;
 		    startMaxima();
 	    }
 	    
@@ -97,17 +91,22 @@ class RMaxima
 
     void stopMaxima()
     { 
-        Rcout << "inside stopMaxima() "; 
-        
         if(running)
         {
-                Rcout << "deleting myMaxima at " << myMaxima << std::endl; 
-
                 delete myMaxima; 
                 myMaxima = nullptr;
 	        running = false;
 	} 
-        else Rcout << "Maxima is not running." << std::endl;
+    }
+
+    void setTexEnv(std::string before, std::string after)
+    {
+	    if(!before.empty() && !after.empty()) 
+                execute("set_tex_environment_default(\"" + 
+				before + 
+				"\", \"" + 
+				after + 
+				"\")$");
     }
 
   private:
@@ -140,6 +139,7 @@ RCPP_MODULE(Maxima)
     .method("execute", &RMaxima::execute)
     .method("loadModule", &RMaxima::loadModule)
     .method("apropos", &RMaxima::apropos)
+    .method("setTexEnv", &RMaxima::setTexEnv)
     //.finalizer(&rmaxima_finalizer)
     ;
 } 

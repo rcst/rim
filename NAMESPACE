@@ -2,6 +2,7 @@
 
 export(maxima.apropos)
 export(maxima.load)
+export(maxima.settexenv)
 export(maxima.start)
 export(maxima.stop)
 export(maxima.tell)
