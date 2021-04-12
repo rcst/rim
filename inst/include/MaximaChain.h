@@ -97,8 +97,9 @@ class MaximaChain
 
             bool isInterrupted() const;
 
-            bool requireUser(std::match_results<Reply::It> &match) const;
-
+            bool requireUser(std::match_results<Reply::It> &match) const; 
+	    
+	    bool checkMaximaError(std::match_results<Reply::It> &match) const;
 
         private:
             Reply(const Reply &);

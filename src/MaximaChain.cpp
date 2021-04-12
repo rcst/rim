@@ -276,15 +276,25 @@ std::string MaximaChain::executeCommand(const std::string &command)
     ReplyPtr reply = crudeExecute(command);
 
     // print content of reply
+    // Rcpp::Rcout << "printing outs" << std::endl;
     // for(auto i = reply->reply.cbegin(); i != reply->reply.cend(); ++i)
     //         Rcpp::Rcout << *i;
     // Rcpp::Rcout << std::endl;
 
+
+    // print content of betweens 
+    Rcpp::Rcout << "printing betweens" << std::endl;
+    for(auto i = reply->betweens.front().first; i != reply->betweens.front().second; ++i)
+            Rcpp::Rcout << *i;
+    Rcpp::Rcout << std::endl;
+
     if (reply->outs.empty())
-    {
-	    std::match_results<Reply::It> match;
-	    if(reply->requireUser(match)) 
-		    return(std::string(match[1].first, match[1].second));
+    { 
+	std::match_results<Reply::It> user; 
+	if(reply->requireUser(user)) 
+	{
+		return(std::string(user[1].first, user[1].second));
+	}
 
         if (!reply->CheckPrompt())
         {
@@ -296,6 +306,12 @@ std::string MaximaChain::executeCommand(const std::string &command)
         {
 		Rcpp::stop("Command execution was interrupted.");
         }
+
+	std::match_results<Reply::It> error; 
+	if(reply->checkMaximaError(error))
+	{
+		Rcpp::stop(std::string(error[0].first, error[0].second).c_str());
+	}
 
 	return std::string("");
     }
@@ -347,6 +363,13 @@ bool MaximaChain::Reply::requireUser(std::match_results<Reply::It> &match) const
     std::regex askExpr("TEXT;>>([[:space:]|[:print:]]*?)<<TEXT;");
     
     return std::regex_search(prompt.first, prompt.second, match, askExpr);
+}
+
+bool MaximaChain::Reply::checkMaximaError(std::match_results<Reply::It> &match) const
+{
+    std::regex askExpr("^[[:space:]|[:print:]]*$");
+    
+    return std::regex_search(betweens.front().first, betweens.front().second, match, askExpr);
 }
 
 std::string MaximaChain::executeCommandList(const std::string &command)
