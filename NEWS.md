@@ -1,5 +1,6 @@
 # rmaxima 0.0.0.9000
 
+- fixed Maxima error (message) forwarding to R
 - implement knitr-engine for maxima using this interface
 - Implement stop function to end maxima child process for debugging purposes
 - Handles asksign and similar feedback interuptions
