@@ -19,7 +19,6 @@ maxima.engine <- function(options) {
 		assign(x = "stopMaxima", 
 		       value = get("mx", envir = maxima.env)$stopMaxima, 
 		       envir = maxima.env)
-		# mx <<- new(rmaxima:::RMaxima)
 	}
 
 	code <- options$code
@@ -37,20 +36,10 @@ maxima.engine <- function(options) {
 	engine_output(options, code, out)
 }
 
-filter_chunks <- function(x) {
-	r <- attr(x, which = "chunk_opts")
-	if("engine" %in% names(r)) {
-		if(r$engine == "maxima") {
-			return(r$label)
-		}
-	}
-	else return(NA)
-}
 
 last_label <- function(label = knitr::opts_current$get('label')) {
   if (knitr:::child_mode()) return(FALSE)
-  # labels <- names(knitr::knit_code$get())
-  labels <- na.omit(sapply(knit_code$get(), FUN = filter_chunks, USE.NAMES = FALSE))
+  labels <- knitr::all_labels(engine == 'maxima')
   tail(labels, 1) == label
 }
 

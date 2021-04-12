@@ -283,10 +283,10 @@ std::string MaximaChain::executeCommand(const std::string &command)
 
 
     // print content of betweens 
-    Rcpp::Rcout << "printing betweens" << std::endl;
-    for(auto i = reply->betweens.front().first; i != reply->betweens.front().second; ++i)
-            Rcpp::Rcout << *i;
-    Rcpp::Rcout << std::endl;
+    // Rcpp::Rcout << "printing betweens" << std::endl;
+    // for(auto i = reply->betweens.front().first; i != reply->betweens.front().second; ++i)
+    //         Rcpp::Rcout << *i;
+    // Rcpp::Rcout << std::endl;
 
     if (reply->outs.empty())
     { 
@@ -315,6 +315,8 @@ std::string MaximaChain::executeCommand(const std::string &command)
 
 	return std::string("");
     }
+
+
 
     //std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
     std::regex validOut("\\s*\\(%o\\d+\\)\\s*([[:space:]|[:print:]]*)\\s*");
@@ -367,7 +369,7 @@ bool MaximaChain::Reply::requireUser(std::match_results<Reply::It> &match) const
 
 bool MaximaChain::Reply::checkMaximaError(std::match_results<Reply::It> &match) const
 {
-    std::regex askExpr("^[[:space:]|[:print:]]*$");
+    std::regex askExpr("^[[:space:]|[:print:]]{2,}$");
     
     return std::regex_search(betweens.front().first, betweens.front().second, match, askExpr);
 }
