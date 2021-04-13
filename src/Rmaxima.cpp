@@ -1,10 +1,8 @@
 #include <Rcpp.h>
 #include "MaximaChain.h"
-#include "boost/process.hpp"
-
+// #include "boost/process.hpp"
 
 using namespace Rcpp;
-
 
 namespace bp = ::boost::process;
 namespace fs = ::boost::filesystem;

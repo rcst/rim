@@ -1,1 +1,5 @@
-R/rmaxima.R
+^R/rmaxima.R$
+^build_all.R$
+^[[:print:]]+\.Rmd$
+^[[:print:]]+\.sh$
+^tests/testthat/testthat-problems.rds$

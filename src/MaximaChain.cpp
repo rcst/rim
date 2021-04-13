@@ -1,10 +1,9 @@
 #include<Rcpp.h>
 #include "MaximaChain.h"
 
-#include <fstream>
-#include <signal.h>
-#include <sstream>
-#include <boost/algorithm/string.hpp>
+#include<fstream>
+#include<signal.h>
+#include<sstream>
 #include<regex>
 
 namespace alg = boost::algorithm;

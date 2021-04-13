@@ -1,14 +1,20 @@
 #ifndef MAXIMACHAIN_H_INCLUDED
 #define MAXIMACHAIN_H_INCLUDED
 
-#include <cstddef>
-#include <string>
-#include <deque>
+#include<cstddef>
+#include<string>
+#include<deque>
 
-#include <boost/process.hpp>
-#include <regex>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+// #include<boost/process.hpp>
+#include<regex>
+#include<boost/scoped_ptr.hpp>
+#include<boost/shared_ptr.hpp>
+
+#include<boost/process/child.hpp>
+#include<boost/process/pipe.hpp>
+#include<boost/process/io.hpp>
+
+#include<boost/algorithm/string.hpp>
 
 namespace bp = ::boost::process;
 namespace fs = ::boost::filesystem;
