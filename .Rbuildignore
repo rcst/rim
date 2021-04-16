@@ -3,3 +3,6 @@
 ^[[:print:]]+\.Rmd$
 ^[[:print:]]+\.sh$
 ^tests/testthat/testthat-problems.rds$
+^boost_dependencies.html$
+^test\.pdf$
+^test\.Rmd$

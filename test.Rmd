@@ -4,7 +4,6 @@ title: |
 subtitle: |
    | test page
 pagetitle: test 
-date: "`r format(Sys.time(), '%d.%m.%Y')`"
 ---
 
 ```{r}
@@ -14,7 +13,7 @@ date: "`r format(Sys.time(), '%d.%m.%Y')`"
 ```{maxima, results='asis'}
 integrate(x^3, x);
 L: sqrt(1 - 1/(R^2));
-assume(R>=0)
+assume(R>=0);
 integrate(x, x, 0, L);
 ```
 
@@ -36,8 +35,8 @@ $$
 Averaging over $\mu$:
 
 ```{maxima, results='asis'}
-assume(sigma > 0, n > 0, N > 0)$
-ratsubstflag: true$ 
+assume(sigma > 0, n > 0, N > 0);
+ratsubstflag: true$
 integrate(norm(ymiss, mu, sigma/sqrt(N - n)) * norm(mu, yobs, sigma/sqrt(n)), mu, minf, inf); 
 ```
 
@@ -45,6 +44,6 @@ and averaging over $\sigma^2$:
 
 ```{maxima, results='asis'}
 % * inv_scaled_chisq(sigma^2, n-1, s^2);
-ratsubst(sqrt(t), sigma, %);
+ratsubst(sqrt(t), sigma, %)$
 integrate(%, t, 0, inf);
 ```

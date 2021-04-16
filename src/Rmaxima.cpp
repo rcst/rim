@@ -107,6 +107,12 @@ class RMaxima
 				"\")$");
     }
 
+    void loadInit(std::string file)
+    {
+	    if(!file.empty())
+		    loadModule("\"" + utilsDir + "/" + file + "\"");
+    }
+
   private:
     Maxima::MaximaChain* myMaxima;
     std::string maxpath;
@@ -138,6 +144,7 @@ RCPP_MODULE(Maxima)
     .method("loadModule", &RMaxima::loadModule)
     .method("apropos", &RMaxima::apropos)
     .method("setTexEnv", &RMaxima::setTexEnv)
+    .method("loadInit", &RMaxima::loadInit)
     //.finalizer(&rmaxima_finalizer)
     ;
 } 

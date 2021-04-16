@@ -5,7 +5,7 @@ Version: 0.0.0.9000
 Date: 2021-02-14
 Authors@R: c(
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
-    person("Hans W.", "Borchers", role = c("aut")),
+    person("Hans W.", "Borchers", email = "hwborchers@googlemail.com", role = c("aut")),
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")))
 Description: rmaxima provides an interface to the powerful and fairly complete computer algebra system maxima.
     It can be used to start and control maxima from within R by entering maxima commands. 
@@ -15,10 +15,11 @@ Description: rmaxima provides an interface to the powerful and fairly complete c
 License: GPL (>= 3)
 Imports: 
     methods,
-    Rcpp
+    Rcpp,
+    knitr
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 3.0.0),
-    knitr (>= 1.30)
 Config/testthat/edition: 3
+Encoding: UTF-8

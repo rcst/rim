@@ -14,7 +14,7 @@
 loadModule("Maxima", TRUE)
 
 .onAttach <- function(libname, pkgname) {
-	maxima <<- new(RMaxima)
+	maxima.env$maxima <- new(RMaxima)
 	if(requireNamespace("knitr", quietly = TRUE)) {
 		knitr::knit_engines$set(maxima = maxima.engine)
 		packageStartupMessage("Maxima successfully registered as knitr engine!")

@@ -1,0 +1,17 @@
+load("alt-display.mac");
+(set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;"),
+my_display(x) := 
+	if not atom(x) 
+	then 
+		(if op(x) = '?mtext 
+		then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
+		elseif op(x) = '?mlabel 
+		then 
+			block([alt_display1d:false, alt_display2d: true], 
+				printf(true,"~%out;>>~%(~a) ~%",first(x)), 
+				?displa(x), 
+				printf(true, "<<out;~%"))
+ 
+		else ?displa(x))
+	else ?displa(x),
+set_alt_display(2,my_display)) $
