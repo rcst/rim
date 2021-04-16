@@ -16,5 +16,24 @@ currently not maintained.
 
 ## Requirements
 
--   Maxima
--   Boost library (&gt;=1.67.0)
+-   this package currently only works under Linux (and has not been
+    tested under MacOS)
+-   you can install it without having Maxima installed, but obviously
+    need to install Maxima in order to use it.
+
+## Steps
+
+If you want to install the latest version (currently the only one
+available) install the R package `drat` first and add this github
+account as a repo:
+
+``` r
+install.packages("drat")
+drat::addRepo("rcst")
+```
+
+Now you can easily install it the usual way:
+
+``` r
+install.packages("rmaxima")
+```
