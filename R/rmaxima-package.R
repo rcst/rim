@@ -1,10 +1,14 @@
 #' rmaxima
 #'
 #' @description
-#' This the description bla bla bla
+#' Provides an interface to Maxima, a computer algebra system.
 #'
 #' @details
-#' Here comes the details section
+#' Note: You need to install the Maxima software separately in order to make use of this package. 
+#' 
+#' Maxima is started automatically on attachment via \code{library(rmaxima)}. Using \code{maxima.start()} and \code{maxima.stop()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history. 
+#'
+#' To send a single command to Maxima and receive the corresponding output use \code{maxima.get()}. The output is returned in the format currently set (\code{maxima.getformat()}). The format can be changed using \code{rmaxima.setformat())}.
 #'
 #' @keywords internal
 #' @import methods
@@ -17,39 +21,44 @@
 #> [1] "_PACKAGE"
 
 maxima.env <- new.env()
-maxima.env$format <- "linear"
+maxima.env$format <- "latex"
 
-#' @rdname rmaxima-package
-#' @param restart If FALSE (default), then maxima process is started provided it is not running already. If TRUE starts or restarts maxima.
+#' @describeIn rmaxima-package (re-)starts Maxima.
+#' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
 	maxima.env$maxima$startMaxima(restart) 
 }
 
-#' @describeIn rmaxima-package Quits the running maxima process.
+#' @describeIn rmaxima-package Quits Maxima.
 #' @export
 maxima.stop <- function() {
 	maxima.env$maxima$stopMaxima()
 }
 
-#' @describeIn rmaxima-package Executes a single Maxima command provided by \code{command}.
+#' @describeIn rmaxima-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 #' @param command A character vector containing the maxima command.
+#' @seealso \code{\link{maxima.engine}}
 #' @export
-maxima.get <- function(command) maxima.env$maxima$execute(command) 
+maxima.get <- function(command) {
+	m <- maxima.env$maxima$execute(command) 
+	attr(m, "format") <- maxima.getformat()
+	return(m)
+}
 
-#' @describeIn rmaxima-package A wrapper function to load a Maxima module named by \code{module}
+#' @describeIn rmaxima-package A wrapper to load a Maxima module named by \code{module}
 #' @param module A character vector naming the maxima module to be loaded.
 #' @export
 maxima.load <- function(module) maxima.env$maxima$loadModule(module) 
 
-#' @describeIn rmaxima-package A wrapper function to call the Maxima helper function \code{apropos} on a search term provided by \code{keystring}
-#' @param command A character vector containing the maxima command.
+#' @describeIn rmaxima-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
+#' @param keystring A character vector containing a search term.
 #' @export
 maxima.apropos <- function(keystring) maxima.env$maxima$apropos(keystring) 
 
 
 #' @describeIn rmaxima-package Sets the format of the output string from Maxima.
-#' @param format A character vector naming the output display format. Can be one of \code{linear} (default), \code{latex} (i.e. $$...$$), \code{text}.
+#' @param format A character vector naming the output display format. Can be one of "linear" (default), "latex" (i.e. $$...$$), "mathml".
 #' @export
 maxima.setformat <- function(format = "linear") {
 	if(!is.character(format))
@@ -58,7 +67,7 @@ maxima.setformat <- function(format = "linear") {
 	switch(format,
 	       latex = maxima.env$maxima$loadInit("maxima-init-tex2.mac"),
 	       linear = maxima.env$maxima$loadInit("maxima-init-lin.mac"),
-	       text = maxima.env$maxima$loadInit("maxima-init-lin.mac"),
+	       mathml = maxima.env$maxima$loadInit("maxima-init-mathml.mac"),
 	       default = maxima.env$maxima$loadInit("maxima-init-lin.mac")
 	       )
 

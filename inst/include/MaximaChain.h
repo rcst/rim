@@ -45,6 +45,8 @@ class MaximaChain
 
 	// bp::process::id_type getId() const;
 	bp::pid_t getId() const;
+
+	size_t getLastPromptId() const { return lastPromptId; }
         
         const fs::path &getWorkingDirectory() const;
 

@@ -28,35 +28,46 @@ maxima.setformat(format = "linear")
 maxima.getformat()
 }
 \arguments{
-\item{restart}{If FALSE (default), then maxima process is started provided it is not running already. If TRUE starts or restarts maxima.}
+\item{restart}{If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.}
 
 \item{command}{A character vector containing the maxima command.}
 
 \item{module}{A character vector naming the maxima module to be loaded.}
 
-\item{format}{A character vector naming the output display format. Can be one of \code{linear} (default), \code{latex} (i.e. $$...$$), \code{text}.}
+\item{keystring}{A character vector containing a search term.}
+
+\item{format}{A character vector naming the output display format. Can be one of "linear" (default), "latex" (i.e. $$...$$), "mathml".}
 }
 \description{
-This the description bla bla bla
+Provides an interface to Maxima, a computer algebra system.
 }
 \details{
-Here comes the details section
+Note: You need to install the Maxima software separately in order to make use of this package. 
+
+Maxima is started automatically on attachment via \code{library(rmaxima)}. Using \code{maxima.start()} and \code{maxima.stop()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history. 
+
+To send a single command to Maxima and receive the corresponding output use \code{maxima.get()}. The output is returned in the format currently set (\code{maxima.getformat()}). The format can be changed using \code{rmaxima.setformat())}.
 }
 \section{Functions}{
 \itemize{
-\item \code{maxima.stop}: Quits the running maxima process.
+\item \code{maxima.start}: (re-)starts Maxima.
 
-\item \code{maxima.get}: Executes a single Maxima command provided by \code{command}.
+\item \code{maxima.stop}: Quits Maxima.
 
-\item \code{maxima.load}: A wrapper function to load a Maxima module named by \code{module}
+\item \code{maxima.get}: Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 
-\item \code{maxima.apropos}: A wrapper function to call the Maxima helper function \code{apropos} on a search term provided by \code{keystring}
+\item \code{maxima.load}: A wrapper to load a Maxima module named by \code{module}
+
+\item \code{maxima.apropos}: A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 
 \item \code{maxima.setformat}: Sets the format of the output string from Maxima.
 
 \item \code{maxima.getformat}: Returns the currently set format as a character vector
 }}
 
+\seealso{
+\code{\link{maxima.engine}}
+}
 \author{
 \strong{Maintainer}: Eric Stemmler \email{stemmler.eric@gmail.com}
 

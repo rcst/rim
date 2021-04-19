@@ -22,6 +22,11 @@ loadModule("Maxima", TRUE)
 		packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
 }
 
-.onUnload <- function (libpath) {
-  library.dynam.unload("rmaxima", libpath)
+.onUnload <- function (libpath) { 
+	library.dynam.unload("rmaxima", libpath)
+	rm("maxima", envir = maxima.env)
+}
+
+.onDetach <- function(libpath) {
+	maxima.env$maxima.stop()
 }

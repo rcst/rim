@@ -38,19 +38,31 @@ class RMaxima
             delete myMaxima;
     }
 
-    std::string execute(std::string command)
+    Rcpp::CharacterVector execute(std::string command)
     {
 	    if(!running) 
 	    {
 		    startMaxima();
 	    }
 	    
-	    std::string result = myMaxima->executeCommand(command);
+	    Rcpp::CharacterVector result = myMaxima->executeCommand(command);
+
+	    std::stringstream ss;
+
+	    ss << "%i" << myMaxima->getLastPromptId();
+	    result.attr("input-label") = ss.str();
+	    ss.str("");
+
+	    ss << "%o" << myMaxima->getLastPromptId();
+	    result.attr("output-label") = ss.str();
+	    ss.str("");
+
+	    result.attr("command") = command;
 
             return result;
     }
 
-    std::string loadModule(std::string module)
+    Rcpp::CharacterVector loadModule(std::string module)
     {
 	    if(module.empty())
 	    {
@@ -58,15 +70,13 @@ class RMaxima
 	    }
 	    else
 	    { 
-		    std::string result = execute("load(" + module + ");"); 
-		    return result;
+		    return execute("load(" + module + ");"); 
 	    }
     }
 
-    std::string apropos(std::string keystring)
+    Rcpp::CharacterVector apropos(std::string keystring)
     {
-	    std::string result = execute("apropos(\"" + keystring + "\");");
-	    return result;
+	    return execute("apropos(\"" + keystring + "\");");
     }
 
     void startMaxima(bool restart = false)

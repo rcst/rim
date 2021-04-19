@@ -1,5 +1,6 @@
 # rmaxima 0.0.0.9000
 
+- maxima.get() returns character vector with added attributes for reference labels, format and it's originating command
 - fixed Maxima error (message) forwarding to R
 - implement knitr-engine for maxima using this interface
 - Implement stop function to end maxima child process for debugging purposes

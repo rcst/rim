@@ -2,7 +2,7 @@ load("alt-display.mac");
 
 define_alt_display(
 	es_display2d(x), 
-	block([display2d:true, alt_display1d:false, alt_display2d:false], displa(x)));
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))));
 
 set_alt_display(1,es_display2d) $
 
@@ -14,7 +14,7 @@ set_alt_display(1,es_display2d) $
 			if type='?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x)) 
 			else 
 				if type=?mlabel 
-				then (printf(true,"~%out;>>~%"), 
+				then (printf(true,"~%out;>>~%(~a)~%", first(x)), 
 					es_display2d(x), 
 					printf(true, "<<out;~%"))
 				else 
