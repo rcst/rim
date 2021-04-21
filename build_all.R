@@ -1,6 +1,5 @@
 if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
-	rmarkdown::render(input = "README.Rmd")
-	file.remove("README.html")
+	rmarkdown::render(input = "README.Rmd", output_file = "docs/index.html")
 	Rcpp::compileAttributes() 
 	devtools::document()
 	devtools::load_all()
@@ -13,4 +12,6 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
 	# devtools::check_win_release()
 
 	drat::insertPackage(file = "../rmaxima_0.0.0.9000.tar.gz", repodir = "../drat")
+
+	detach("package:rmaxima", unload = TRUE)
 }
