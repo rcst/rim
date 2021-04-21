@@ -21,29 +21,29 @@
 #> [1] "_PACKAGE"
 
 maxima.env <- new.env()
-maxima.env$format <- "latex"
+maxima.env$format <- "linear"
 
 #' @describeIn rmaxima-package (re-)starts Maxima.
 #' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
-	maxima.env$maxima$startMaxima(restart) 
+  maxima.env$maxima$startMaxima(restart) 
 }
 
 #' @describeIn rmaxima-package Quits Maxima.
 #' @export
 maxima.stop <- function() {
-	maxima.env$maxima$stopMaxima()
+  maxima.env$maxima$stopMaxima()
 }
 
 #' @describeIn rmaxima-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 #' @param command A character vector containing the maxima command.
 #' @seealso \code{\link{maxima.engine}}
 #' @export
-maxima.get <- function(command) {
-	m <- maxima.env$maxima$execute(command) 
-	attr(m, "format") <- maxima.getformat()
-	return(m)
+maxima.get <- function(command, label = FALSE) {
+  m <- maxima.env$maxima$execute(command, label) 
+  attr(m, "format") <- maxima.getformat()
+  return(m)
 }
 
 #' @describeIn rmaxima-package A wrapper to load a Maxima module named by \code{module}
@@ -61,21 +61,14 @@ maxima.apropos <- function(keystring) maxima.env$maxima$apropos(keystring)
 #' @param format A character vector naming the output display format. Can be one of "linear" (default), "latex" (i.e. $$...$$), "mathml".
 #' @export
 maxima.setformat <- function(format = "linear") {
-	if(!is.character(format))
-		stop("Invalid input: expected character vector")
+  if(!is.character(format))
+    stop("Invalid input: expected character vector")
 
-	switch(format,
-	       latex = maxima.env$maxima$loadInit("maxima-init-tex2.mac"),
-	       linear = maxima.env$maxima$loadInit("maxima-init-lin.mac"),
-	       mathml = maxima.env$maxima$loadInit("maxima-init-mathml.mac"),
-	       default = maxima.env$maxima$loadInit("maxima-init-lin.mac")
-	       )
-
-	maxima.env$format <- format
+  maxima.env$format <- switch_format(maxima.env$maxima, format)
 }
 
 #' @describeIn rmaxima-package Returns the currently set format as a character vector
 #' @export
 maxima.getformat <- function() {
-	maxima.env$format
+  maxima.env$format
 }

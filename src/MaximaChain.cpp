@@ -37,7 +37,7 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	args.push_back(maximaPath); 
 	args.push_back("-q"); 
 	args.push_back("--userdir=" + utilsDirectory.string()); 
-	args.push_back("--init=maxima-init-tex2"); 
+	args.push_back("--init=maxima-init-lin"); 
 	
 	// work-around since std::regex has no member function empty() 
 	maximaIOHookRegexStr = std::string(); 

@@ -8,33 +8,35 @@
 #' @importFrom utils tail
 #' @param options A list of chunk options
 #' @return This functions prints the resulting output from maxima together with it's code 
-maxima.engine <- function(options) {
-	maxima.engine.start()
+maxima.engine <- function(options) { 
+  maxima.engine.start()
 
-	code <- options$code
-	out <- character(0);
-	for(i in 1:length(code))
-		out <- c(out, maxima.env$mx$execute(code[i]))
+  code <- options$code
+  out <- character(0);
+  for(i in 1:length(code)) {
+      out <- c(out, 
+	       maxima.env$mx$execute(code[i], 
+				     maxima.env$engine_format == "linear")) 
+  }
 
+  if (last_label(options$label)) { 
+    maxima.engine.stop()
+  }
 
-	if (last_label(options$label)) { 
-		maxima.engine.stop()
-	}
-
-
-	engine_output(options, code, out)
+  engine_output(options, code, out)
 }
 
 maxima.engine.start <- function() {
-	if(!exists("mx", envir = maxima.env)) { 
-		maxima.env$mx <- new(RMaxima)
-		maxima.env$engine_format <- "latex"
-	}
+  if(!exists("mx", envir = maxima.env)) { 
+    maxima.env$mx <- new(RMaxima)
+    maxima.env$engine_format <- "linear"
+    setup_hooks()
+  }
 }
 
 maxima.engine.stop <- function() { 
-	maxima.env$mx$stopMaxima() 
-	rm(mx, engine_format, envir = maxima.env) 
+  maxima.env$mx$stopMaxima() 
+  rm(mx, engine_format, envir = maxima.env) 
 }
 
 
@@ -44,26 +46,3 @@ last_label <- function(label = knitr::opts_current$get('label')) {
   labels <- knitr::all_labels(engine == 'maxima')
   tail(labels, 1) == label
 }
-
-
-knitr::knit_hooks$set(maxima.format = function(before, options) {
-	# this functions will print it's return value
-	# i.e. the last statement if it results in a character vector
-	if(before) {
-		maxima.engine.start()
-		if(options$maxima.format != maxima.env$engine_format) {
-			maxima.env$engine_format <- switch_format(maxima.env$mx, 
-									options$maxima.format)
-			return()
-		}
-	}
-	else {
-		# engine has been stopped after last chunk
-		if(!last_label()) {
-			if((options$maxima.format != maxima.env$engine_format)) {
-				maxima.env$engine_format <- switch_format(maxima.env$mx)
-				return()
-			}
-		}
-	} 
-})
