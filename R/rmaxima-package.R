@@ -38,6 +38,7 @@ maxima.stop <- function() {
 
 #' @describeIn rmaxima-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 #' @param command A character vector containing the maxima command.
+#' @param label Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.
 #' @seealso \code{\link{maxima.engine}}
 #' @export
 maxima.get <- function(command, label = FALSE) {

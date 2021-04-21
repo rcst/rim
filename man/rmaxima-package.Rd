@@ -17,7 +17,7 @@ maxima.start(restart = FALSE)
 
 maxima.stop()
 
-maxima.get(command)
+maxima.get(command, label = FALSE)
 
 maxima.load(module)
 
@@ -31,6 +31,8 @@ maxima.getformat()
 \item{restart}{If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.}
 
 \item{command}{A character vector containing the maxima command.}
+
+\item{label}{Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.}
 
 \item{module}{A character vector naming the maxima module to be loaded.}
 

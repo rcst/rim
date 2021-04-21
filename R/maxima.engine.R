@@ -2,7 +2,9 @@
 #'
 #' An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}. 
 #'
-#' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it creates an object of reference class \code{RMaxima} in \code{knit()}'s execution environment. This spawns a child process running Maxima in the background. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. In detail, \code{maxima.engine} first checks whether an object named "mx" of type reference class exists. If not then it is created and hence Maxima is started in the background. Each line of code chunk is then turned into an unevaluated expression by using \code{call(name = mx$execute, code)}. When the last code chunk with option \code{engine = "maxima"} has been processed, \code{mx} is deleted and the Maxima child process quits.
+#' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it spawns a child process running Maxima in the background. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. 
+#'
+#' In addition, this function sets up Maxima specific output and chunk hooks.
 #' 
 #' @import knitr
 #' @importFrom utils tail
@@ -36,7 +38,9 @@ maxima.engine.start <- function() {
 
 maxima.engine.stop <- function() { 
   maxima.env$mx$stopMaxima() 
-  rm(mx, engine_format, envir = maxima.env) 
+  rm(mx, 
+     engine_format, 
+     envir = maxima.env) 
 }
 
 
