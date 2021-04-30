@@ -38,7 +38,7 @@ maxima.getformat()
 
 \item{keystring}{A character vector containing a search term.}
 
-\item{format}{A character vector naming the output display format. Can be one of "linear" (default), "latex" (i.e. $$...$$), "mathml".}
+\item{format}{A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".}
 }
 \description{
 Provides an interface to Maxima, a computer algebra system.

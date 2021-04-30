@@ -36,7 +36,7 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	std::vector<std::string> args; 
 	args.push_back(maximaPath); 
 	args.push_back("-q"); 
-	args.push_back("--userdir=" + utilsDirectory.string()); 
+	args.push_back("--userdir=" + utilsDirectory); 
 	args.push_back("--init=maxima-init-lin"); 
 	
 	// work-around since std::regex has no member function empty() 
@@ -228,15 +228,15 @@ MaximaChain::Reply::Reply(bp::ipstream &in)
 	    prompt = outInPrompt[1]; 
     }
 
-    std::regex validPrompt_("\\s*\\(%i(\\d+)\\)\\s*");
+    std::regex validPrompt_("\\s*(\\(%i(\\d+)\\))\\s*");
     std::match_results<Reply::It>validPromptMatch;
 
     if (std::regex_match(prompt.first, prompt.second, validPromptMatch,
         validPrompt_))
     {
     validPrompt = true;
-        std::istringstream idStream(std::string(validPromptMatch[1].first,
-                                    validPromptMatch[1].second));
+        std::istringstream idStream(std::string(validPromptMatch[2].first,
+                                    validPromptMatch[2].second));
         idStream >> promptId;
     }
     else
@@ -266,6 +266,7 @@ MaximaChain::ReplyPtr MaximaChain::readReply()
     while (result->outs.empty() && result->CheckPrompt() &&
            result->getPromptId() <= lastPromptId_ && result->isInterrupted());
 
+    lastInputLabel = std::string("%i" + std::to_string(lastPromptId));
     lastPromptId = result->getPromptId();
     return result;
 }
@@ -318,7 +319,7 @@ std::string MaximaChain::executeCommand(const std::string &command)
 
 
     //std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
-    std::regex validOut("\\s*\\(%o\\d+\\)\\s*([[:space:]|[:print:]]*)\\s*");
+    std::regex validOut("\\s*\\((%o\\d+)\\)\\s*([[:space:]|[:print:]]*)\\s*");
 
     Reply::Range lastOut = reply->outs.back();
 
@@ -326,8 +327,9 @@ std::string MaximaChain::executeCommand(const std::string &command)
     
     // output results of command to R-console if the result is truely valid, i.e. after (%o..)
     if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
-    {
-	return alg::trim_copy(std::string(what[1].first, what[1].second));
+    { 
+	    lastOutputLabel = alg::trim_copy(std::string(what[1].first, what[1].second));
+	    return alg::trim_copy(std::string(what[2].first, what[2].second));
     }
 
     crudeExecute(";");
@@ -446,7 +448,7 @@ int MaximaChain::checkInput(char c, int state) const
     return state;
 }
 
-const fs::path &MaximaChain::getWorkingDirectory() const
+const std::string &MaximaChain::getWorkingDirectory() const
 {
     return workingDirectory;
 }

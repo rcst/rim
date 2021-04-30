@@ -1,7 +1,8 @@
 ---
 title: "rmaxima - an interface to maxima for R"
 output: 
-   html_document
+   html_document:
+      keep_md: yes
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -31,7 +32,7 @@ Now you can easily install it the usual way:
 install.packages("rmaxima")
 ```
 
-# Usage
+# Usage {.tabset}
 
 ## Introduction
 
@@ -64,13 +65,13 @@ knitr::knit_hooks$set(source = function(x, options){
 })
 ```
 
-Now we can enter Maxima expression inside code chunks. Note that we are not required to end each line by `;` or `$` (suppressing output). If omitted a `;` is inserted automatically. 
+Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output).
 
 
 ```{maxima}
 L: sqrt(1 - 1/R^2);
 assume(R > 0);
-'integrate(x, x, 0, L) = integrate(x, x, 0, L)
+'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 
 In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas data base to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression.
@@ -82,7 +83,7 @@ Since this web page has been rendered using pandoc, a more readable output can b
 ```{maxima, maxima.format = "latex", results = "asis"}
 'L = L;
 assume(R > 0);
-'integrate(x, x, 0, 'L) = integrate(x, x, 0, L)
+'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
 ```
 
 `pandoc` automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, `pandoc` takes care of how mathematical equations delimited by `$$` are rendered.
@@ -120,5 +121,39 @@ If you are calling `maxima.get()` the returned value is a character vector with 
 ```{r, results="markup"}
 maxima.start(restart = TRUE)
 maxima.get("1+1")
+maxima.stop()
 ```
+
+## Demos {.tabset}
+
+### Distributions
+
+This is basically a reproduced demo for `Sympy` from [Bryan Zhang's Blog](https://brianzhang01.github.io/2018/04/distributions-with-sympy/).
+
+First we define some helper functions:
+
+```{maxima}
+area(dist) := integrate(dist, x, minf, inf)$
+mean(dist) := area(dist*x)$
+EX2(dist) := area(dist*x^2)$
+variance(dist) := EX2(dist) - mean(dist)^2$
+mgf(dist) := area(dist*%e^(x*t))$
+```
+
+#### Normal Distribution
+
+```{maxima}
+normal(x) := 
+      (2*%pi*sigma^2)^(-1/2) * 
+      exp(-(x-mu)^2/(2*sigma^2));
+
+assume(sigma > 0);
+
+area(normal(x));
+mean(normal(x));
+variance(normal(x));
+mgf(normal(x));
+```
+
+
 

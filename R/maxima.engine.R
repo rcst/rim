@@ -14,24 +14,34 @@ maxima.engine <- function(options) {
   maxima.engine.start()
 
   code <- options$code
+  code <- collect_ends(code)
   out <- character(0);
   for(i in 1:length(code)) {
-      out <- c(out, 
-	       maxima.env$mx$execute(code[i], 
-				     maxima.env$engine_format == "linear")) 
+    tt <- maxima.env$mx$execute(code[i], maxima.env$engine_ref_labels)
+
+    if(maxima.env$engine_format == "text2d") { 
+      tt <- maxima.env$mx$execute(code[i], FALSE)
+      if(!maxima.env$engine_ref_labels)
+	 tt <- str_strip_col(x = tt, n = label_length(tt), side = "left") 
+    }
+    else 
+      tt <- maxima.env$mx$execute(code[i], maxima.env$engine_ref_labels)
+    
+    out <- c(out, tt) 
   }
 
   if (last_label(options$label)) { 
     maxima.engine.stop()
   }
 
-  engine_output(options, code, out)
+  engine_output(options, options$code, out)
 }
 
 maxima.engine.start <- function() {
   if(!exists("mx", envir = maxima.env)) { 
     maxima.env$mx <- new(RMaxima)
     maxima.env$engine_format <- "linear"
+    maxima.env$engine_ref_labels <- TRUE
     setup_hooks()
   }
 }
@@ -39,7 +49,8 @@ maxima.engine.start <- function() {
 maxima.engine.stop <- function() { 
   maxima.env$mx$stopMaxima() 
   rm(mx, 
-     engine_format, 
+     engine_format,
+     engine_ref_labels,
      envir = maxima.env) 
 }
 

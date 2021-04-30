@@ -5,10 +5,7 @@
 #include<string>
 #include<deque>
 
-// #include<boost/process.hpp>
 #include<regex>
-#include<boost/scoped_ptr.hpp>
-#include<boost/shared_ptr.hpp>
 
 #include<boost/process/child.hpp>
 #include<boost/process/pipe.hpp>
@@ -17,7 +14,7 @@
 #include<boost/algorithm/string.hpp>
 
 namespace bp = ::boost::process;
-namespace fs = ::boost::filesystem;
+// namespace fs = ::std::filesystem; c++17 only
 using std::size_t;
 
 namespace Maxima
@@ -47,8 +44,12 @@ class MaximaChain
 	bp::pid_t getId() const;
 
 	size_t getLastPromptId() const { return lastPromptId; }
+	
+	std::string getLastInputLabel() const { return lastInputLabel; }
+
+	std::string getLastOutputLabel() const { return lastOutputLabel; }
         
-        const fs::path &getWorkingDirectory() const;
+        const std::string &getWorkingDirectory() const;
 
         class MaximaIOHook
         {
@@ -117,9 +118,11 @@ class MaximaChain
             bool validPrompt;
 
             size_t promptId;
+
         };
 
-        typedef boost::shared_ptr<MaximaChain::Reply> ReplyPtr;
+        // typedef boost::shared_ptr<MaximaChain::Reply> ReplyPtr;
+        typedef std::shared_ptr<MaximaChain::Reply> ReplyPtr;
 
         // Returns the number of bytes read
         static size_t readData(std::istream &in, Reply::RawReply &reply);
@@ -134,7 +137,8 @@ class MaximaChain
 
 	void getPid();
 
-        boost::scoped_ptr<bp::child> process;
+        // boost::scoped_ptr<bp::child> process;
+        std::unique_ptr<bp::child> process;
 
 	bp::ipstream is; // pipe reading stream
 	bp::opstream os; // pipe writing stream
@@ -144,11 +148,13 @@ class MaximaChain
 	std::string maximaIOHookRegexStr;
 	std::regex maximaIOHookRegex;
 
-        fs::path workingDirectory;
-
-        fs::path utilsDirectory;
+	std::string workingDirectory;
+	std::string utilsDirectory;
 
         size_t lastPromptId;
+
+	std::string lastOutputLabel;
+	std::string lastInputLabel;
 
 	// size_t pid;
 	pid_t pid;

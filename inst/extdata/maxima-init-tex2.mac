@@ -1,7 +1,7 @@
 (load("mactex-utilities"), load("alt-display.mac"));
 (set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;"),
-my_display(x):=block([type], type:?caar(x),
-if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",?cadr(x))
-else if type=?mlabel then printf(true,"~%out;>>~%(~a) ~a~a~a~%<<out;~%",?cadr(x),"$$",tex1(?caddr(x)),"$$")
+my_display(x):=block([type], type:op(x),
+if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
+else if type=?mlabel then printf(true,"~%out;>>~%(~a) ~a~a~a~%<<out;~%",first(x),"$$",tex1(?caddr(x)),"$$")
 else block([alt_display1d:false, alt_display2d:false], displa(x))),
 set_alt_display(2,my_display)) $

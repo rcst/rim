@@ -1,2 +1,3 @@
-CXX_STD = CXX11
+CXX_STD = CXX17
 PKG_CXXFLAGS = -I../inst/include
+OBJECTS = MaximaChain.o RcppExports.o Rmaxima.o process.o process_unix.o 

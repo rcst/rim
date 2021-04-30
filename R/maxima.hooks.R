@@ -26,4 +26,20 @@ setup_hooks <- function() {
 			    return()
 			  }
 })
+
+  knitr::knit_hooks$set(maxima.labels = function(before, options) {
+			  if(is.logical(options$maxima.labels) && options$engine == "maxima") {
+			    if(before) {
+			      maxima.engine.start() 
+			      maxima.env$engine_ref_labels <- options$maxima.labels
+			    }
+			    else {
+			      # engine has been stopped after last chunk, cannot switch
+			      if(!last_label()) {
+				maxima.env$engine_ref_labels <- TRUE
+			      }
+			    } 
+			    return()
+			  }
+})
 }

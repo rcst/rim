@@ -22,6 +22,7 @@
 
 maxima.env <- new.env()
 maxima.env$format <- "linear"
+maxima.env$ref.label <- TRUE 
 
 #' @describeIn rmaxima-package (re-)starts Maxima.
 #' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
@@ -59,7 +60,7 @@ maxima.apropos <- function(keystring) maxima.env$maxima$apropos(keystring)
 
 
 #' @describeIn rmaxima-package Sets the format of the output string from Maxima.
-#' @param format A character vector naming the output display format. Can be one of "linear" (default), "latex" (i.e. $$...$$), "mathml".
+#' @param format A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".
 #' @export
 maxima.setformat <- function(format = "linear") {
   if(!is.character(format))

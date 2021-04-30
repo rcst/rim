@@ -5,7 +5,6 @@
 using namespace Rcpp;
 
 namespace bp = ::boost::process;
-namespace fs = ::boost::filesystem;
 
 class RMaxima 
 {
@@ -40,33 +39,10 @@ class RMaxima
 
 		Rcpp::CharacterVector execute(std::string command, bool label = false)
 		{
-			Rcpp::CharacterVector result;
-			std::stringstream ss;
+			Rcpp::CharacterVector result = myMaxima->executeCommand(command);
 
-			if(!running) 
-			{
-				startMaxima();
-			}
-
-			size_t i = myMaxima->getLastPromptId();
-
-			if(label)
-			{
-				ss << "(%o" << i << ") " << myMaxima->executeCommand(command);
-				result = ss.str();
-				ss.str("");
-			}
-			else  
-				result = myMaxima->executeCommand(command);
-
-			ss << "%i" << i;
-			result.attr("input.label") = ss.str();
-			ss.str("");
-
-			ss << "%o" << i;
-			result.attr("output.label") = ss.str();
-			ss.str("");
-
+			result.attr("input.label") = myMaxima->getLastInputLabel();
+			result.attr("output.label") = myMaxima->getLastOutputLabel();
 			result.attr("command") = command;
 
 			return result;

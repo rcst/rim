@@ -14,7 +14,7 @@ set_alt_display(1,es_display2d) $
 			if type='?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x)) 
 			else 
 				if type=?mlabel 
-				then (printf(true,"~%out;>>~%"), 
+				then (printf(true,"~%out;>>~%(~a)~%", first(x)), 
 					es_display2d(x), 
 					printf(true, "<<out;~%"))
 				else 
