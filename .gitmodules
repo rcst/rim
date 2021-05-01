@@ -1,0 +1,3 @@
+[submodule "src/tiny-process-library"]
+	path = src/tiny-process-library
+	url = http://gitlab.com/eidheim/tiny-process-library
