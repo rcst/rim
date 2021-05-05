@@ -1,0 +1,3 @@
+[submodule "src/libexecstream"]
+	path = src/libexecstream
+	url = https://github.com/n-ham/libexecstream-pp
