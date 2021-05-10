@@ -7,15 +7,18 @@
 
 #include<regex>
 
-#include<boost/process/child.hpp>
-#include<boost/process/pipe.hpp>
-#include<boost/process/io.hpp>
+// #include<boost/process/child.hpp>
+// #include<boost/process/pipe.hpp>
+// #include<boost/process/io.hpp>
 
 #include<boost/algorithm/string.hpp>
 
-namespace bp = ::boost::process;
+#include "exec-stream.h"
+
+// namespace bp = ::boost::process;
 // namespace fs = ::std::filesystem; c++17 only
-using std::size_t;
+
+using std::size_t; 
 
 namespace Maxima
 {
@@ -41,7 +44,7 @@ class MaximaChain
         void sendCommand(std::string command);              
 
 	// bp::process::id_type getId() const;
-	bp::pid_t getId() const;
+	// bp::pid_t getId() const;
 
 	size_t getLastPromptId() const { return lastPromptId; }
 	
@@ -95,7 +98,8 @@ class MaximaChain
 	    Reply();
 
             // Reply(std::istream &in);
-            Reply(bp::ipstream &in);
+            // Reply(bp::ipstream &in);
+	    Reply(std::istream &in);
 
             std::string concatenateParts();
 
@@ -135,13 +139,17 @@ class MaximaChain
 
         ReplyPtr readReply();
 
-	void getPid();
+	// void getPid();
 
         // boost::scoped_ptr<bp::child> process;
-        std::unique_ptr<bp::child> process;
+        // std::unique_ptr<bp::child> process;
+	std::unique_ptr<exec_stream_t> process;
 
-	bp::ipstream is; // pipe reading stream
-	bp::opstream os; // pipe writing stream
+	// bp::istream is; // pipe reading stream
+	// bp::opstream os; // pipe writing stream
+
+	// std::istream &is; // pipe reading stream
+	// std::ostream &os; // pipe writing stream
 
         MaximaIOHook* maximaIOHook;
 
@@ -157,7 +165,7 @@ class MaximaChain
 	std::string lastInputLabel;
 
 	// size_t pid;
-	pid_t pid;
+	// pid_t pid;
 };
 
 } // namespace Maxima

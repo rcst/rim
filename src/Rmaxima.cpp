@@ -4,7 +4,7 @@
 
 using namespace Rcpp;
 
-namespace bp = ::boost::process;
+// namespace bp = ::boost::process;
 
 class RMaxima 
 {
