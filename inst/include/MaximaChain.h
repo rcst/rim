@@ -144,6 +144,7 @@ class MaximaChain
         // boost::scoped_ptr<bp::child> process;
         // std::unique_ptr<bp::child> process;
 	std::unique_ptr<exec_stream_t> process;
+	// std::shared_ptr<exec_stream_t> process;
 
 	// bp::istream is; // pipe reading stream
 	// bp::opstream os; // pipe writing stream

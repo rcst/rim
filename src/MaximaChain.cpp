@@ -53,6 +53,10 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	// 			bp::std_in < os)); 
 
 	process.reset(new exec_stream_t(maximaPath, args.str()));
+
+	// alternative
+	// process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
+
 	// process->set_wait_timeout(exec_stream_t::s_out, 5000);
 	// is = process->out();
 	// os = process->in();
@@ -60,9 +64,6 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	// getPid(); 
 	
 	Reply(process->out()); 
-	
-	// flush the pipe stream 
-	readReply();
 }
 
 MaximaChain::~MaximaChain()
