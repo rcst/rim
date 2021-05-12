@@ -189,22 +189,22 @@ drat::addRepo(&quot;rcst&quot;)</code></pre>
 <pre class="r"><code>install.packages(&quot;rmaxima&quot;)</code></pre>
 </div>
 </div>
-<div id="usage" class="section level1 tabset">
-<h1 class="tabset">Usage</h1>
+<div id="usage" class="section level1">
+<h1>Usage</h1>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This section demonstrates the use of <code>rmaxima</code> via it’s knitr engine. Alternatively, you can run each line of the Maxima code chunks via <code>maxima.get()</code>.</p>
 <p>Let’s first attach the package. This will start Maxima automatically.</p>
-<pre class="r"><code># library(rmaxima)</code></pre>
+<pre class="r"><code>library(rmaxima)</code></pre>
 <p>Now we can enter Maxima expression inside code chunks. Note that we need to end each line by <code>;</code> or <code>$</code> (suppressing output).</p>
 <pre><code>```{maxima}
 L: sqrt(1 - 1/R^2);
 assume(R &gt; 0);
 &#39;integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```</code></pre>
-<pre><code>## (%o1) sqrt(1-1/R^2)
-## (%o2) [R &gt; 0]
-## (%o3) &#39;integrate(x,x,0,sqrt(1-1/R^2)) = (R^2-1)/(2*R^2)</code></pre>
+<pre><code>## sqrt(1-1/R^2)
+## [redundant]
+## &#39;integrate(x,x,0,sqrt(1-1/R^2)) = (R^2-1)/(2*R^2)</code></pre>
 <p>In the above code chunk we define a variable <code>L</code> (that depends on another variable <code>R</code>). We tell Maximas data base to assume <code>R</code> being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression.</p>
 <p>The resulting output also prints Maxima’s output labels for each individual output, e.g. <code>(%o2)</code>, which we can reuse in other Maxima expressions as a substitute for it’s corresponding expression.</p>
 <p>Since this web page has been rendered using pandoc, a more readable output can be printed by changing Maxima’s output format and print <code>results = &#39;asis&#39;</code>.</p>
@@ -213,29 +213,29 @@ assume(R &gt; 0);
 assume(R &gt; 0);
 &#39;integrate(x, x, 0, &#39;L) = integrate(x, x, 0, L);
 ```</code></pre>
-<p>(%o6) <span class="math display">\[L=\sqrt{1-\frac{1}{R^2}}\]</span> (%o7) <span class="math display">\[\left[ {\it redundant} \right] \]</span> (%o8) <span class="math display">\[\int_{0}^{L}{x\;dx}=\frac{R^2-1}{2\,R^2}\]</span></p>
+<p><span class="math display">\[L=\sqrt{1-\frac{1}{R^2}}\]</span> <span class="math display">\[\left[ {\it redundant} \right] \]</span> <span class="math display">\[\int_{0}^{L}{x\;dx}=\frac{R^2-1}{2\,R^2}\]</span></p>
 <p><code>pandoc</code> automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, <code>pandoc</code> takes care of how mathematical equations delimited by <code>$$</code> are rendered.</p>
 <p>However, we can also change Maxima’s output format to MathML, which works if the output document is a HTML document.</p>
 <pre class="r"><code>knitr::opts_chunk$set(maxima.format = &quot;latex&quot;, results = &#39;asis&#39;)</code></pre>
 <pre><code>```{maxima, maxima.format=&quot;mathml&quot;}
 sqrt(3/4);
 ```</code></pre>
-<p>(%o13) <math xmlns="http://www.w3.org/1998/Math/MathML"> <mfrac><mrow> <msqrt><mn>3</mn> </msqrt></mrow> <mrow><mn>2</mn> </mrow></mfrac> </math></p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mfrac><mrow> <msqrt><mn>3</mn> </msqrt></mrow> <mrow><mn>2</mn> </mrow></mfrac> </math></p>
 <pre><code>```{maxima}
 f(x) := e^(x^2)$
 diff(f(x), x);
 ```</code></pre>
-<p>(%o18) (%o19) <span class="math display">\[2\,e^{x^2}\,\log e\,x\]</span></p>
+<p><span class="math display">\[2\,e^{x^2}\,\log e\,x\]</span></p>
 <pre><code>```{maxima, maxima.format=&quot;mathml&quot;}
 %;
 ```</code></pre>
-<p>(%o24) <math xmlns="http://www.w3.org/1998/Math/MathML"> <mn>2</mn> <mspace width="thinmathspace"></mspace><msup><mrow><mi>e</mi> </mrow> <mrow> <msup><mrow><mi>x</mi> </mrow> <mn>2</mn> </msup> </mrow></msup> <mspace width="thinmathspace"></mspace><mi>log</mi> <mi>e</mi> <mspace width="thinmathspace"></mspace><mi>x</mi> </math></p>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mn>2</mn> <mspace width="thinmathspace"></mspace><msup><mrow><mi>e</mi> </mrow> <mrow> <msup><mrow><mi>x</mi> </mrow> <mn>2</mn> </msup> </mrow></msup> <mspace width="thinmathspace"></mspace><mi>log</mi> <mi>e</mi> <mspace width="thinmathspace"></mspace><mi>x</mi> </math></p>
 <p>Notice, that we can use the symbol <code>%</code> to refer to the last expression and that this works across code chunks.</p>
 <p>You can also replay other previous expressions by referring to their output labels. Output labels are printed in the default maxima output format <code>&quot;linear&quot;</code>.</p>
 <pre><code>```{maxima}
 log(%o1);
 ```</code></pre>
-<p>(%o29) <span class="math display">\[\frac{\log \left(1-\frac{1}{R^2}\right)}{2}\]</span></p>
+<p><span class="math display">\[\frac{\log \left(1-\frac{1}{R^2}\right)}{2}\]</span></p>
 <p>If you are calling <code>maxima.get()</code> the returned value is a character vector with an attribute <code>output.label</code>, among others:</p>
 <pre class="r"><code>maxima.start(restart = TRUE)
 maxima.get(&quot;1+1&quot;)</code></pre>
@@ -250,8 +250,8 @@ maxima.get(&quot;1+1&quot;)</code></pre>
 ## [1] &quot;linear&quot;</code></pre>
 <pre class="r"><code>maxima.stop()</code></pre>
 </div>
-<div id="demos" class="section level2 tabset">
-<h2 class="tabset">Demos</h2>
+<div id="demos" class="section level2">
+<h2>Demos</h2>
 <div id="distributions" class="section level3">
 <h3>Distributions</h3>
 <p>This is basically a reproduced demo for <code>Sympy</code> from <a href="https://brianzhang01.github.io/2018/04/distributions-with-sympy/">Bryan Zhang’s Blog</a>.</p>
@@ -263,7 +263,6 @@ EX2(dist) := area(dist*x^2)$
 variance(dist) := EX2(dist) - mean(dist)^2$
 mgf(dist) := area(dist*%e^(x*t))$
 ```</code></pre>
-<p>(%o34) (%o35) (%o36) (%o37) (%o38)</p>
 <div id="normal-distribution" class="section level4">
 <h4>Normal Distribution</h4>
 <pre><code>```{maxima}
@@ -271,14 +270,45 @@ normal(x) :=
       (2*%pi*sigma^2)^(-1/2) * 
       exp(-(x-mu)^2/(2*sigma^2));
 
-assume(sigma &gt; 0);
+assume(sigma &gt; 0)$
 
 area(normal(x));
 mean(normal(x));
 variance(normal(x));
 mgf(normal(x));
 ```</code></pre>
-<p>(%o43) <span class="math display">\[{\it normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)\]</span> (%o44) <span class="math display">\[\left[ \sigma&gt;0 \right] \]</span> (%o45) <span class="math display">\[1\]</span> (%o46) <span class="math display">\[\mu\]</span> (%o47) <span class="math display">\[\frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2\]</span> (%o48) <span class="math display">\[e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}\]</span></p>
+<p><span class="math display">\[{\it normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)\]</span></p>
+<p><span class="math display">\[1\]</span> <span class="math display">\[\mu\]</span> <span class="math display">\[\frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2\]</span> <span class="math display">\[e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}\]</span></p>
+</div>
+<div id="laplace-distribution" class="section level4">
+<h4>Laplace Distribution</h4>
+<pre><code>```{maxima}
+laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
+
+load(&quot;abs_integrate&quot;)$
+
+assume(b &gt; 0)$
+
+area(laplace(x));
+mean(laplace(x));
+variance(laplace(x));
+```</code></pre>
+<p><span class="math display">\[{\it laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)\]</span></p>
+<p><span class="math display">\[1\]</span> <span class="math display">\[\mu\]</span> <span class="math display">\[\frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2\]</span></p>
+</div>
+<div id="exponential-distribution" class="section level4">
+<h4>Exponential Distribution</h4>
+<pre><code>```{maxima}
+expo(x) := unit_step(x) * lambda * exp(-lambda * x);
+
+assume(lambda &gt; 0)$
+
+area(expo(x));
+mean(expo(x));
+variance(expo(x));
+```</code></pre>
+<p><span class="math display">\[{\it expo}\left(x\right):={\it unit\_step}\left(x\right)\,\lambda\,\exp \left(\left(-\lambda\right)\,x\right)\]</span></p>
+<p><span class="math display">\[1\]</span> <span class="math display">\[\frac{1}{\lambda}\]</span> <span class="math display">\[\frac{1}{\lambda^2}\]</span></p>
 </div>
 </div>
 </div>

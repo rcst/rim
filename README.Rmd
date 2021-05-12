@@ -32,7 +32,7 @@ Now you can easily install it the usual way:
 install.packages("rmaxima")
 ```
 
-# Usage {.tabset}
+# Usage
 
 ## Introduction
 
@@ -40,8 +40,8 @@ This section demonstrates the use of `rmaxima` via it's knitr engine. Alternativ
 
 Let's first attach the package. This will start Maxima automatically.
 
-```{r}
-# library(rmaxima)
+```{r, eval = FALSE}
+library(rmaxima)
 ```
 
 ```{r, echo = FALSE}
@@ -124,7 +124,7 @@ maxima.get("1+1")
 maxima.stop()
 ```
 
-## Demos {.tabset}
+## Demos
 
 ### Distributions
 
@@ -147,7 +147,7 @@ normal(x) :=
       (2*%pi*sigma^2)^(-1/2) * 
       exp(-(x-mu)^2/(2*sigma^2));
 
-assume(sigma > 0);
+assume(sigma > 0)$
 
 area(normal(x));
 mean(normal(x));
@@ -155,5 +155,29 @@ variance(normal(x));
 mgf(normal(x));
 ```
 
+#### Laplace Distribution
 
+```{maxima}
+laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
+
+load("abs_integrate")$
+
+assume(b > 0)$
+
+area(laplace(x));
+mean(laplace(x));
+variance(laplace(x));
+```
+
+#### Exponential Distribution
+
+```{maxima}
+expo(x) := unit_step(x) * lambda * exp(-lambda * x);
+
+assume(lambda > 0)$
+
+area(expo(x));
+mean(expo(x));
+variance(expo(x));
+```
 
