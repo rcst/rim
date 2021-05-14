@@ -6,8 +6,6 @@
 #include<sstream>
 #include<regex>
 
-namespace alg = boost::algorithm;
-
 using namespace Maxima;
 
 enum Input
@@ -32,43 +30,25 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
     utilsDirectory(utilsDir),
     lastPromptId(1)
 { 
-	// std::vector<std::string> args; 
-	std::ostringstream args;
-	// args.push_back(maximaPath); 
-	args << maximaPath; 
-	// args.push_back("-q"); 
-	args << " -q"; 
-	// args.push_back("--userdir=" + utilsDirectory); 
-	args << " --userdir=" + utilsDirectory; 
-	// args.push_back("--init=maxima-init-lin"); 
-	args << " --init=maxima-init-lin"; 
+	std::vector<std::string> args; 
+	args.push_back(maximaPath); 
+	args.push_back("-q"); 
+	args.push_back("--userdir=" + utilsDirectory); 
+	args.push_back("--init=maxima-init-lin"); 
 	
 	// work-around since std::regex has no member function empty() 
 	maximaIOHookRegexStr = std::string(); 
 	maximaIOHookRegex = std::regex(maximaIOHookRegexStr); 
 	
-	// process.reset(new bp::child(maximaPath, 
-	// 			args, 
-	// 			(bp::std_out & bp::std_err) > is, 
-	// 			bp::std_in < os)); 
+	process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
 
-	process.reset(new exec_stream_t(maximaPath, args.str()));
-
-	// alternative
-	// process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
-
-	// process->set_wait_timeout(exec_stream_t::s_out, 5000);
-	// is = process->out();
-	// os = process->in();
-
-	// getPid(); 
-	
 	Reply(process->out()); 
 }
 
 MaximaChain::~MaximaChain()
 { 
 	sendCommand("quit()"); 
+	process->close_in();
 	// os.pipe().close(); 
 	// process->wait();
 	if(!process->close())
@@ -123,7 +103,8 @@ size_t MaximaChain::readData(std::istream &in, Reply::RawReply &reply)
 void MaximaChain::sendCommand(std::string command)
 { 
 	// remove leading and trailing spaces from command 
-	alg::trim(command); 
+	// alg::trim(command); 
+	trim(command);
 	int state = 0; 
 	
 	// this loop solely checks whether the command issued terminates correctly 
@@ -341,8 +322,9 @@ std::string MaximaChain::executeCommand(const std::string &command)
     // output results of command to R-console if the result is truely valid, i.e. after (%o..)
     if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
     { 
-	    lastOutputLabel = alg::trim_copy(std::string(what[1].first, what[1].second));
-	    return alg::trim_copy(std::string(what[2].first, what[2].second));
+	    // lastOutputLabel = alg::trim_copy(std::string(what[1].first, what[1].second));
+	    lastOutputLabel = trim_copy(std::string(what[1].first, what[1].second));
+	    return trim_copy(std::string(what[2].first, what[2].second));
     }
 
     crudeExecute(";");
