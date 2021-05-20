@@ -40,7 +40,12 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	maximaIOHookRegexStr = std::string(); 
 	maximaIOHookRegex = std::regex(maximaIOHookRegexStr); 
 	
-	process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
+	//process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
+	process.reset(new exec_stream_t);
+	process->set_wait_timeout(exec_stream_t::s_child, 5000);
+
+	process->set_wait_timeout(exec_stream_t::s_all, 2e+10);
+	process->start(maximaPath, args.cbegin(), args.cend());
 
 	Reply(process->out()); 
 }

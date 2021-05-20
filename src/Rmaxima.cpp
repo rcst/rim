@@ -8,117 +8,125 @@ using namespace Rcpp;
 
 class RMaxima 
 {
-	public:
-		RMaxima()
-		{
-			running = false;
+  public:
+    RMaxima()
+    {
+      running = false;
 
-			Function a("normalizePath");
-			Function b("dirname");
-			Function c("system.file");
-			Function SysWhich("Sys.which");
-			Function getwd("getwd");
+      Function a("normalizePath");
+      Function b("dirname");
+      Function c("system.file");
+      Function SysWhich("Sys.which");
+      Function getwd("getwd");
 
-			maxpath = Rcpp::as<std::string>(SysWhich("maxima"));
-			// maxpath = bp::search_path("maxima").string();
+      maxpath = Rcpp::as<std::string>(SysWhich("maxima"));
+      // maxpath = bp::search_path("maxima").string();
 
-			workDir = Rcpp::as<std::string>(getwd());
-			// workDir = fs::current_path().string();
+      workDir = Rcpp::as<std::string>(getwd());
+      // workDir = fs::current_path().string();
 
-			utilsDir = Rcpp::as<std::string>(a(b(c("extdata", "maxima-init-lin.mac", Named("package") = "rmaxima", Named("mustWork") = true))));
-			// fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
-			// utilsDir = p.parent_path().string();
+      utilsDir = Rcpp::as<std::string>(a(b(c("extdata", "maxima-init-lin.mac", Named("package") = "rmaxima", Named("mustWork") = true))));
+      // fs::path p(Rcpp::as<std::string>(f("extdata", "maxima-init.mac", Named("package") = "rmaxima", Named("mustWork") = true)));
+      // utilsDir = p.parent_path().string();
 
-			startMaxima();
-		}
+      startMaxima();
+    }
 
-		~RMaxima()
-		{
-			delete myMaxima;
-		}
+    ~RMaxima()
+    {
+      delete myMaxima;
+    }
 
-		Rcpp::CharacterVector execute(std::string command, bool label = false)
-		{
-			Rcpp::CharacterVector result = myMaxima->executeCommand(command);
+    Rcpp::CharacterVector execute(std::string command, bool label = false)
+    {
+      Rcpp::CharacterVector result = myMaxima->executeCommand(command);
 
-			result.attr("input.label") = myMaxima->getLastInputLabel();
-			result.attr("output.label") = myMaxima->getLastOutputLabel();
-			result.attr("command") = command;
+      result.attr("input.label") = myMaxima->getLastInputLabel();
+      result.attr("output.label") = myMaxima->getLastOutputLabel();
+      result.attr("command") = command;
 
-			return result;
-		}
+      return result;
+    }
 
-		Rcpp::CharacterVector loadModule(std::string module)
-		{
-			if(module.empty())
-			{
-				Rcpp::stop("Please provide a valid module name!");
-			}
-			else
-			{ 
-				return execute("load(" + module + ");"); 
-			}
-		}
+    Rcpp::CharacterVector loadModule(std::string module)
+    {
+      if(module.empty())
+      {
+	Rcpp::stop("Please provide a valid module name!");
+      }
+      else
+      { 
+	return execute("load(" + module + ");"); 
+      }
+    }
 
-		Rcpp::CharacterVector apropos(std::string keystring)
-		{
-			return execute("apropos(\"" + keystring + "\");");
-		}
+    Rcpp::CharacterVector apropos(std::string keystring)
+    {
+      return execute("apropos(\"" + keystring + "\");");
+    }
 
-		void startMaxima(bool restart = false)
-		{
-			if(running) 
-			{ 
-				if(restart) 
-				{ 
-					stopMaxima(); 
-					myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir); 
-				}
-				else 
-					Rcout << "Maxima is already running." << std::endl;
-			} else
-			{
-				myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
-				running = true;
-			}
-		}
+    void startMaxima(bool restart = false)
+    {
+      if(maxpath.empty())
+      {
+	Rcpp::Rcout << "Could not find Maxima executable, please install first" << std::endl;
+      }
+      else
+      {
 
-		void stopMaxima()
-		{ 
-			if(running)
-			{
-				delete myMaxima; 
-				myMaxima = nullptr;
-				running = false;
-			} 
-		}
+	if(running) 
+	{ 
+	  if(restart) 
+	  { 
+	    stopMaxima(); 
+	    myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir); 
+	  }
+	  else 
+	    Rcout << "Maxima is already running." << std::endl;
+	} else
+	{
+	  myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
+	  running = true;
+	}
+      }
+    }
 
-		void setTexEnv(std::string before, std::string after)
-		{
-			if(!before.empty() && !after.empty()) 
-				execute("set_tex_environment_default(\"" + 
-						before + 
-						"\", \"" + 
-						after + 
-						"\")$");
-		}
+    void stopMaxima()
+    { 
+      if(running)
+      {
+	delete myMaxima; 
+	myMaxima = nullptr;
+	running = false;
+      } 
+    }
 
-		void loadInit(std::string file)
-		{
-			if(!file.empty())
-			{
-				loadModule("\"" + utilsDir + "/" + file + "\"");
-				execute(std::string("%th(2)"));
-			}
-		}
+    void setTexEnv(std::string before, std::string after)
+    {
+      if(!before.empty() && !after.empty()) 
+	execute("set_tex_environment_default(\"" + 
+	    before + 
+	    "\", \"" + 
+	    after + 
+	    "\")$");
+    }
 
-	private:
-		Maxima::MaximaChain* myMaxima;
-		std::string maxpath;
-		std::string workDir;
-		std::string utilsDir;
+    void loadInit(std::string file)
+    {
+      if(!file.empty())
+      {
+	loadModule("\"" + utilsDir + "/" + file + "\"");
+	execute(std::string("%th(2)"));
+      }
+    }
 
-		bool running;
+  private:
+    Maxima::MaximaChain* myMaxima;
+    std::string maxpath;
+    std::string workDir;
+    std::string utilsDir;
+
+    bool running;
 };
 
 // static void rmaxima_finalizer(RMaxima* ptr)
@@ -135,17 +143,17 @@ class RMaxima
 
 RCPP_MODULE(Maxima)
 {
-	class_<RMaxima>("RMaxima")
-		.constructor()
-		.method("startMaxima", &RMaxima::startMaxima)
-		.method("stopMaxima", &RMaxima::stopMaxima)
-		.method("execute", &RMaxima::execute)
-		.method("loadModule", &RMaxima::loadModule)
-		.method("apropos", &RMaxima::apropos)
-		.method("setTexEnv", &RMaxima::setTexEnv)
-		.method("loadInit", &RMaxima::loadInit)
-		//.finalizer(&rmaxima_finalizer)
-		;
+  class_<RMaxima>("RMaxima")
+    .constructor()
+    .method("startMaxima", &RMaxima::startMaxima)
+    .method("stopMaxima", &RMaxima::stopMaxima)
+    .method("execute", &RMaxima::execute)
+    .method("loadModule", &RMaxima::loadModule)
+    .method("apropos", &RMaxima::apropos)
+    .method("setTexEnv", &RMaxima::setTexEnv)
+    .method("loadInit", &RMaxima::loadInit)
+    //.finalizer(&rmaxima_finalizer)
+    ;
 } 
 
 /*** R
