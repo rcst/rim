@@ -1,5 +1,4 @@
 test_that("execution returns formatted strings", {
-  maxima.start()
   expect_match(maxima.get("2+2"), "^4$")
   expect_match(maxima.get("2+2;"), "^4$")
   expect_match(maxima.get("jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )"), "^[[:space:]|[:print:]]*$")

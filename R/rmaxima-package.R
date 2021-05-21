@@ -12,6 +12,7 @@
 #'
 #' @keywords internal
 #' @import methods
+#' @import digest 
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib rmaxima, .registration = TRUE
