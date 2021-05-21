@@ -52,7 +52,7 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 
 MaximaChain::~MaximaChain()
 { 
-	sendCommand("quit()"); 
+	sendCommand("quit();"); 
 	process->close_in();
 	// os.pipe().close(); 
 	// process->wait();

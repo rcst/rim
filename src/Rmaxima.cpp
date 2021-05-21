@@ -34,7 +34,7 @@ class RMaxima
 
     ~RMaxima()
     {
-      delete myMaxima;
+      //delete myMaxima;
     }
 
     Rcpp::CharacterVector execute(std::string command, bool label = false)
@@ -79,13 +79,15 @@ class RMaxima
 	  if(restart) 
 	  { 
 	    stopMaxima(); 
-	    myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir); 
+	    //myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir); 
+	    myMaxima.reset(new Maxima::MaximaChain(maxpath, workDir, utilsDir)); 
 	  }
 	  else 
 	    Rcout << "Maxima is already running." << std::endl;
 	} else
 	{
-	  myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
+	  // myMaxima = new Maxima::MaximaChain(maxpath, workDir, utilsDir);
+	    myMaxima.reset(new Maxima::MaximaChain(maxpath, workDir, utilsDir)); 
 	  running = true;
 	}
       }
@@ -95,8 +97,9 @@ class RMaxima
     { 
       if(running)
       {
-	delete myMaxima; 
-	myMaxima = nullptr;
+	// delete myMaxima; 
+	// myMaxima = nullptr;
+	myMaxima.reset(nullptr);
 	running = false;
       } 
     }
@@ -121,7 +124,8 @@ class RMaxima
     }
 
   private:
-    Maxima::MaximaChain* myMaxima;
+    // Maxima::MaximaChain* myMaxima;
+    std::unique_ptr<Maxima::MaximaChain> myMaxima;
     std::string maxpath;
     std::string workDir;
     std::string utilsDir;
