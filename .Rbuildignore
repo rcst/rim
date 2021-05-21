@@ -2,7 +2,13 @@
 ^build_all.R$
 ^[[:print:]]+\.Rmd$
 ^[[:print:]]+\.sh$
+^[[:print:]]+\.pdf$
+^[[:print:]]+\.html$
+^[[:print:]]+\.o$
 ^tests/testthat/testthat-problems.rds$
 ^boost_dependencies.html$
 ^test\.pdf$
 ^test\.Rmd$
+^src/libexecstream/.git$
+^src/tiny-process-library
+^docs

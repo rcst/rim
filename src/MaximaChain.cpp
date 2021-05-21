@@ -6,8 +6,6 @@
 #include<sstream>
 #include<regex>
 
-namespace alg = boost::algorithm;
-
 using namespace Maxima;
 
 enum Input
@@ -30,8 +28,7 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 			 const std::string &display)
   : workingDirectory(workingDir),
     utilsDirectory(utilsDir),
-    lastPromptId(1),
-    pid(0)
+    lastPromptId(1)
 { 
 	std::vector<std::string> args; 
 	args.push_back(maximaPath); 
@@ -43,49 +40,50 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	maximaIOHookRegexStr = std::string(); 
 	maximaIOHookRegex = std::regex(maximaIOHookRegexStr); 
 	
-	process.reset(new bp::child(maximaPath, 
-				args, 
-				(bp::std_out & bp::std_err) > is, 
-				bp::std_in < os)); 
-	getPid(); 
-	
-	Reply(is); 
-	
-	// flush the pipe stream 
-	readReply();
+	//process.reset(new exec_stream_t(maximaPath, args.cbegin(), args.cend()));
+	process.reset(new exec_stream_t);
+	process->set_wait_timeout(exec_stream_t::s_child, 5000);
+
+	process->set_wait_timeout(exec_stream_t::s_all, 2e+10);
+	process->start(maximaPath, args.cbegin(), args.cend());
+
+	Reply(process->out()); 
 }
 
 MaximaChain::~MaximaChain()
 { 
 	sendCommand("quit()"); 
-	os.pipe().close(); 
-	process->wait();
+	process->close_in();
+	// os.pipe().close(); 
+	// process->wait();
+	if(!process->close())
+		process->kill();
 }
 
-void MaximaChain::getPid()
-{ 
-	// variable pid is actually not read within MaximaChain class 
-	#ifdef _WIN32
-	std::string pidStr;
-	// std::getline(process->get_stdout(), pidStr);
-	std::getline(is, pidStr);
-
-	std::regex pidRegex("(pid=)?(\\d+)");
-	std::match_results<std::string::iterator> pidRegexMatch;
-        if (std::regex_match(pidStr.begin(),
-                               pidStr.end(),
-                               pidRegexMatch,pidRegex))
-        {
-            std::istringstream pidStream(std::string(pidRegexMatch[2].first,
-                                         pidRegexMatch[2].second));
-            pidStream >> pid;
-	    return;
-        } 
-#endif
-
-	// pid = process->get_id(); 
-	pid = process->id();
-}
+// void MaximaChain::getPid()
+// { 
+// 	// variable pid is actually not read within MaximaChain class 
+// 	#ifdef _WIN32
+// 	std::string pidStr;
+// 	// std::getline(process->get_stdout(), pidStr);
+// 	std::getline(is, pidStr);
+// 
+// 	std::regex pidRegex("(pid=)?(\\d+)");
+// 	std::match_results<std::string::iterator> pidRegexMatch;
+//         if (std::regex_match(pidStr.begin(),
+//                                pidStr.end(),
+//                                pidRegexMatch,pidRegex))
+//         {
+//             std::istringstream pidStream(std::string(pidRegexMatch[2].first,
+//                                          pidRegexMatch[2].second));
+//             pidStream >> pid;
+// 	    return;
+//         } 
+// #endif
+// 
+// 	// pid = process->get_id(); 
+// 	pid = process->id();
+// }
 
 size_t MaximaChain::readData(std::istream &in, Reply::RawReply &reply)
 { 
@@ -110,7 +108,8 @@ size_t MaximaChain::readData(std::istream &in, Reply::RawReply &reply)
 void MaximaChain::sendCommand(std::string command)
 { 
 	// remove leading and trailing spaces from command 
-	alg::trim(command); 
+	// alg::trim(command); 
+	trim(command);
 	int state = 0; 
 	
 	// this loop solely checks whether the command issued terminates correctly 
@@ -164,14 +163,15 @@ void MaximaChain::sendCommand(std::string command)
     }
 
     // process->get_stdin() << command << std::endl;
-    os << command << std::endl;
+    // os << command << std::endl;
+    process->in() << command << std::endl;
 }
 
 MaximaChain::Reply::Reply()
 {
 }
 
-MaximaChain::Reply::Reply(bp::ipstream &in)
+MaximaChain::Reply::Reply(std::istream &in)
 { 
     //std::regex promptExpr("prompt;>>(.*)<<prompt;"); 
     std::regex promptExpr("prompt;>>([[:space:]|[:print:]]*)<<prompt;"); 
@@ -261,7 +261,8 @@ MaximaChain::ReplyPtr MaximaChain::readReply()
     do
     {
         // result = ReplyPtr(new Reply(process->get_stdout()));
-        result = ReplyPtr(new Reply(is));
+        // result = ReplyPtr(new Reply(is));
+	result = ReplyPtr(new Reply(process->out()));
     }
     while (result->outs.empty() && result->CheckPrompt() &&
            result->getPromptId() <= lastPromptId_ && result->isInterrupted());
@@ -316,8 +317,6 @@ std::string MaximaChain::executeCommand(const std::string &command)
 	return std::string("");
     }
 
-
-
     //std::regex validOut("\\s*\\(%o\\d+\\)\\s*(.*)\\s*");
     std::regex validOut("\\s*\\((%o\\d+)\\)\\s*([[:space:]|[:print:]]*)\\s*");
 
@@ -328,8 +327,9 @@ std::string MaximaChain::executeCommand(const std::string &command)
     // output results of command to R-console if the result is truely valid, i.e. after (%o..)
     if (std::regex_match(lastOut.first, lastOut.second, what, validOut))
     { 
-	    lastOutputLabel = alg::trim_copy(std::string(what[1].first, what[1].second));
-	    return alg::trim_copy(std::string(what[2].first, what[2].second));
+	    // lastOutputLabel = alg::trim_copy(std::string(what[1].first, what[1].second));
+	    lastOutputLabel = trim_copy(std::string(what[1].first, what[1].second));
+	    return trim_copy(std::string(what[2].first, what[2].second));
     }
 
     crudeExecute(";");
@@ -380,10 +380,10 @@ std::string MaximaChain::executeCommandList(const std::string &command)
     return crudeExecute(command)->concatenateParts();
 }
 
-boost::process::pid_t MaximaChain::getId() const
-{
-    return pid;
-}
+// boost::process::pid_t MaximaChain::getId() const
+// {
+//     return pid;
+// }
 
 void MaximaChain::setMaximaIOHook(const std::string &hookRegex, MaximaIOHook *hook)
 {

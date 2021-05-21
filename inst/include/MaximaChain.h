@@ -7,15 +7,18 @@
 
 #include<regex>
 
-#include<boost/process/child.hpp>
-#include<boost/process/pipe.hpp>
-#include<boost/process/io.hpp>
+// #include<boost/process/child.hpp>
+// #include<boost/process/pipe.hpp>
+// #include<boost/process/io.hpp>
 
-#include<boost/algorithm/string.hpp>
+// #include<boost/algorithm/string.hpp>
 
-namespace bp = ::boost::process;
+#include "exec-stream.h"
+
+// namespace bp = ::boost::process;
 // namespace fs = ::std::filesystem; c++17 only
-using std::size_t;
+
+using std::size_t; 
 
 namespace Maxima
 {
@@ -41,7 +44,7 @@ class MaximaChain
         void sendCommand(std::string command);              
 
 	// bp::process::id_type getId() const;
-	bp::pid_t getId() const;
+	// bp::pid_t getId() const;
 
 	size_t getLastPromptId() const { return lastPromptId; }
 	
@@ -95,7 +98,8 @@ class MaximaChain
 	    Reply();
 
             // Reply(std::istream &in);
-            Reply(bp::ipstream &in);
+            // Reply(bp::ipstream &in);
+	    Reply(std::istream &in);
 
             std::string concatenateParts();
 
@@ -135,13 +139,18 @@ class MaximaChain
 
         ReplyPtr readReply();
 
-	void getPid();
+	// void getPid();
 
         // boost::scoped_ptr<bp::child> process;
-        std::unique_ptr<bp::child> process;
+        // std::unique_ptr<bp::child> process;
+	std::unique_ptr<exec_stream_t> process;
+	// std::shared_ptr<exec_stream_t> process;
 
-	bp::ipstream is; // pipe reading stream
-	bp::opstream os; // pipe writing stream
+	// bp::istream is; // pipe reading stream
+	// bp::opstream os; // pipe writing stream
+
+	// std::istream &is; // pipe reading stream
+	// std::ostream &os; // pipe writing stream
 
         MaximaIOHook* maximaIOHook;
 
@@ -157,10 +166,48 @@ class MaximaChain
 	std::string lastInputLabel;
 
 	// size_t pid;
-	pid_t pid;
+	// pid_t pid;
 };
 
 } // namespace Maxima
 
+// trim a std::string
+// trim from start (in place)
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+// trim from end (in place)
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}
+
+// trim from start (copying)
+static inline std::string ltrim_copy(std::string s) {
+    ltrim(s);
+    return s;
+}
+
+// trim from end (copying)
+static inline std::string rtrim_copy(std::string s) {
+    rtrim(s);
+    return s;
+}
+
+// trim from both ends (copying)
+static inline std::string trim_copy(std::string s) {
+    trim(s);
+    return s;
+}
 
 #endif // MAXIMACHAIN_H_INCLUDED
