@@ -1,0 +1,86 @@
+---
+title: "knitr engine test page"
+output: md_document
+---
+
+```{maxima}
+L: sqrt(1 - 1/R^2);
+assume(R > 0);
+'integrate(x, x, 0, L) = integrate(x, x, 0, L);
+```
+
+```{maxima, maxima.format = "latex", results = "asis"}
+'L = L;
+assume(R > 0);
+'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
+```
+
+```{r}
+knitr::opts_chunk$set(maxima.format = "latex", results = 'asis')
+```
+
+```{maxima, maxima.format="mathml"}
+sqrt(3/4);
+```
+
+```{maxima}
+f(x) := e^(x^2)$
+diff(f(x), x);
+```
+
+```{maxima, maxima.format="mathml"}
+%;
+```
+
+```{maxima}
+log(%o1);
+```
+
+```{maxima}
+area(dist) := integrate(dist, x, minf, inf)$
+mean(dist) := area(dist*x)$
+EX2(dist) := area(dist*x^2)$
+variance(dist) := EX2(dist) - mean(dist)^2$
+mgf(dist) := area(dist*%e^(x*t))$
+```
+
+# Normal Distribution
+
+```{maxima}
+normal(x) := 
+      (2*%pi*sigma^2)^(-1/2) * 
+      exp(-(x-mu)^2/(2*sigma^2));
+
+assume(sigma > 0)$
+
+area(normal(x));
+mean(normal(x));
+variance(normal(x));
+mgf(normal(x));
+```
+
+# Laplace Distribution
+
+```{maxima}
+laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
+
+load("abs_integrate")$
+
+assume(b > 0)$
+
+area(laplace(x));
+mean(laplace(x));
+variance(laplace(x));
+```
+
+# Exponential Distribution
+
+```{maxima}
+expo(x) := unit_step(x) * lambda * exp(-lambda * x);
+
+assume(lambda > 0)$
+
+area(expo(x));
+mean(expo(x));
+variance(expo(x));
+```
