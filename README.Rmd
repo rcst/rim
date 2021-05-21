@@ -1,8 +1,6 @@
 ---
 title: "rmaxima - an interface to maxima for R"
-output: 
-   html_document:
-      keep_md: yes
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -34,150 +32,14 @@ install.packages("rmaxima")
 
 # Usage
 
-## Introduction
-
-This section demonstrates the use of `rmaxima` via it's knitr engine. Alternatively, you can run each line of the Maxima code chunks via `maxima.get()`.
-
-Let's first attach the package. This will start Maxima automatically.
+This section only demonstrate using the packages R-function directly accessible to the user. On how to use the package's `knitr` engine see [this page](https://rcst.github.io/rmaxima).
 
 ```{r, eval = FALSE}
 library(rmaxima)
 ```
 
-```{r, echo = FALSE}
-knitr::knit_hooks$set(source = function(x, options){
-  if (options$engine == "maxima"){
-    opts <- gsub(",\\s*verbatim\\s*=\\s*TRUE\\s*", "", options$params.src)
-    opts <- gsub(",?\\s*engine\\s*=\"maxima\"", "", opts)
-    if(opts=="") bef = sprintf('\n\n    ```{maxima}\n', opts, "\n")
-    else bef = sprintf('\n\n    ```{maxima,%s}\n', opts, "\n")
-    stringr::str_c(
-      bef, 
-      knitr:::indent_block(paste(x, collapse = '\n'), "    "), 
-      "\n    ```\n"
-    )
-  } 
-  else {
-    stringr::str_c("\n\n```", tolower(options$engine), "\n", 
-      paste(x, collapse = '\n'), "\n```\n\n"
-    )
-  }
-})
-```
-
-Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output).
-
-
-```{maxima}
-L: sqrt(1 - 1/R^2);
-assume(R > 0);
-'integrate(x, x, 0, L) = integrate(x, x, 0, L);
-```
-
-In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas data base to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression.
-
-The resulting output also prints Maxima's output labels for each individual output, e.g. `(%o2)`, which we can reuse in other Maxima expressions as a substitute for it's corresponding expression.
-
-Since this web page has been rendered using pandoc, a more readable output can be printed by changing Maxima's output format and print `results = 'asis'`.  
-
-```{maxima, maxima.format = "latex", results = "asis"}
-'L = L;
-assume(R > 0);
-'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
-```
-
-`pandoc` automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, `pandoc` takes care of how mathematical equations delimited by `$$` are rendered.
-
-However, we can also change Maxima's output format to MathML, which works if the output document is a HTML document. 
-
 ```{r}
-knitr::opts_chunk$set(maxima.format = "latex", results = 'asis')
-```
-
-```{maxima, maxima.format="mathml"}
-sqrt(3/4);
-```
-
-```{maxima}
-f(x) := e^(x^2)$
-diff(f(x), x);
-```
-
-```{maxima, maxima.format="mathml"}
-%;
-```
-
-Notice, that we can use the symbol `%` to refer to the last expression and that this works across code chunks.
-
-You can also replay other previous expressions by referring to their output labels. Output labels are printed in the default maxima output format `"linear"`. 
-
-```{maxima}
-log(%o1);
-```
-
-
-If you are calling `maxima.get()` the returned value is a character vector with an attribute `output.label`, among others:
-
-```{r, results="markup"}
 maxima.start(restart = TRUE)
 maxima.get("1+1")
 maxima.stop()
 ```
-
-## Demos
-
-### Distributions
-
-This is basically a reproduced demo for `Sympy` from [Bryan Zhang's Blog](https://brianzhang01.github.io/2018/04/distributions-with-sympy/).
-
-First we define some helper functions:
-
-```{maxima}
-area(dist) := integrate(dist, x, minf, inf)$
-mean(dist) := area(dist*x)$
-EX2(dist) := area(dist*x^2)$
-variance(dist) := EX2(dist) - mean(dist)^2$
-mgf(dist) := area(dist*%e^(x*t))$
-```
-
-#### Normal Distribution
-
-```{maxima}
-normal(x) := 
-      (2*%pi*sigma^2)^(-1/2) * 
-      exp(-(x-mu)^2/(2*sigma^2));
-
-assume(sigma > 0)$
-
-area(normal(x));
-mean(normal(x));
-variance(normal(x));
-mgf(normal(x));
-```
-
-#### Laplace Distribution
-
-```{maxima}
-laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
-
-load("abs_integrate")$
-
-assume(b > 0)$
-
-area(laplace(x));
-mean(laplace(x));
-variance(laplace(x));
-```
-
-#### Exponential Distribution
-
-```{maxima}
-expo(x) := unit_step(x) * lambda * exp(-lambda * x);
-
-assume(lambda > 0)$
-
-area(expo(x));
-mean(expo(x));
-variance(expo(x));
-```
-
