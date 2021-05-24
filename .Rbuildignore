@@ -12,3 +12,4 @@
 ^src/libexecstream/.git$
 ^src/tiny-process-library
 ^docs
+^cran-comments.md$
