@@ -1,6 +1,5 @@
 ^R/rmaxima.R$
 ^build_all.R$
-^[[:print:]]+\.Rmd$
 ^[[:print:]]+\.sh$
 ^[[:print:]]+\.pdf$
 ^[[:print:]]+\.html$
@@ -8,8 +7,8 @@
 ^tests/testthat/testthat-problems.rds$
 ^boost_dependencies.html$
 ^test\.pdf$
-^test\.Rmd$
 ^src/libexecstream/.git$
 ^src/tiny-process-library
 ^docs
 ^cran-comments.md$
+^README.Rmd$
