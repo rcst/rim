@@ -1,3 +1,4 @@
+utils::globalVariables(c("engine", "engine_format", "engine_ref_labels", "mx"))
 #' knitr maxima engine
 #'
 #' An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}. 

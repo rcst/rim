@@ -17,7 +17,8 @@ Imports:
     methods,
     Rcpp,
     knitr,
-    stringr
+    stringr,
+    digest
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 Suggests: 
