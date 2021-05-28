@@ -1,7 +1,11 @@
 ---
 title: "knitr engine test page"
-output: md_document
 ---
+
+```{r}
+# library(rmaxima)
+```
+
 
 ```{maxima}
 L: sqrt(1 - 1/R^2);
@@ -11,7 +15,6 @@ assume(R > 0);
 
 ```{maxima, maxima.format = "latex", results = "asis"}
 'L = L;
-assume(R > 0);
 'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
 ```
 

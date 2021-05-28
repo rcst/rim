@@ -43,7 +43,6 @@ maxima.engine.start <- function() {
     maxima.env$mx <- new(RMaxima)
     maxima.env$engine_format <- "linear"
     maxima.env$engine_ref_labels <- TRUE
-    setup_hooks()
   }
 }
 

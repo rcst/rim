@@ -14,19 +14,20 @@
 loadModule("Maxima", TRUE)
 
 .onAttach <- function(libname, pkgname) {
-	maxima.env$maxima <- new(RMaxima)
-	if(requireNamespace("knitr", quietly = TRUE)) {
-		knitr::knit_engines$set(maxima = maxima.engine)
-		packageStartupMessage("Maxima successfully registered as knitr engine!")
-	} else
-		packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
+  maxima.env$maxima <- new(RMaxima)
+  if(requireNamespace("knitr", quietly = TRUE)) {
+    knitr::knit_engines$set(maxima = maxima.engine)
+    setup_hooks()
+    packageStartupMessage("Maxima successfully registered as knitr engine!")
+  } else
+    packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
 }
 
 .onUnload <- function (libpath) { 
-	library.dynam.unload("rmaxima", libpath)
-	rm("maxima", envir = maxima.env)
+  library.dynam.unload("rmaxima", libpath)
+  rm("maxima", envir = maxima.env)
 }
 
 .onDetach <- function(libpath) {
-	maxima.env$maxima.stop()
+  maxima.env$maxima.stop()
 }

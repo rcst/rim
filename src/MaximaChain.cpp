@@ -44,7 +44,8 @@ MaximaChain::MaximaChain(const std::string &maximaPath,
 	process.reset(new exec_stream_t);
 	process->set_wait_timeout(exec_stream_t::s_child, 5000);
 
-	process->set_wait_timeout(exec_stream_t::s_all, 2e+10);
+	// 1 hour timeout for single command  
+	process->set_wait_timeout(exec_stream_t::s_all, 3600000);
 	process->start(maximaPath, args.cbegin(), args.cend());
 
 	Reply(process->out()); 
@@ -172,7 +173,7 @@ MaximaChain::Reply::Reply()
 }
 
 MaximaChain::Reply::Reply(std::istream &in)
-{ 
+{
     //std::regex promptExpr("prompt;>>(.*)<<prompt;"); 
     std::regex promptExpr("prompt;>>([[:space:]|[:print:]]*)<<prompt;"); 
     std::match_results<Reply::It> promptMatch;

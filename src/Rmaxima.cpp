@@ -119,7 +119,8 @@ class RMaxima
       if(!file.empty())
       {
 	loadModule("\"" + utilsDir + "/" + file + "\"");
-	execute(std::string("%th(2)"));
+	// prevent accidental re-loading of display setter when user executes "%" 
+	// execute(std::string("%th(2)"));
       }
     }
 
