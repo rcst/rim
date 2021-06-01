@@ -31,24 +31,27 @@ Reply <- R6Class("Reply",
 	}
       }
 
-      # extract outs and betweens
+      # extract prompt, outs and betweens
       # outExpr <- "out;>>([[:space:]|[:print:]]*?)<<out;"
       nr <- length(private$reply)
+      private$prompt <- z 
+
       iouts <- which(regexpr("out;>>|<<out;", private$reply) == 1L)
-      n <- length(iouts)
+      if(length(iouts) < 2L || length(iouts) %% 2 != 0)
+	stop(paste("Could not fetch a result:", 
+		   paste0(private$reply[-nr], collapse = "\n")))
 
-      if(n < 2L || n %% 2 != 0)
-	stop("Could not fetch a result.")
+      # get output
+      louts <- lbetweens <- logical(nr)
+      louts[iouts] <- TRUE
+      private$outs <- private$reply[swipe(louts, FALSE)]
 
-      private$outs  <- private$betweens <- logical(nr)
-      private$outs[iouts] <- TRUE
+      # get betweens
+      lbetweens <- !swipe(louts)
+      lbetweens[nr] <- FALSE
+      private$betweens <- private$reply[lbetweens]
 
-      private$betweens <- private$reply[!swipe(outs)]
-      private$betweens[nr] <- FALSE
-      private$betweens <- private$reply[private$betweens]
-
-      private$outs <- private$reply[swipe(outs, FALSE)]
-
+      # get prompt ID
       private$promptID <- as.integer(regex(text = private$reply[nr], 
 					   pattern = "\\(%i(\\d+)\\)")[2])
     }, 
@@ -57,6 +60,7 @@ Reply <- R6Class("Reply",
     cat("Reply object:\n")
     cat("  prompt ID:", private$promptID, "\n", sep = "")
     cat("  raw:", private$reply, "\n", sep = "")
+    cat("  prompt: ", private$prompt, "\n", sep = "")
     cat("  outs:", private$outs, "\n", sep = "")
     cat("  betweens:", private$betweens, "\n", sep = "")
   }),
@@ -65,8 +69,8 @@ Reply <- R6Class("Reply",
     reply = character(),
     prompt = character(),
     promptID = integer(),
-    outs = list(),
-    betweens = list()
+    outs = character(),
+    betweens = character()
   )
 )
 
@@ -74,9 +78,9 @@ Reply <- R6Class("Reply",
 regex <- function(text, pattern) {
   r <- regexec(pattern, text)
   starts <- unlist(r)
-  stops <- starts + unlist(lapply(X = promptMatch, 
+  stops <- starts + unlist(lapply(X = r, 
 				  FUN = attr, 
-				  which = "match.length"))
+				  which = "match.length")) - 1L
   substring(text, starts, stops)
 }
 
