@@ -45,6 +45,7 @@ std::string rtrim_copy(std::string s) {
 }
 
 // trim from both ends (copying)
+// [[Rcpp::export]]
 std::string trim_copy(std::string s) {
     trim(s);
     return s;
