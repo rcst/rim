@@ -92,7 +92,7 @@ Reply <- R6Class("Reply",
 
   requireUser = function() {
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
-	      x = private$reply))
+	      x = private$prompt))
   },
 
   checkMaximaError = function() {
@@ -104,6 +104,10 @@ Reply <- R6Class("Reply",
     paste0(private$reply, collapse = "\n")
   },
   
+  getPrompt = function() { 
+    paste0(private$prompt, collapse = "\n")
+  },
+
   getBetweens = function() { 
     paste0(private$betweens, collapse = "\n")
   },
@@ -125,7 +129,7 @@ Reply <- R6Class("Reply",
 
 MaximaChain <- R6Class("MaximaChain",
   public = list(
-    initialize = function(maximaPath, 
+    initialize = function(maximaPath = "maxima", 
 			  workDir, 
 			  utilDir, 
 			  display = "maxima-init-tex2", 
@@ -155,69 +159,101 @@ MaximaChain <- R6Class("MaximaChain",
 					   blocking = FALSE, 
 					   open = "r+b")
       close(scon)
-    },
 
+      # read-out pid
+      pid <- as.integer(regex(pattern = "pid=(\\d+)", 
+			      readLines(con = private$maximaSocket, 
+					n = 1, 
+					warn = FALSE))[2])
+      # flush
+      Reply$new(private$maximaSocket)
+    },
     finalize = function() {
-      sendCommand("quit();")
+      cat("Quitting Maxima\n")
+      private$sendCommand("quit();")
       close(private$maximaSocket)
     },
-
     executeCommand = function(command){
       private$crudeExecute(command)
 
-      if(reply$empty()) {
-	if(reply$requireUser()) {
-	 return(regex(text = reply$getPrompt(), 
+      if(private$reply$is.empty()) {
+	if(private$reply$requireUser()) {
+	  return(regex(text = private$reply$getPrompt(), 
 		      pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
 	}
 
-	if(reply$checkPrompt()) {
-	  stop("Unsupported.")
+	if(private$reply$checkPrompt()) {
+	  stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
+					  replacement = "", 
+					  x = private$reply$getBetweens())))
 	}
 
-	if(reply$isInterrupted()) {
+	if(private$reply$isInterrupted()) {
 	  stop("Command execution was interrupted.")
 	}
 
-	if(reply$checkMaximaError()) {
-	  stop(paste(reply$getBetweens())) 
+	if(private$reply$checkMaximaError()) {
+	  stop(gsub(pattern = "TEXT;>>|<<TEXT;", 
+		    replacement = "", 
+		    x = private$reply$getBetweens())) 
 	}
+
       return("")
       }
 
       # validate output and return if valid
-      return(reply$outs)
+      if(length(r <- regex(patter = paste0("out;>>", 
+					   "\\s*\\", 
+					   "((%o\\d+)\\)", 
+					   "\\s+", 
+					   "([[:space:]|[:print:]]*)", 
+					   "\\s+", 
+					   "<<out;"), 
+			   text = private$reply$getOuts())) == 3) { 
+	private$lastOutputLabel <- r[2]
+	return(r[3])
+      }
 
-      crudeExecute(";") 
-      stop(paste("Unsupported:", reply$concatenateParts()))
+      private$crudeExecute(";") 
+      stop(paste("Unsupported:", private$reply$concatenateParts()))
     },
-    getLastPromptID = function() {},
-    getLastInputLabel = function() {},
-    getLastOutputLabel = function() {}
+
+    getLastPromptID = function() {
+      private$lastPromptID
+    },
+    getLastInputLabel = function() {
+      private$lastInputLabel
+    },
+    getLastOutputLabel = function() {
+      private$lastOutputLabel
+    }
     ),
+
   private = list(
     maximaSocket = NULL,
     port = NULL,
+    pid = NULL,
     workDir = character(),
     utilsDir = character(),
     maximaPath = character(),
     display = character(),
-    reply = NULL
+    reply = NULL,
     readReply = function() {},
+
     sendCommand = function(command){
-      if(missing(command)) {
+      if(missing(command))
 	stop("Missing command.")
 
-	command <- trim_copy(command)
-	command <- checkCommand(command)
+      command <- trim_copy(command)
+      command <- checkCommand(command)
 
-	writeLines(text = command, con = private$maximaSocket)
-    },
+      writeLines(text = command, con = private$maximaSocket)
+    }, 
     crudeExecute = function(command) {
-      sendCommand(command)
+      private$sendCommand(command)
       private$reply = Reply$new(private$maximaSocket)
     },
-    checkInput = function() {}, # C++
+
     lastPromptID = integer(),
     lastInputLabel = character(),
     lastOutputLabel = character()
