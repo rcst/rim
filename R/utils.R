@@ -153,7 +153,7 @@ MaximaChain <- R6Class("MaximaChain",
 		paste0("--init=", display)), 
 	      wait = FALSE, 
 	      stdout = FALSE, 
-	      stderr = FALSE)
+	      stderr = stdout())
 
       private$maximaSocket <- socketAccept(socket = scon, 
 					   blocking = FALSE, 
@@ -183,9 +183,9 @@ MaximaChain <- R6Class("MaximaChain",
 	}
 
 	if(private$reply$checkPrompt()) {
-	  stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
-					  replacement = "", 
-					  x = private$reply$getBetweens())))
+	   stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
+	 				     replacement = "", 
+	 				     x = private$reply$getBetweens())))
 	}
 
 	if(private$reply$isInterrupted()) {
