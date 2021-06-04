@@ -13,13 +13,6 @@ Reply <- R6Class("Reply",
       if(!(isOpen(con, rw = "read") && isOpen(con, rw = "write"))) 
 	stop("Connection without read/write access")
 
-      # read socket until end of input 
-      # reply <- readLines(con, warn = FALSE)
-      # if(tail(reply, n = 1)) {
-      #   stop("Read failed, was read: ", 
-      #        paste0(reply, collapse = "\n"))
-      # }
-
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
       repeat {
@@ -62,7 +55,6 @@ Reply <- R6Class("Reply",
 	private$promptID <- NA_integer_
       }
     }, 
-
   print = function(...) {
     cat("Reply object:\n")
     cat("  prompt ID:", private$promptID, "\n", sep = "")
@@ -72,46 +64,36 @@ Reply <- R6Class("Reply",
     cat("  betweens:", private$betweens, "\n", sep = "")
     invisible(private$outs)
   },
-  
   is.empty = function() {
     length(private$outs) == 0
   },
-
   checkPrompt = function() {
     private$validPrompt
   },
-
   getPromptID = function() {
     private$promptID
   },
-
   isInterrupted = function() {
     any(grepl(pattern = "Console interrupt|User break|Interactive interrupt", 
 	      x = private$betweens))
   },
-
   requireUser = function() {
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
 	      x = private$prompt))
   },
-
   checkMaximaError = function() {
     any(grepl(pattern = "^[[:space:]|[:print:]]{2,}$", 
 	      x = private$betweens))
   },
-  
   concatenateParts = function() {
     paste0(private$reply, collapse = "\n")
   },
-  
   getPrompt = function() { 
     paste0(private$prompt, collapse = "\n")
   },
-
   getBetweens = function() { 
     paste0(private$betweens, collapse = "\n")
   },
-
   getOuts = function() {
     paste0(private$outs, collapse = "\n")
   }
@@ -131,49 +113,68 @@ MaximaChain <- R6Class("MaximaChain",
   public = list(
     initialize = function(maximaPath = "maxima", 
 			  workDir, 
-			  utilDir, 
+			  utilsDir, 
 			  display = "maxima-init-tex2", 
 			  port = 27182) {
+
       if(missing(maximaPath))
 	private$maximaPath <- Sys.which("maxima")
+      else
+	private$maximaPath <- maximaPath
+
       if(missing(workDir))
-	workDir = getwd()
-      if(missing(utilDir))
-	utilsDir <- normalizePath(dirname(system.file("extdata", 
-						      "maxima-init-lin.mac", 
+	private$workDir = getwd()
+      else
+	private$workDir
+
+      if(missing(utilsDir))
+	private$utilsDir <- normalizePath(dirname(system.file("extdata", 
+						      paste0(display, ".mac"), 
 						      package = "rmaxima", 
 						      mustWork = TRUE)))
+      else
+	private$utilsDir <- utilsDir
+
+      private$display <- display
       private$port <- port
 
-      scon <- serverSocket(port)
-      system2(maximaPath, 
-	      c("-q", 
-		paste0("-s ", port), 
-		paste0("--userdir=", utilsDir), 
-		paste0("--init=", display)), 
-	      wait = FALSE, 
-	      stdout = FALSE, 
-	      stderr = stdout())
-
-      private$maximaSocket <- socketAccept(socket = scon, 
-					   blocking = FALSE, 
-					   open = "r+b")
-      close(scon)
-
-      # read-out pid
-      pid <- as.integer(regex(pattern = "pid=(\\d+)", 
-			      readLines(con = private$maximaSocket, 
-					n = 1, 
-					warn = FALSE))[2])
-      # flush
-      Reply$new(private$maximaSocket)
+      self$start()
     },
     finalize = function() {
-      cat("Quitting Maxima\n")
-      private$sendCommand("quit();")
-      close(private$maximaSocket)
+      # in here no more method calls are possible
+      # suppressMessages(self$stop())
+      if(private$running) { 
+	private$sendCommand("quit();")
+	close(private$maximaSocket)
+      }
     },
-    executeCommand = function(command){
+    start = function(restart = FALSE) {
+      if(nchar(private$maximaPath) == 0)
+	stop("Could not find maxima executable, please install first")
+      else {
+	if(private$running) {
+	  if(restart) {
+	    self$stop()
+	    private$run()
+	  }
+	  else
+	    message("Maxima is already running.")
+	}
+	else {
+	  private$run()
+	}
+      }
+    },
+    stop = function() {
+      if(private$running) {
+	private$sendCommand("quit();")
+	private$running <- FALSE
+	close(private$maximaSocket)
+      }
+      else
+	message("Maxima is not running.")
+    },
+    get = function(command){
       private$crudeExecute(command)
 
       if(private$reply$is.empty()) {
@@ -235,11 +236,48 @@ MaximaChain <- R6Class("MaximaChain",
     pid = NULL,
     workDir = character(),
     utilsDir = character(),
-    maximaPath = character(),
+    maximaPath = NA_character_,
     display = character(),
     reply = NULL,
-    readReply = function() {},
+    running = FALSE,
+    lastPromptID = integer(),
+    lastInputLabel = character(),
+    lastOutputLabel = character(),
+    run = function() {
+      # try until free port is found
+      # starting from given port
+      for(port in private$port:65536) { 
+	try(scon <- serverSocket(port))
+	if(exists("scon")) 
+	  if(isOpen(con = scon)) {
+	    private$port <- port
+	    break
+	  }
+      }
 
+      system2(private$maximaPath, 
+	      c("-q", 
+		paste0("-s ", private$port), 
+		paste0("--userdir=", private$utilsDir), 
+		paste0("--init=", private$display)), 
+	      wait = FALSE, 
+	      stdout = FALSE, 
+	      stderr = stdout())
+
+      private$maximaSocket <- socketAccept(socket = scon, 
+					   blocking = FALSE, 
+					   open = "r+b")
+      close(scon)
+
+      # read-out pid
+      private$pid <- as.integer(regex(pattern = "pid=(\\d+)", 
+			      readLines(con = private$maximaSocket, 
+					n = 1, 
+					warn = FALSE))[2])
+      # flush
+      Reply$new(private$maximaSocket)
+      private$running <- TRUE
+    },
     sendCommand = function(command){
       if(missing(command))
 	stop("Missing command.")
@@ -252,11 +290,7 @@ MaximaChain <- R6Class("MaximaChain",
     crudeExecute = function(command) {
       private$sendCommand(command)
       private$reply = Reply$new(private$maximaSocket)
-    },
-
-    lastPromptID = integer(),
-    lastInputLabel = character(),
-    lastOutputLabel = character()
+    }
   )
 )
 
