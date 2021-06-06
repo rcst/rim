@@ -51,9 +51,11 @@ Reply <- R6::R6Class("Reply",
 
       # get output label
       outputMatch <- regex(text = paste0(private$outs, collapse = "\n"), 
-			   pattern = "\\((%o(\\d+))\\)")
-      if(length(outputMatch)) 
+			   pattern = "out;>>\n\\((%o(\\d+))\\) ([[:space:]|[:print:]]*)\n<<out;")
+      if(length(outputMatch)) {
 	private$outputLabel <- outputMatch[2]
+	private$result <- outputMatch[4]
+      }
       else
 	private$outputLabel <- NA_character_
 
@@ -85,6 +87,7 @@ Reply <- R6::R6Class("Reply",
     cat("  prompt: ", private$prompt, "\n", sep = "")
     cat("  outs: ", private$outs, "\n", sep = "")
     cat("  betweens: ", private$betweens, "\n", sep = "")
+    cat("  result: ", private$result, "\n", sep = "")
     invisible(private$outs)
   },
   is.empty = function() {
@@ -125,8 +128,10 @@ Reply <- R6::R6Class("Reply",
   },
   getOuts = function() {
     paste0(private$outs, collapse = "\n")
-  }
-  ),
+  },
+  getResult = function() {
+    private$result
+  }),
 
   private = list( 
     reply = character(),
@@ -136,6 +141,7 @@ Reply <- R6::R6Class("Reply",
     outputLabel = character(),
     outs = character(),
     betweens = character(),
+    result = character(),
     validPrompt = logical()
   )
 )
@@ -235,18 +241,22 @@ RMaxima <- R6::R6Class("RMaxima",
       }
 
       # validate output and return if valid
-      # if(!is.na(private$reply$getOutputlabel()))
-      if(length(r <- regex(patter = paste0("out;>>", 
-					   "\\s*\\", 
-					   "((%o\\d+)\\)", 
-					   "\\s+", 
-					   "([[:space:]|[:print:]]*)", 
-					   "\\s+", 
-					   "<<out;"), 
-			   text = private$reply$getOuts())) == 3) { 
-	private$lastOutputLabel <- r[2]
-	return(r[3])
+      if(!is.na(private$reply$getOutputLabel())) {
+	private$lastOutputLabel <- private$reply$getOutputLabel()
+	return(private$reply$getResult())
       }
+
+      # if(length(r <- regex(patter = paste0("out;>>", 
+      #   				   "\\s*\\", 
+      #   				   "((%o\\d+)\\)", 
+      #   				   "\\s+", 
+      #   				   "([[:space:]|[:print:]]*)", 
+      #   				   "\\s+", 
+      #   				   "<<out;"), 
+      #   		   text = private$reply$getOuts())) == 3) { 
+      #   private$lastOutputLabel <- r[2]
+      #   return(r[3])
+      # }
 
       private$crudeExecute(";") 
       stop(paste("Unsupported:", private$reply$concatenateParts()))
