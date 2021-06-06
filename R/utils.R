@@ -212,7 +212,9 @@ RMaxima <- R6::R6Class("RMaxima",
 	message("Maxima is not running.")
     },
     get = function(command, label = FALSE){
-      private$lastInputLabel <- private$reply$getInputLabel()
+      if(!is.na(private$reply$getInputLabel()))
+	private$lastInputLabel <- private$reply$getInputLabel()
+
       private$crudeExecute(command)
 
       if(private$reply$is.empty()) {
@@ -243,7 +245,12 @@ RMaxima <- R6::R6Class("RMaxima",
       # validate output and return if valid
       if(!is.na(private$reply$getOutputLabel())) {
 	private$lastOutputLabel <- private$reply$getOutputLabel()
-	return(private$reply$getResult())
+	# return(private$reply$getResult())
+	return(structure(private$reply$getResult(),
+			 input.label = private$lastInputLabel,
+			 output.label = private$lastOutputLabel,
+			 command = command))
+
       }
 
       # if(length(r <- regex(patter = paste0("out;>>", 
