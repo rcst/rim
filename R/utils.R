@@ -1,11 +1,19 @@
-#' defines R6-class equivalent of MaximChain::Reply
+#' R6-class to handle Maxima's output 
+#'
+#' @description 
+#' This class encapsulates Maxima's output as an object, 
+#' with fields for different sections of returned messages and 
+#' results from Maxima.
+#' (The original design comes from MaximChain::Reply)
+#' @details
+#' Here come some details.
 #' @field reply A character vector storing the raw reply string from maxima
 #' up until and including the next prompt
 #' @field outs A list of character vectors storing the content delimited 
 #' by output delimters "out;>>" and "<<out;"
 #' @field betweens A list of character vectors storing each the the content between delimiter ";TEXT>>" and "<<TEXT;" 
 #' @import R6
-Reply <- R6Class("Reply",  
+Reply <- R6::R6Class("Reply",  
   public = list(
     initialize = function(con) {
       if(missing(con)) 
@@ -41,27 +49,42 @@ Reply <- R6Class("Reply",
       iouts <- pvseq(iouts)
       private$outs <- private$reply[iouts]
 
+      # get output label
+      outputMatch <- regex(text = paste0(private$outs, collapse = "\n"), 
+			   pattern = "\\((%o(\\d+))\\)")
+      if(length(outputMatch)) 
+	private$outputLabel <- outputMatch[2]
+      else
+	private$outputLabel <- NA_character_
+
       # betweens
       private$betweens <- private$reply[-c(iprompt, iouts)]
 
-      # get prompt ID
-      promptMatch <- regex(text = private$prompt, pattern = "\\(%i(\\d+)\\)")
-      if(length(promptMatch)) { 
+      # get prompt ID/ label
+      promptMatch <- regex(text = paste0(private$prompt, collapse = "\n"), 
+			   pattern = "\\((%i(\\d+))\\)")
+
+      if(length(promptMatch)) {
 	private$validPrompt <- TRUE
-	private$promptID <- as.integer(promptMatch[2])
+	private$inputLabel <- promptMatch[2]
+	private$promptID <- as.integer(promptMatch[3])
       }
       else {
 	private$validPrompt <- FALSE
+	private$inputLabel <- NA_character_
 	private$promptID <- NA_integer_
+
       }
     }, 
   print = function(...) {
     cat("Reply object:\n")
-    cat("  prompt ID:", private$promptID, "\n", sep = "")
+    cat("  prompt ID: ", private$promptID, "\n", sep = "")
+    cat("  Input Label: ", private$inputLabel, "\n", sep = "")
+    cat("  Output Label: ", private$outputLabel, "\n", sep = "")
     cat("  raw:", private$reply, "\n", sep = "")
     cat("  prompt: ", private$prompt, "\n", sep = "")
-    cat("  outs:", private$outs, "\n", sep = "")
-    cat("  betweens:", private$betweens, "\n", sep = "")
+    cat("  outs: ", private$outs, "\n", sep = "")
+    cat("  betweens: ", private$betweens, "\n", sep = "")
     invisible(private$outs)
   },
   is.empty = function() {
@@ -72,6 +95,12 @@ Reply <- R6Class("Reply",
   },
   getPromptID = function() {
     private$promptID
+  },
+  getInputLabel = function() {
+    private$inputLabel
+  },
+  getOutputLabel = function() {
+    private$outputLabel
   },
   isInterrupted = function() {
     any(grepl(pattern = "Console interrupt|User break|Interactive interrupt", 
@@ -103,13 +132,15 @@ Reply <- R6Class("Reply",
     reply = character(),
     prompt = character(),
     promptID = integer(),
+    inputLabel = character(),
+    outputLabel = character(),
     outs = character(),
     betweens = character(),
     validPrompt = logical()
   )
 )
 
-MaximaChain <- R6Class("MaximaChain",
+RMaxima <- R6::R6Class("RMaxima",
   public = list(
     initialize = function(maximaPath = "maxima", 
 			  workDir, 
@@ -174,7 +205,8 @@ MaximaChain <- R6Class("MaximaChain",
       else
 	message("Maxima is not running.")
     },
-    get = function(command){
+    get = function(command, label = FALSE){
+      private$lastInputLabel <- private$reply$getInputLabel()
       private$crudeExecute(command)
 
       if(private$reply$is.empty()) {
@@ -183,7 +215,7 @@ MaximaChain <- R6Class("MaximaChain",
 		      pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
 	}
 
-	if(private$reply$checkPrompt()) {
+	if(!private$reply$checkPrompt()) {
 	   stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
 	 				     replacement = "", 
 	 				     x = private$reply$getBetweens())))
@@ -203,6 +235,7 @@ MaximaChain <- R6Class("MaximaChain",
       }
 
       # validate output and return if valid
+      # if(!is.na(private$reply$getOutputlabel()))
       if(length(r <- regex(patter = paste0("out;>>", 
 					   "\\s*\\", 
 					   "((%o\\d+)\\)", 
@@ -227,6 +260,19 @@ MaximaChain <- R6Class("MaximaChain",
     },
     getLastOutputLabel = function() {
       private$lastOutputLabel
+    },
+    loadModule = function(module) {
+      if(length(module) > 0 && nchar(module))
+	self$get(paste0("load(\"", module, "\")$")) 
+    },
+    loadInit = function(file) {
+      if(length(file) > 0 && nchar(file) > 0) {
+	self$get(paste0("(load(\"", private$utilsDir, "/", file, "\"),",
+			"linnum:linenum-1, %);"))
+      }
+
+      # return NULL
+      invisible()
     }
     ),
 
@@ -274,9 +320,10 @@ MaximaChain <- R6Class("MaximaChain",
 			      readLines(con = private$maximaSocket, 
 					n = 1, 
 					warn = FALSE))[2])
-      # flush
-      Reply$new(private$maximaSocket)
+      private$reply <- Reply$new(private$maximaSocket)
+      private$lastInputLabel <- private$reply$getInputLabel
       private$running <- TRUE
+
     },
     sendCommand = function(command){
       if(missing(command))
