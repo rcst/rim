@@ -29,13 +29,13 @@ maxima.env$ref.label <- TRUE
 #' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
-  maxima.env$maxima$startMaxima(restart) 
+  maxima.env$maxima$start(restart) 
 }
 
 #' @describeIn rmaxima-package Quits Maxima.
 #' @export
 maxima.stop <- function() {
-  maxima.env$maxima$stopMaxima()
+  maxima.env$maxima$stop()
 }
 
 #' @describeIn rmaxima-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
@@ -44,7 +44,7 @@ maxima.stop <- function() {
 #' @seealso \code{\link{maxima.engine}}
 #' @export
 maxima.get <- function(command, label = FALSE) {
-  m <- maxima.env$maxima$execute(command, label) 
+  m <- maxima.env$maxima$get(command, label) 
   attr(m, "format") <- maxima.getformat()
   return(m)
 }
@@ -57,7 +57,8 @@ maxima.load <- function(module) maxima.env$maxima$loadModule(module)
 #' @describeIn rmaxima-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 #' @param keystring A character vector containing a search term.
 #' @export
-maxima.apropos <- function(keystring) maxima.env$maxima$apropos(keystring) 
+maxima.apropos <- function(keystring) 
+  maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")) 
 
 
 #' @describeIn rmaxima-package Sets the format of the output string from Maxima.

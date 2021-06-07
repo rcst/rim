@@ -5,11 +5,32 @@
 
 using namespace Rcpp;
 
-
-RcppExport SEXP _rcpp_module_boot_Maxima();
+// trim_copy
+std::string trim_copy(std::string s);
+RcppExport SEXP _rmaxima_trim_copy(SEXP sSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type s(sSEXP);
+    rcpp_result_gen = Rcpp::wrap(trim_copy(s));
+    return rcpp_result_gen;
+END_RCPP
+}
+// checkCommand
+std::string checkCommand(std::string command);
+RcppExport SEXP _rmaxima_checkCommand(SEXP commandSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type command(commandSEXP);
+    rcpp_result_gen = Rcpp::wrap(checkCommand(command));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rcpp_module_boot_Maxima", (DL_FUNC) &_rcpp_module_boot_Maxima, 0},
+    {"_rmaxima_trim_copy", (DL_FUNC) &_rmaxima_trim_copy, 1},
+    {"_rmaxima_checkCommand", (DL_FUNC) &_rmaxima_checkCommand, 1},
     {NULL, NULL, 0}
 };
 

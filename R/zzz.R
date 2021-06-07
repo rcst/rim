@@ -11,10 +11,11 @@
 ## a load action, so this does not have to be placed in .onLoad() or evalqOnLoad().
 
 #' @importFrom Rcpp loadModule
-loadModule("Maxima", TRUE)
+# loadModule("Maxima", TRUE)
 
 .onAttach <- function(libname, pkgname) {
-  maxima.env$maxima <- new(RMaxima)
+  # maxima.env$maxima <- new(RMaxima)
+  maxima.env$maxima <- RMaxima$new()
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
     setup_hooks()

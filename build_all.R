@@ -5,6 +5,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::document()
   devtools::load_all()
   devtools::test()
+  devtools::test(filter = "setformat")
   devtools::build()
   devtools::check()
 
@@ -12,11 +13,11 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::check_win_oldrelease()
   devtools::check_win_release()
 
-  drat::insertPackage(file = "../builds/rmaxima/source/rmaxima_0.3.2.9000.tar.gz",  
+  drat::insertPackage(file = "../builds/rmaxima/source/rmaxima_0.4.0.tar.gz",  
 		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/devel/rmaxima_0.3.2.9000.zip", 
+  drat::insertPackage(file = "../builds/rmaxima/win/devel/rmaxima_0.4.0.zip", 
 		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/release/rmaxima_0.3.2.9000.zip", 
+  drat::insertPackage(file = "../builds/rmaxima/win/release/rmaxima_0.4.0.zip", 
 		      repodir = "../drat")
 
   detach("package:rmaxima", unload = TRUE)

@@ -51,7 +51,7 @@ Reply <- R6::R6Class("Reply",
 
       # get output label
       outputMatch <- regex(text = paste0(private$outs, collapse = "\n"), 
-			   pattern = "out;>>\n\\((%o(\\d+))\\) ([[:space:]|[:print:]]*)\n<<out;")
+			   pattern = "out;>>\\s+\\((%o(\\d+))\\)\\s*([[:space:]|[:print:]]*)\\s+<<out;")
       if(length(outputMatch)) {
 	private$outputLabel <- outputMatch[2]
 	private$result <- outputMatch[4]
@@ -151,7 +151,7 @@ RMaxima <- R6::R6Class("RMaxima",
     initialize = function(maximaPath = "maxima", 
 			  workDir, 
 			  utilsDir, 
-			  display = "maxima-init-tex2", 
+			  display = "maxima-init-lin", 
 			  port = 27182) {
 
       if(missing(maximaPath))

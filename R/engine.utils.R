@@ -1,6 +1,6 @@
 switch_format <- function(obj, format = "linear") {
   switch(format,
-	 latex = obj$loadInit("maxima-init-tex2.mac"),
+	 latex = obj$loadInit("maxima-init-tex.mac"),
 	 linear = obj$loadInit("maxima-init-lin.mac"),
 	 text2d = obj$loadInit("maxima-init-2d.mac"),
 	 mathml = obj$loadInit("maxima-init-mathml.mac"),
