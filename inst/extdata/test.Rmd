@@ -2,11 +2,6 @@
 title: "knitr engine test page"
 ---
 
-```{r}
-# library(rmaxima)
-```
-
-
 ```{maxima}
 L: sqrt(1 - 1/R^2);
 assume(R > 0);

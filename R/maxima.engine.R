@@ -18,16 +18,14 @@ maxima.engine <- function(options) {
   code <- collect_ends(code)
   out <- character(0);
   for(i in 1:length(code)) {
-    tt <- maxima.env$mx$execute(code[i], maxima.env$engine_ref_labels)
+    tt <- maxima.env$mx$get(code[i], maxima.env$engine_ref_labels)
 
     if(maxima.env$engine_format == "text2d") { 
-      # tt <- maxima.env$mx$execute(code[i], FALSE)
       tt <- maxima.env$mx$get(code[i], FALSE)
       if(!maxima.env$engine_ref_labels)
 	 tt <- str_strip_col(x = tt, n = label_length(tt), side = "left") 
     }
     else 
-      # tt <- maxima.env$mx$execute(code[i], maxima.env$engine_ref_labels)
       tt <- maxima.env$mx$get(code[i], maxima.env$engine_ref_labels)
 
     
