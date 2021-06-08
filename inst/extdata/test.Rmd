@@ -82,3 +82,15 @@ area(expo(x));
 mean(expo(x));
 variance(expo(x));
 ```
+
+# Matrices
+
+```{maxima}
+m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);
+transpose(m);
+determinant(m);
+f: invert(m), detout;
+m . f;
+expand(%);
+factor(%);
+```

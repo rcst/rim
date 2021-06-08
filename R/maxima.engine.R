@@ -3,23 +3,25 @@ utils::globalVariables(c("engine", "engine_format", "engine_ref_labels", "mx"))
 #'
 #' An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}. 
 #'
-#' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it spawns a child process running Maxima in the background. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. 
+#' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it runs Maxima in the in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (using e.g. Maxima reference labels).  
 #'
-#' In addition, this function sets up Maxima specific output and chunk hooks.
+#' In addition, this function sets up Maxima specific output and chunk hooks to be used via chunk options.
 #' 
 #' @import knitr
 #' @importFrom utils tail
-#' @param options A list of chunk options
+#' @param maxima.format A character vector of length 1. Can be one of "linear" (default), "latex", "text2d" or "mathml". Changes the output format of Maxima for the respective code chunk.
+#'
+#' @param maxima.label Logical. If TRUE output reference labels are printed additionally, otherwise not (default).
+#'
 #' @return This functions prints the resulting output from maxima together with it's code 
 maxima.engine <- function(options) { 
   maxima.engine.start()
 
   code <- options$code
   code <- collect_ends(code)
-  out <- character(0);
+  # out <- character(0)
+  ll <- list()
   for(i in 1:length(code)) {
-    tt <- maxima.env$mx$get(code[i], maxima.env$engine_ref_labels)
-
     if(maxima.env$engine_format == "text2d") { 
       tt <- maxima.env$mx$get(code[i], FALSE)
       if(!maxima.env$engine_ref_labels)
@@ -28,15 +30,18 @@ maxima.engine <- function(options) {
     else 
       tt <- maxima.env$mx$get(code[i], maxima.env$engine_ref_labels)
 
+    ll <- append(ll, list(structure(list(src = iprint(tt)), class = "source")))
     
-    out <- c(out, tt) 
+    # out <- c(out, tt) 
+    ll <- append(ll, tt)
   }
 
   if (last_label(options$label)) { 
     maxima.engine.stop()
   }
 
-  engine_output(options, options$code, out)
+  # engine_output(options, options$code, out)
+  engine_output(options, out = ll)
 }
 
 maxima.engine.start <- function() {

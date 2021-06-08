@@ -16,6 +16,7 @@ License: GPL (>= 3)
 Imports: 
     methods,
     Rcpp,
+    R6,
     knitr,
     stringr,
     digest

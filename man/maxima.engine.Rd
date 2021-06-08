@@ -7,7 +7,9 @@
 maxima.engine(options)
 }
 \arguments{
-\item{options}{A list of chunk options}
+\item{maxima.format}{A character vector of length 1. Can be one of "linear" (default), "latex", "text2d" or "mathml". Changes the output format of Maxima for the respective code chunk.}
+
+\item{maxima.label}{Logical. If TRUE output reference labels are printed additionally, otherwise not (default).}
 }
 \value{
 This functions prints the resulting output from maxima together with it's code
@@ -16,7 +18,7 @@ This functions prints the resulting output from maxima together with it's code
 An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}.
 }
 \details{
-\code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it spawns a child process running Maxima in the background. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. 
+\code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it runs Maxima in the in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (using e.g. Maxima reference labels).  
 
-In addition, this function sets up Maxima specific output and chunk hooks.
+In addition, this function sets up Maxima specific output and chunk hooks to be used via chunk options.
 }

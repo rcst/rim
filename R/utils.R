@@ -1,17 +1,3 @@
-#' R6-class to handle Maxima's output 
-#'
-#' @description 
-#' This class encapsulates Maxima's output as an object, 
-#' with fields for different sections of returned messages and 
-#' results from Maxima.
-#' (The original design comes from MaximChain::Reply)
-#' @details
-#' Here come some details.
-#' @field reply A character vector storing the raw reply string from maxima
-#' up until and including the next prompt
-#' @field outs A list of character vectors storing the content delimited 
-#' by output delimters "out;>>" and "<<out;"
-#' @field betweens A list of character vectors storing each the the content between delimiter ";TEXT>>" and "<<TEXT;" 
 #' @import R6
 Reply <- R6::R6Class("Reply",  
   public = list(
@@ -239,7 +225,11 @@ RMaxima <- R6::R6Class("RMaxima",
 		    x = private$reply$getBetweens())) 
 	}
 
-      return("")
+	return(structure("",
+			 input.label = private$lastInputLabel,
+			 output.label = private$lastOutputLabel,
+			 command = command,
+			 class = "maxima"))
       }
 
       # validate output and return if valid
@@ -249,21 +239,10 @@ RMaxima <- R6::R6Class("RMaxima",
 	return(structure(private$reply$getResult(),
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
-			 command = command))
+			 command = command,
+			 class = "maxima"))
 
       }
-
-      # if(length(r <- regex(patter = paste0("out;>>", 
-      #   				   "\\s*\\", 
-      #   				   "((%o\\d+)\\)", 
-      #   				   "\\s+", 
-      #   				   "([[:space:]|[:print:]]*)", 
-      #   				   "\\s+", 
-      #   				   "<<out;"), 
-      #   		   text = private$reply$getOuts())) == 3) { 
-      #   private$lastOutputLabel <- r[2]
-      #   return(r[3])
-      # }
 
       private$crudeExecute(";") 
       stop(paste("Unsupported:", private$reply$concatenateParts()))
@@ -358,7 +337,6 @@ RMaxima <- R6::R6Class("RMaxima",
   )
 )
 
-#' returns character vector of all matches
 regex <- function(text, pattern) {
   r <- regexec(pattern, text)
   starts <- unlist(r)
@@ -387,7 +365,6 @@ vseq <- function(from, to, unique = TRUE) {
     unlist(Map(':', from, to))
 }
 
-#' paired vector sequence
 pvseq <- function(x) {
   if(length(x) >= 2 && length(x) %% 2 == 0) {
     vseq(from = x[odd(1:length(x))],
@@ -395,5 +372,23 @@ pvseq <- function(x) {
   }
   else
     x
+}
+
+iprint <- function(x) {
+  if(class(x) != "maxima")
+    stop("x is not a maxima object")
+
+  paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
+}
+
+oprint <- function(x) {
+  if(class(x) != "maxima")
+    stop("x is not a maxima object")
+
+  paste0("(", attr(x, "output.label"), ") ", x)
+}
+
+print.maxima <- function(x, ...) {
+  print(paste0("(", attr(x, "output.label"), ") ", x))
 }
 
