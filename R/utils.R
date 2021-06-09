@@ -61,8 +61,9 @@ Reply <- R6::R6Class("Reply",
 	private$validPrompt <- FALSE
 	private$inputLabel <- NA_character_
 	private$promptID <- NA_integer_
-
       }
+
+      private$dollar <- FALSE
     }, 
   print = function(...) {
     cat("Reply object:\n")
@@ -128,7 +129,19 @@ Reply <- R6::R6Class("Reply",
     outs = character(),
     betweens = character(),
     result = character(),
-    validPrompt = logical()
+    validPrompt = logical(),
+    dollar = logical()
+  ),
+  active = list(
+    suppressed = function(value) {
+      if(missing(value))
+	private$dollar
+      else 
+	if(is.logical(value))
+	  private$dollar <- value
+	else
+	  stop("Expected logical value") 
+    }
   )
 )
 
@@ -198,6 +211,9 @@ RMaxima <- R6::R6Class("RMaxima",
 	message("Maxima is not running.")
     },
     get = function(command, label = FALSE){
+      if(!private$running)
+	self$start()
+
       if(!is.na(private$reply$getInputLabel()))
 	private$lastInputLabel <- private$reply$getInputLabel()
 
@@ -227,9 +243,11 @@ RMaxima <- R6::R6Class("RMaxima",
 
 	return(structure("",
 			 input.label = private$lastInputLabel,
-			 output.label = private$lastOutputLabel,
-			 command = command,
-			 class = "maxima"))
+			 output.label = private$lastOutputLabel, 
+			 command = command, 
+			 suppressed = private$reply$suppressed,
+			 class = "maxima"
+			 ))
       }
 
       # validate output and return if valid
@@ -240,6 +258,7 @@ RMaxima <- R6::R6Class("RMaxima",
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
 			 command = command,
+			 suppressed = private$reply$suppressed,
 			 class = "maxima"))
 
       }
@@ -329,10 +348,14 @@ RMaxima <- R6::R6Class("RMaxima",
       command <- checkCommand(command)
 
       writeLines(text = command, con = private$maximaSocket)
+
+      return(command)
     }, 
     crudeExecute = function(command) {
-      private$sendCommand(command)
+      command <- private$sendCommand(command)
       private$reply = Reply$new(private$maximaSocket)
+      if(grepl("\\$$", command))
+	private$reply$suppressed <- TRUE
     }
   )
 )
