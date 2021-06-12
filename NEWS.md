@@ -1,3 +1,9 @@
+# rmaxima 0.4.0
+- communiction is now implemented using sockets and the processing is handles by two nested R6 classes
+- return type is now a S3 class of type maxima. There are two methods `iprint()` and `oprint()` for printing an maxima S3 object: printing the input command and output respectively, including reference labels. 
+- removed external C++ library dependencies (now using sockets for communicating with Maxima)
+- knitr engine now prints output after each input line, it also prints the input reference label infront of the command
+
 # rmaxima 0.0.0.9000
 
 - removed depency from boost (switched to libexecstream)

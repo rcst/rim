@@ -2,22 +2,23 @@
 title: "knitr engine test page"
 ---
 
+```{r}
+library(rmaxima)
+maxima.engine.format <- "latex"
+```
+
 ```{maxima}
 L: sqrt(1 - 1/R^2);
 assume(R > 0);
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 
-```{maxima, maxima.format = "latex", results = "asis"}
+```{maxima}
 'L = L;
 'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
 ```
 
-```{r}
-knitr::opts_chunk$set(maxima.format = "latex", results = 'asis')
-```
-
-```{maxima, maxima.format="mathml"}
+```{maxima}
 sqrt(3/4);
 ```
 
@@ -26,7 +27,7 @@ f(x) := e^(x^2)$
 diff(f(x), x);
 ```
 
-```{maxima, maxima.format="mathml"}
+```{maxima}
 %;
 ```
 

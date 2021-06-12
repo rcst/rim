@@ -17,7 +17,7 @@ maxima.start(restart = FALSE)
 
 maxima.stop()
 
-maxima.get(command, label = FALSE)
+maxima.get(command)
 
 maxima.load(module)
 
@@ -32,13 +32,13 @@ maxima.getformat()
 
 \item{command}{A character vector containing the maxima command.}
 
-\item{label}{Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.}
-
 \item{module}{A character vector naming the maxima module to be loaded.}
 
 \item{keystring}{A character vector containing a search term.}
 
 \item{format}{A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".}
+
+\item{label}{Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.}
 }
 \description{
 Provides an interface to Maxima, a computer algebra system.
