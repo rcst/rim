@@ -5,14 +5,14 @@
 
 using namespace Rcpp;
 
-// trim_copy
-std::string trim_copy(std::string s);
-RcppExport SEXP _rmaxima_trim_copy(SEXP sSEXP) {
+// trim
+std::string trim(std::string s);
+RcppExport SEXP _rmaxima_trim(SEXP sSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type s(sSEXP);
-    rcpp_result_gen = Rcpp::wrap(trim_copy(s));
+    rcpp_result_gen = Rcpp::wrap(trim(s));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -29,7 +29,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rmaxima_trim_copy", (DL_FUNC) &_rmaxima_trim_copy, 1},
+    {"_rmaxima_trim", (DL_FUNC) &_rmaxima_trim, 1},
     {"_rmaxima_checkCommand", (DL_FUNC) &_rmaxima_checkCommand, 1},
     {NULL, NULL, 0}
 };

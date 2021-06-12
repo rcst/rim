@@ -121,8 +121,44 @@ str_strip_col <- function(x, n = 1, side = "left") {
     )
 }
 
-# returns the label string string
+# returns the label string 
 label_length <- function(x, sub = "\\(%o\\d+\\)") {
   str_length(str_extract(string = x, pattern = sub))
 }
 
+mef <- function(format = "linear") {
+  if(missing(format))
+    return(maxima.env$engine.format)
+  else {
+    stopifnot(is.character(format))
+    if(maxima.env$engine.format != format) {
+      switch(format,
+	     latex = {
+	       maxima.env$engine.format <- format
+	       maxima.env$display <- "maxima-init-tex"
+	       knitr::opts_chunk$set(results = "asis")
+	     },
+	     linear = {
+	       maxima.env$engine.format <- format
+	       maxima.env$display <- "maxima-init-lin"
+	       knitr::opts_chunk$set(results = "markup")
+	     },
+	     text2d = {
+	       maxima.env$engine.format <- format
+	       maxima.env$display <- "maxima-init-2d"
+	       knitr::opts_chunk$set(results = "markup")
+	     },
+	     mathml = {
+	       maxima.env$engine.format <- format
+	       maxima.env$display <- "maxima-init-mathml"
+	       knitr::opts_chunk$set(results = "asis")
+	     },
+	     {
+	       maxima.env$engine.format <- "linear"
+	       maxima.env$display <- "maxima-init-lin"
+	       knitr::opts_chunk$set(results = "markup")
+	       format <- "linear"
+	     })
+    }
+  }
+}

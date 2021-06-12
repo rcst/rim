@@ -23,13 +23,17 @@
 
 maxima.env <- new.env()
 maxima.env$format <- "linear"
+maxima.env$engine.format <- "linear"
+maxima.env$display <- "maxima-init-lin"
 maxima.env$ref.label <- TRUE 
+maxima.env$engine.reflabels <- TRUE 
 
 #' @describeIn rmaxima-package (re-)starts Maxima.
 #' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
   maxima.env$maxima$start(restart) 
+  maxima.env$format <- "linear"
 }
 
 #' @describeIn rmaxima-package Quits Maxima.
@@ -43,8 +47,8 @@ maxima.stop <- function() {
 #' @param label Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.
 #' @seealso \code{\link{maxima.engine}}
 #' @export
-maxima.get <- function(command, label = FALSE) {
-  m <- maxima.env$maxima$get(command, label) 
+maxima.get <- function(command) {
+  m <- maxima.env$maxima$get(command) 
   attr(m, "format") <- maxima.getformat()
   return(m)
 }
@@ -76,3 +80,4 @@ maxima.setformat <- function(format = "linear") {
 maxima.getformat <- function() {
   maxima.env$format
 }
+

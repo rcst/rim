@@ -37,7 +37,7 @@ Reply <- R6::R6Class("Reply",
 
       # get output label
       outputMatch <- regex(text = paste0(private$outs, collapse = "\n"), 
-			   pattern = "out;>>\\s+\\((%o(\\d+))\\)\\s*([[:space:]|[:print:]]*)\\s+<<out;")
+			   pattern = "out;>>\\s+\\((%o(\\d+))\\)\\s\\n?([[:space:]|[:print:]]*)\\s+<<out;")
       if(length(outputMatch)) {
 	private$outputLabel <- outputMatch[2]
 	private$result <- outputMatch[4]
@@ -210,7 +210,7 @@ RMaxima <- R6::R6Class("RMaxima",
       else
 	message("Maxima is not running.")
     },
-    get = function(command, label = FALSE){
+    get = function(command){
       if(!private$running)
 	self$start()
 
@@ -344,7 +344,7 @@ RMaxima <- R6::R6Class("RMaxima",
       if(missing(command))
 	stop("Missing command.")
 
-      command <- trim_copy(command)
+      command <- trim(command)
       command <- checkCommand(command)
 
       writeLines(text = command, con = private$maximaSocket)

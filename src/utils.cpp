@@ -13,43 +13,62 @@ const int STATE_END = -1;
 
 // trim a std::string
 // trim from start (in place)
-void ltrim(std::string &s) {
+// void ltrim(std::string &s) {
+//     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+//         return !std::isspace(ch);
+//     }));
+// }
+std::string ltrim(std::string s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
     }));
+
+    return s;
 }
 
 // trim from end (in place)
-void rtrim(std::string &s) {
+// void rtrim(std::string &s) {
+//     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+//         return !std::isspace(ch);
+//     }).base(), s.end());
+// }
+std::string rtrim(std::string s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
         return !std::isspace(ch);
     }).base(), s.end());
+
+    return s;
 }
 
 // trim from both ends (in place)
-void trim(std::string &s) {
-    ltrim(s);
-    rtrim(s);
+// void trim(std::string s) {
+//     ltrim(s);
+//     rtrim(s);
+// }
+
+// [[Rcpp::export]]
+std::string trim(std::string s) {
+    return rtrim(ltrim(s));
 }
 
 // trim from start (copying)
-std::string ltrim_copy(std::string s) {
-    ltrim(s);
-    return s;
-}
-
-// trim from end (copying)
-std::string rtrim_copy(std::string s) {
-    rtrim(s);
-    return s;
-}
-
-// trim from both ends (copying)
-// [[Rcpp::export]]
-std::string trim_copy(std::string s) {
-    trim(s);
-    return s;
-}
+// std::string ltrim_copy(std::string s) {
+//     ltrim(s);
+//     return s;
+// }
+// 
+// // trim from end (copying)
+// std::string rtrim_copy(std::string s) {
+//     rtrim(s);
+//     return s;
+// }
+// 
+// // trim from both ends (copying)
+// // [[Rcpp::export]]
+// std::string trim_copy(std::string s) {
+//     trim(s);
+//     return s;
+// }
 
 int checkInput(char c, int state)
 {

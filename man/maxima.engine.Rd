@@ -7,9 +7,7 @@
 maxima.engine(options)
 }
 \arguments{
-\item{maxima.format}{A character vector of length 1. Can be one of "linear" (default), "latex", "text2d" or "mathml". Changes the output format of Maxima for the respective code chunk.}
-
-\item{maxima.label}{Logical. If TRUE output reference labels are printed additionally, otherwise not (default).}
+\item{options}{Named `list` of knitr options.}
 }
 \value{
 This functions prints the resulting output from maxima together with it's code
