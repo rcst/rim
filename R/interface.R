@@ -173,8 +173,6 @@ RMaxima <- R6::R6Class("RMaxima",
 
       private$display <- display
       private$port <- port
-
-      self$start()
     },
     finalize = function() {
       # in here no more method calls are possible
@@ -290,7 +288,6 @@ RMaxima <- R6::R6Class("RMaxima",
       invisible()
     }
     ),
-
   private = list(
     maximaSocket = NULL,
     port = NULL,
@@ -396,22 +393,3 @@ pvseq <- function(x) {
   else
     x
 }
-
-iprint <- function(x) {
-  if(class(x) != "maxima")
-    stop("x is not a maxima object")
-
-  paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
-}
-
-oprint <- function(x) {
-  if(class(x) != "maxima")
-    stop("x is not a maxima object")
-
-  paste0("(", attr(x, "output.label"), ") ", x)
-}
-
-print.maxima <- function(x, ...) {
-  print(paste0("(", attr(x, "output.label"), ") ", x))
-}
-

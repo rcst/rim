@@ -81,3 +81,19 @@ maxima.getformat <- function() {
   maxima.env$format
 }
 
+#' @describeIn rmaxima-package Prints the input command preceding with the corresponding input reference label of an maxima S3-object returned by maxima.get()
+#' @export
+iprint <- function(x) {
+  if(class(x) != "maxima")
+    stop("x is not a maxima object")
+
+  paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
+}
+
+#' @describeIn rmaxima-package Prints the maxima output part of an S3 object returned by maxima.get() 
+#' @method print maxima
+#' @export
+print.maxima <- function(x, ...) {
+  print(paste0("(", attr(x, "output.label"), ") ", x))
+}
+
