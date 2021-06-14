@@ -1,7 +1,7 @@
 utils::globalVariables(c("engine", "engine.format", "engine.reflabels", "mx"))
 #' knitr maxima engine
 #'
-#' An R-function that is registered as a knitr engine when package \code{rmaxima} is attached, i.e. \code{library(rmaxima)}. 
+#' An R-function that is registered as a knitr engine when package \code{rim} is attached, i.e. \code{library(rim)}. 
 #'
 #' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it runs Maxima in the in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (using e.g. Maxima reference labels).  
 #'

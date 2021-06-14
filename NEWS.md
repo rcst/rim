@@ -1,4 +1,5 @@
-# rmaxima 0.4.0
+# rmaxima 0.4.0/ rim 0.4.0
+- renamed package to "rim" to avoid confusion with maxima's "rmaxima"
 - communiction is now implemented using sockets and the processing is handles by two nested R6 classes
 - return type is now a S3 class of type maxima. There are two methods `iprint()` and `oprint()` for printing an maxima S3 object: printing the input command and output respectively, including reference labels. 
 - removed external C++ library dependencies (now using sockets for communicating with Maxima)

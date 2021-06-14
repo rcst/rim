@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // trim
 std::string trim(std::string s);
-RcppExport SEXP _rmaxima_trim(SEXP sSEXP) {
+RcppExport SEXP _rim_trim(SEXP sSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // checkCommand
 std::string checkCommand(std::string command);
-RcppExport SEXP _rmaxima_checkCommand(SEXP commandSEXP) {
+RcppExport SEXP _rim_checkCommand(SEXP commandSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,12 +29,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rmaxima_trim", (DL_FUNC) &_rmaxima_trim, 1},
-    {"_rmaxima_checkCommand", (DL_FUNC) &_rmaxima_checkCommand, 1},
+    {"_rim_trim", (DL_FUNC) &_rim_trim, 1},
+    {"_rim_checkCommand", (DL_FUNC) &_rim_checkCommand, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_rmaxima(DllInfo *dll) {
+RcppExport void R_init_rim(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

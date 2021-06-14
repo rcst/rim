@@ -1,6 +1,6 @@
 test_that("maxima knitr engine works", {
 	    fr <- system.file("extdata", c("test.Rmd", "result.md"), 
-			      package = "rmaxima")
+			      package = "rim")
 	    fo <- paste0(dirname(fr[1]), "/test.md")
 
 	    hash <- digest(readLines(fr[2]), "sha256")

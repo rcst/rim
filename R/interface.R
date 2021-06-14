@@ -166,7 +166,7 @@ RMaxima <- R6::R6Class("RMaxima",
       if(missing(utilsDir))
 	private$utilsDir <- normalizePath(dirname(system.file("extdata", 
 						      paste0(display, ".mac"), 
-						      package = "rmaxima", 
+						      package = "rim", 
 						      mustWork = TRUE)))
       else
 	private$utilsDir <- utilsDir

@@ -26,7 +26,7 @@
 }
 
 .onUnload <- function (libpath) { 
-  library.dynam.unload("rmaxima", libpath)
+  library.dynam.unload("rim", libpath)
   rm("maxima", envir = maxima.env)
 }
 

@@ -13,12 +13,12 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::check_win_oldrelease()
   devtools::check_win_release()
 
-  drat::insertPackage(file = "../builds/rmaxima/source/rmaxima_0.4.0.tar.gz",  
+  drat::insertPackage(file = "../builds/rmaxima/source/rim_0.4.0.tar.gz",  
 		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/devel/rmaxima_0.4.0.zip", 
+  drat::insertPackage(file = "../builds/rmaxima/win/devel/rim_0.4.0.zip", 
 		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/release/rmaxima_0.4.0.zip", 
+  drat::insertPackage(file = "../builds/rmaxima/win/release/rim_0.4.0.zip", 
 		      repodir = "../drat")
 
-  detach("package:rmaxima", unload = TRUE)
+  detach("package:rim", unload = TRUE)
 }

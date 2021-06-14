@@ -2,7 +2,7 @@
 title: "knitr engine test page"
 ---
 
-library(rmaxima)maxima.engine.format <- "latex"
+maxima.engine.format <- "latex"
 
 (%i1) L: sqrt(1 - 1/R^2);$$\sqrt{1-\frac{1}{R^2}}$$(%i2) assume(R > 0);$$\left[ R>0 \right] $$(%i3) 'integrate(x, x, 0, L) = integrate(x, x, 0, L);$$\int_{0}^{\sqrt{1-\frac{1}{R^2}}}{x\;dx}=\frac{R^2-1}{2\,R^2}$$
 

@@ -131,34 +131,32 @@ mef <- function(format = "linear") {
     return(maxima.env$engine.format)
   else {
     stopifnot(is.character(format))
-    if(maxima.env$engine.format != format) {
-      switch(format,
-	     latex = {
-	       maxima.env$engine.format <- format
-	       maxima.env$display <- "maxima-init-tex"
-	       knitr::opts_chunk$set(results = "asis")
-	     },
-	     linear = {
-	       maxima.env$engine.format <- format
-	       maxima.env$display <- "maxima-init-lin"
-	       knitr::opts_chunk$set(results = "markup")
-	     },
-	     text2d = {
-	       maxima.env$engine.format <- format
-	       maxima.env$display <- "maxima-init-2d"
-	       knitr::opts_chunk$set(results = "markup")
-	     },
-	     mathml = {
-	       maxima.env$engine.format <- format
-	       maxima.env$display <- "maxima-init-mathml"
-	       knitr::opts_chunk$set(results = "asis")
-	     },
-	     {
-	       maxima.env$engine.format <- "linear"
-	       maxima.env$display <- "maxima-init-lin"
-	       knitr::opts_chunk$set(results = "markup")
-	       format <- "linear"
-	     })
-    }
+    switch(format,
+	   latex = {
+	     maxima.env$engine.format <- format
+	     maxima.env$display <- "maxima-init-tex"
+	     knitr::opts_chunk$set(results = "asis")
+	   },
+	   linear = {
+	     maxima.env$engine.format <- format
+	     maxima.env$display <- "maxima-init-lin"
+	     knitr::opts_chunk$set(results = "markup")
+	   },
+	   text2d = {
+	     maxima.env$engine.format <- format
+	     maxima.env$display <- "maxima-init-2d"
+	     knitr::opts_chunk$set(results = "markup")
+	   },
+	   mathml = {
+	     maxima.env$engine.format <- format
+	     maxima.env$display <- "maxima-init-mathml"
+	     knitr::opts_chunk$set(results = "asis")
+	   },
+	   {
+	     maxima.env$engine.format <- "linear"
+	     maxima.env$display <- "maxima-init-lin"
+	     knitr::opts_chunk$set(results = "markup")
+	     format <- "linear"
+	   })
   }
 }

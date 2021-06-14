@@ -1,4 +1,3 @@
 library(testthat)
-library(rmaxima)
 
-test_check("rmaxima")
+test_check("rim")
