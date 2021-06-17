@@ -6,7 +6,7 @@ Reply <- R6::R6Class("Reply",
 	stop("Please provide a connection object to initialize.") 
       if(!(isOpen(con, rw = "read") && isOpen(con, rw = "write"))) 
 	stop("Connection without read/write access")
-
+      
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
       repeat {
@@ -164,10 +164,10 @@ RMaxima <- R6::R6Class("RMaxima",
 	private$workDir
 
       if(missing(utilsDir))
-	private$utilsDir <- normalizePath(dirname(system.file("extdata", 
+	private$utilsDir <- dirname(system.file("extdata", 
 						      paste0(display, ".mac"), 
 						      package = "rim", 
-						      mustWork = TRUE)))
+						      mustWork = TRUE))
       else
 	private$utilsDir <- utilsDir
 
@@ -182,8 +182,17 @@ RMaxima <- R6::R6Class("RMaxima",
 	close(private$maximaSocket)
       }
     },
+    isInstalled = function() {
+      if(!nchar(private$maximaPath) || 
+	 !grep(pattern = "maxima", 
+	       x = private$maximaPath, 
+	       ignore.case = TRUE))
+	return(FALSE)
+      else
+	return(TRUE)
+    },
     start = function(restart = FALSE) {
-      if(nchar(private$maximaPath) == 0)
+      if(!self$isInstalled())
 	stop("Could not find maxima executable, please install first")
       else {
 	if(private$running) {
@@ -264,7 +273,6 @@ RMaxima <- R6::R6Class("RMaxima",
       private$crudeExecute(";") 
       stop(paste("Unsupported:", private$reply$concatenateParts()))
     },
-
     getLastPromptID = function() {
       private$lastPromptID
     },
@@ -286,6 +294,12 @@ RMaxima <- R6::R6Class("RMaxima",
 
       # return NULL
       invisible()
+    },
+    getPort = function() {
+      if(private$running) 
+	return(private$port)
+      else
+	return(NA_integer_)
     }
     ),
   private = list(

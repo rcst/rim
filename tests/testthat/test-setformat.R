@@ -1,4 +1,7 @@
 test_that("changing the output format works", {
+  if(!maxima.env$maxima$isInstalled()) 
+    skip("Maxima not installed")
+
   # test linear output format
   expect_match(maxima.setformat("linear"), 
 	       "linear")
