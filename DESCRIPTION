@@ -7,10 +7,10 @@ Authors@R: c(
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
     person("Hans W.", "Borchers", email = "hwborchers@googlemail.com", role = c("aut")),
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")))
-Description: provides an interface to the powerful and fairly complete computer algebra system maxima.
+Description: Provides an interface to the powerful and fairly complete computer algebra system maxima.
     It can be used to start and control maxima from within R by entering maxima commands. 
-    It facilitates outputting results from maxima in LaTeX and MathML. 2D and 3D plots can be displayed directly. This package also registers a knitr-engine 
-    enabling maxima code chunks to be written in RMarkdown documents.
+    It facilitates outputting results from maxima in LaTeX and 'MathML'. 2D and 3D plots can be displayed directly. This package also registers a 'knitr'-engine 
+    enabling maxima code chunks to be written in 'RMarkdown' documents.
 License: GPL (>= 3)
 Imports: 
     methods,

@@ -39,7 +39,7 @@ install.packages("rim")
 
 This section only demonstrate using the packages R-function directly
 accessible to the user. On how to use the package’s `knitr` engine see
-[this page](https://rcst.github.io/rim).
+[this page](https://rcst.github.io/rim/).
 
 ``` r
 library(rim)
@@ -47,6 +47,11 @@ library(rim)
 
 ``` r
 maxima.start(restart = TRUE)
+```
+
+    ## trying port 27182
+
+``` r
 maxima.get("1+1;")
 ```
 

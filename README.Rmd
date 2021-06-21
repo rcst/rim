@@ -31,7 +31,7 @@ install.packages("rim")
 
 # Usage
 
-This section only demonstrate using the packages R-function directly accessible to the user. On how to use the package's `knitr` engine see [this page](https://rcst.github.io/rim).
+This section only demonstrate using the packages R-function directly accessible to the user. On how to use the package's `knitr` engine see [this page](https://rcst.github.io/rim/).
 
 ```{r, eval = FALSE}
 library(rim)
