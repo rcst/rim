@@ -81,6 +81,12 @@ maxima.getformat <- function() {
   maxima.env$format
 }
 
+#' @describeIn rim-package Returns the version number of Maxima that is used
+#' @export
+maxima.version <- function() {
+  maxima.env$maxima$getVersion()
+}
+
 #' @describeIn rim-package Prints the input command preceding with the corresponding input reference label of an maxima S3-object returned by maxima.get()
 #' @export
 iprint <- function(x) {
@@ -96,4 +102,3 @@ iprint <- function(x) {
 print.maxima <- function(x, ...) {
   print(paste0("(", attr(x, "output.label"), ") ", x))
 }
-

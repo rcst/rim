@@ -100,6 +100,10 @@ Reply <- R6::R6Class("Reply",
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
 	      x = private$prompt))
   },
+  checkMaximaWarning = function() {
+    any(grepl(pattern = "WARNING",
+	      x = private$betweens))
+  },
   checkMaximaError = function() {
     any(grepl(pattern = "^[[:space:]|[:print:]]{2,}$", 
 	      x = private$betweens))
@@ -242,6 +246,13 @@ RMaxima <- R6::R6Class("RMaxima",
 	  stop("Command execution was interrupted.")
 	}
 
+	if(private$reply$checkMaximaWarning()) {
+	  w <- gsub(pattern = "TEXT;>>|<<TEXT;", 
+		       replacement = "", 
+		       x = private$reply$getBetweens())
+	  warning(w)
+	}
+
 	if(private$reply$checkMaximaError()) {
 	  stop(gsub(pattern = "TEXT;>>|<<TEXT;", 
 		    replacement = "", 
@@ -300,12 +311,19 @@ RMaxima <- R6::R6Class("RMaxima",
 	return(private$port)
       else
 	return(NA_integer_)
+    },
+    getVersion = function() {
+      if(private$running)
+	return(private$version)
+      else
+	return(NULL)
     }
     ),
   private = list(
     maximaSocket = NULL,
     port = NULL,
     pid = NULL,
+    version = NULL,
     workDir = character(),
     utilsDir = character(),
     maximaPath = NA_character_,
@@ -319,16 +337,18 @@ RMaxima <- R6::R6Class("RMaxima",
       # try until free port is found
       # starting from given port
       for(port in private$port:65536) { 
-	try(scon <- serverSocket(port))
+	try(scon <- serverSocket(port), silent = TRUE)
 	if(exists("scon")) 
 	  if(isOpen(con = scon)) {
 	    private$port <- port
 	    break
 	  }
       }
+      if(!exists("scon"))
+        stop("Couldn't find available port")
 
-      system2(private$maximaPath, 
-	      c("-q", 
+      system2("maxima", 
+	      c(# "-q", 
 		paste0("-s ", private$port), 
 		paste0("--userdir=", private$utilsDir), 
 		paste0("--init=", private$display)), 
@@ -342,10 +362,10 @@ RMaxima <- R6::R6Class("RMaxima",
       close(scon)
 
       # read-out pid
-      private$pid <- as.integer(regex(pattern = "pid=(\\d+)", 
-			      readLines(con = private$maximaSocket, 
-					n = 1, 
-					warn = FALSE))[2])
+      fr <- readLines(con = private$maximaSocket, warn = FALSE)
+      private$pid <- as.integer(regex(pattern = "pid=(\\d+)", fr[1])[2])
+      private$version <- numeric_version(regex(pattern = "Maxima (\\d+\\.\\d+\\.\\d+)", 
+					       fr[2])[2])
       private$reply <- Reply$new(private$maximaSocket)
       private$lastInputLabel <- private$reply$getInputLabel
       private$running <- TRUE

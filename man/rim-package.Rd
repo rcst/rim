@@ -11,6 +11,7 @@
 \alias{maxima.apropos}
 \alias{maxima.setformat}
 \alias{maxima.getformat}
+\alias{maxima.version}
 \alias{iprint}
 \alias{print.maxima}
 \title{rim}
@@ -28,6 +29,8 @@ maxima.apropos(keystring)
 maxima.setformat(format = "linear")
 
 maxima.getformat()
+
+maxima.version()
 
 iprint(x)
 
@@ -71,6 +74,8 @@ To send a single command to Maxima and receive the corresponding output use \cod
 \item \code{maxima.setformat}: Sets the format of the output string from Maxima.
 
 \item \code{maxima.getformat}: Returns the currently set format as a character vector
+
+\item \code{maxima.version}: Returns the version number of Maxima that is used
 
 \item \code{iprint}: Prints the input command preceding with the corresponding input reference label of an maxima S3-object returned by maxima.get()
 
