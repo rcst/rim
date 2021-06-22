@@ -167,11 +167,17 @@ RMaxima <- R6::R6Class("RMaxima",
       else
 	private$workDir
 
-      if(missing(utilsDir))
+      if(missing(utilsDir)) {
 	private$utilsDir <- dirname(system.file("extdata", 
 						      paste0(display, ".mac"), 
 						      package = "rim", 
 						      mustWork = TRUE))
+	# for virtual machine package testing
+	private$utilsDir <- gsub(pattern = "\\\\vboxsrv", 
+				 replacement = "Z:", 
+				 x = private$utilsDir, 
+				 ignore.case = TRUE)
+      }
       else
 	private$utilsDir <- utilsDir
 
@@ -251,6 +257,13 @@ RMaxima <- R6::R6Class("RMaxima",
 		       replacement = "", 
 		       x = private$reply$getBetweens())
 	  warning(w)
+	  return(structure("",
+			   input.label = private$lastInputLabel,
+			   output.label = private$lastOutputLabel, 
+			   command = command, 
+			   suppressed = private$reply$suppressed,
+			   class = "maxima"
+			   ))
 	}
 
 	if(private$reply$checkMaximaError()) {
