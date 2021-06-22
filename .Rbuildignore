@@ -12,3 +12,6 @@
 ^docs
 ^cran-comments.md$
 ^README.Rmd$
+^CRAN-RELEASE$
+^.*\.Rproj$
+^\.Rproj\.user$
