@@ -1,4 +1,7 @@
 # rmaxima 0.4.0/ rim 0.4.0
+- added `maxima.engine.format()` function that can be used to change the output format of the knitr engine
+- fixed issue that arises when Maxima takes longer to start (which previously caused the interface to freez)
+- added functions to record the version number of Maxima that is being used
 - renamed package to "rim" to avoid confusion with maxima's "rmaxima"
 - communiction is now implemented using sockets and the processing is handles by two nested R6 classes
 - return type is now a S3 class of type maxima. There are two methods `iprint()` and `oprint()` for printing an maxima S3 object: printing the input command and output respectively, including reference labels. 
