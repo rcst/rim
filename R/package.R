@@ -100,5 +100,8 @@ iprint <- function(x) {
 #' @method print maxima
 #' @export
 print.maxima <- function(x, ...) {
-  print(paste0("(", attr(x, "output.label"), ") ", x))
+  if(attr(x, "format") != "text2d") 
+    cat(paste0("(", attr(x, "output.label"), ") ", x, "\n"))
+  else
+    cat(paste0(x, "\n"))
 }
