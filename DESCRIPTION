@@ -11,6 +11,9 @@ Description: Provides an interface to the powerful and fairly complete computer 
     It can be used to start and control maxima from within R by entering maxima commands. 
     It facilitates outputting results from maxima in LaTeX and 'MathML'. 2D and 3D plots can be displayed directly. This package also registers a 'knitr'-engine 
     enabling maxima code chunks to be written in 'RMarkdown' documents.
+URL: https://rcst.github.io/rim/
+BugReports: https://github.com/rcst/rim/issues
+SystemRequirements: Maxima (>= 5.42.1)
 License: GPL (>= 3)
 Imports: 
     methods,

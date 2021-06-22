@@ -126,10 +126,10 @@ label_length <- function(x, sub = "\\(%o\\d+\\)") {
   str_length(str_extract(string = x, pattern = sub))
 }
 
-mef <- function(format = "linear") {
-  if(missing(format))
-    return(maxima.env$engine.format)
-  else {
+#' @describeIn maxima.engine Sets the knitr engine format. It can be used both to set or get the current engine format. The current engine format is returned in both cases.
+#' @export
+maxima.engine.format <- function(format = "linear") {
+  if(!missing(format)) {
     stopifnot(is.character(format))
     switch(format,
 	   latex = {
@@ -159,4 +159,5 @@ mef <- function(format = "linear") {
 	     format <- "linear"
 	   })
   }
+  return(maxima.env$engine.format)
 }

@@ -83,6 +83,13 @@ To send a single command to Maxima and receive the corresponding output use \cod
 }}
 
 \seealso{
+Useful links:
+\itemize{
+  \item \url{https://rcst.github.io/rim/}
+  \item Report bugs at \url{https://github.com/rcst/rim/issues}
+}
+
+
 \code{\link{maxima.engine}}
 }
 \author{

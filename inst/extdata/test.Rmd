@@ -3,7 +3,7 @@ title: "knitr engine test page"
 ---
 
 ```{r}
-maxima.engine.format <- "latex"
+maxima.engine.format("latex")
 ```
 
 ```{maxima}

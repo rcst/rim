@@ -15,18 +15,14 @@ utils::globalVariables(c("engine", "engine.format", "engine.reflabels", "mx"))
 #' @return This functions prints the resulting output from maxima together with it's code 
 maxima.engine <- function(options) { 
   maxima.engine.start()
-
   code <- options$code
   code <- collect_ends(code)
-  # out <- character(0)
   ll <- list()
   ccode <- character()
-
   for(i in 1:length(code)) {
     if(maxima.env$engine.format == "text2d") { 
       tt <- maxima.env$mx$get(code[i])
       if(!maxima.env$engine.reflabels)
-	 # tt <- str_strip_col(x = tt, n = label_length(tt), side = "left") 
 	 tt <- str_strip_col(x = tt, n = nchar(tt$outputLabel), side = "left") 
     }
     else 
