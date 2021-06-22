@@ -347,7 +347,7 @@ RMaxima <- R6::R6Class("RMaxima",
       if(!exists("scon"))
         stop("Couldn't find available port")
 
-      system2("maxima", 
+      system2(private$maximaPath, 
 	      c(# "-q", 
 		paste0("-s ", private$port), 
 		paste0("--userdir=", private$utilsDir), 
@@ -355,17 +355,13 @@ RMaxima <- R6::R6Class("RMaxima",
 	      wait = FALSE, 
 	      stdout = FALSE, 
 	      stderr = stdout())
-
+      
       private$maximaSocket <- socketAccept(socket = scon, 
 					   blocking = FALSE, 
 					   open = "r+b")
       close(scon)
 
-      # read-out pid
-      fr <- readLines(con = private$maximaSocket, warn = FALSE)
-      private$pid <- as.integer(regex(pattern = "pid=(\\d+)", fr[1])[2])
-      private$version <- numeric_version(regex(pattern = "Maxima (\\d+\\.\\d+\\.\\d+)", 
-					       fr[2])[2])
+      private$parseStartUp()
       private$reply <- Reply$new(private$maximaSocket)
       private$lastInputLabel <- private$reply$getInputLabel
       private$running <- TRUE
@@ -387,13 +383,44 @@ RMaxima <- R6::R6Class("RMaxima",
       private$reply = Reply$new(private$maximaSocket)
       if(grepl("\\$$", command))
 	private$reply$suppressed <- TRUE
+    },
+    parseStartUp = function() {
+      # pid
+      pidExpr <- "pid=(\\d+)"
+      repeat {
+	z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	if(length(z)) {
+	  if(grepl(pattern = pidExpr, x = z)) { 
+	    private$pid <- as.integer(regex(text = z, pattern = pidExpr)[2])
+	    break
+	  }
+	}
+      }
+
+      # version
+      verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
+      repeat {
+	z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	if(length(z)) {
+	  if(grepl(pattern = verExpr, x = z)) { 
+	    private$version <- numeric_version(regex(text = z, pattern = verExpr)[2])
+	    break
+	  }
+	}
+      }
     }
   )
 )
 
+#' Extract substring by regular expression
+#' @param text Character vector containing the text to be searched
+#' @param pattern Character vector of length 1 containing the regular expression to be matched
+#' @return Character vector of the same length as \code{text}
+#' @noRd
 regex <- function(text, pattern) {
   r <- regexec(pattern, text)
   starts <- unlist(r)
+  starts[starts == -1] <- NA
   stops <- starts + unlist(lapply(X = r, 
 				  FUN = attr, 
 				  which = "match.length")) - 1L
