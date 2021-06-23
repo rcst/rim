@@ -127,6 +127,7 @@ label_length <- function(x, sub = "\\(%o\\d+\\)") {
 }
 
 #' @describeIn maxima.engine Sets the knitr engine format. It can be used both to set or get the current engine format. The current engine format is returned in both cases.
+#' @param format Character vector of length 1 naming the output format to be used for the \code{knitr} engine
 #' @export
 maxima.engine.format <- function(format = "linear") {
   if(!missing(format)) {

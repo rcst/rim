@@ -11,6 +11,8 @@ maxima.engine.format(format = "linear")
 }
 \arguments{
 \item{options}{Named \code{list} of knitr options. Currently there are no maxima specific chunk options. To change the output format of the maxima engine set the variable \code{maxima.engine.format} to either "linear" (default), "latex", "mathml" or "text2d".}
+
+\item{format}{Character vector of length 1 naming the output format to be used for the \code{knitr} engine}
 }
 \value{
 This functions prints the resulting output from maxima together with it's code
