@@ -5,18 +5,24 @@ output: html_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-Development version of the yet-to-be-released CRAN package. rim provides an interface to the powerful and fairly complete maxima computer algebra system
+Development version of the CRAN package. `rim` provides an interface to the powerful and fairly complete maxima computer algebra system
 
-This repository is a fork from the original RMaximam created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
+This repository is a fork from the original `RMaxima` created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
 
 # Installation
 
 ## Requirements
-- Maxima needs to be installed to use the package (the package can be installed without Maxima being present)
+- Maxima (>= 5.42.1), this package has been tested with 5.42.1 and 5.45.0, but may also work with older versios 
 
-## Steps
+## Installation
 
-If you want to install the latest version (currently the only one available) install the R package `drat` first and add this github account as a repo:
+To install the current release version
+
+```{r, eval = FALSE}
+install.packages("rim")
+```
+
+If you want to install the latest version the easiest way is to install the R package `drat` first and add this github account as a repo:
 
 ```{r, eval = FALSE}
 install.packages("drat")
@@ -31,69 +37,93 @@ install.packages("rim")
 
 # Usage
 
-## Loading the package and rendering documents
+If you want to learn how to use Maxima you can check out a number of ressources from it's [project site](https://maxima.sourceforge.io/documentation.html).
 
-This section demonstrates the use of `rmaxima` via it's knitr engine. Alternatively, you can run each line of the Maxima code chunks via `maxima.get()`.
+## RMarkdown
 
-This page has been generated using `rim`'s knitr engine itself. Note that the math-output only displays as intended for html output format, when MathJax is loaded or embedded.
+This section demonstrates the use of `rim` via it's knitr engine. Alternatively, you can run each line of the Maxima code chunks via `maxima.get()`.
 
-When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package `knitr`, it will register maxima as a `knitr` engine. If this worked, maxima code can be used and rendered in RMarkdown documents.
+This page has been generated using `rim`'s knitr engine itself. 
 
-```{r, eval = FALSE}
+Note that you can set the output format to LaTeX `maxima.engine.format("latex")` to get LaTeX-style expression rendering, when using pandoc as well as MathJax is loaded or embedded. Alternatively, expression outputs can be printed in MathML directly using `maxima.engine.format("mathml")`. 
+
+When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package `knitr` (which get's installed by default with this package as well), it will register maxima as a `knitr` engine. If this worked, maxima code can be used and rendered in RMarkdown documents.
+
+```{r}
 library(rim)
+maxima.engine.format("latex")
 ```
 
-For example, to generate this page you can download it's source `index.Rmd` from [here](https://raw.githubusercontent.com/rcst/rmaxima/master/docs/index.Rmd) and then use `rmarkdown::render` to generate it.
+For example, to generate this page you can download it's source `index.Rmd` from [here](https://raw.githubusercontent.com/rcst/rim/master/docs/index.Rmd) and then use `rmarkdown::render` to generate it.
 
 ```{r, eval = FALSE}
-download.file(url = "https://raw.githubusercontent.com/rcst/rmaxima/master/docs/index.Rmd", 
+download.file(url = "https://raw.githubusercontent.com/rcst/rim/master/docs/index.Rmd", 
 	      destfile = "index.Rmd")
-maxima.engine.format <- "latex"
+maxima.engine.format("latex")
 rmarkdown::render("index.Rmd")
 ```
 
 ## Introduction
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, eval = FALSE}
+old <- knitr::knit_hooks$get("source")
 knitr::knit_hooks$set(source = function(x, options){
-  if (options$engine == "maxima"){
-    opts <- gsub(",\\s*verbatim\\s*=\\s*TRUE\\s*", "", options$params.src)
-    opts <- gsub(",?\\s*engine\\s*=\"maxima\"", "", opts)
-    if(opts=="") bef = sprintf('\n\n    ```{maxima}\n', opts, "\n")
-    else bef = sprintf('\n\n    ```{maxima,%s}\n', opts, "\n")
-    stringr::str_c(
-      bef, 
-      knitr:::indent_block(paste(x, collapse = '\n'), "    "), 
-      "\n    ```\n"
-    )
-  } 
+  if (options$engine == "maxima") {
+    if(!is.null(options$explicit)) {
+      if(options$explicit) {
+	opts <- gsub(",\\s*verbatim\\s*=\\s*TRUE\\s*", "", options$params.src)
+	opts <- gsub(",?\\s*engine\\s*=\"maxima\"", "", opts)
+	if(opts=="") bef = sprintf('\n\n    ```{maxima}\n', opts, "\n")
+	else bef = sprintf('\n\n    ```{maxima,%s}\n', opts, "\n")
+	stringr::str_c(
+		       bef, 
+		       knitr:::indent_block(paste(x, collapse = '\n'), "    "), 
+		       "\n    ```\n"
+	)
+      } 
+    }
+  }
   else {
     stringr::str_c("\n\n```", tolower(options$engine), "\n", 
-      paste(x, collapse = '\n'), "\n```\n\n"
+		   paste(x, collapse = '\n'), "\n```\n\n"
     )
   }
 })
 ```
 
-Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output).
+Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output). For example we can type the following code chunk into our RMarkdown document file:
 
 
-```{maxima}
+````
+
+```{maxima}`r ''`
 L: sqrt(1 - 1/R^2);
-assume(R > 0);
+assume(R > 0)$
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 
-In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas data base to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression.
+````
 
-The resulting output also prints Maxima's output labels for each individual output, e.g. `(%o2)`, which we can reuse in other Maxima expressions as a substitute for it's corresponding expression.
-
-Since this web page has been rendered using pandoc, a more readable output can be printed by changing Maxima's output format and print `results = 'asis'`.  
+In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas data base to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression. This, when rendered into a document will be printed as 
 
 ```{maxima}
-'L = L;
-assume(R > 0);
-'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
+L: sqrt(1 - 1/R^2);
+assume(R > 0)$
+'integrate(x, x, 0, L) = integrate(x, x, 0, L);
+```
+
+The resulting output (if not suppressed) is printed after each line of code, and thus apprears as several. Input and output reference labels that are assign by Maxima are printed into he code chunk. Those can be used to refer to previous commands in other code chunks. For example
+
+```{maxima}
+sqrt(rhs(%o3));
+```
+
+takes the right-hand side of the result of the equation from input label `%i3`, which is assigned to output label `%o3` and computes the square-root of it.
+
+Of course exercising on such simple computations is of little benefit. The real benefit comes from more complicated expression and the effort that we would need to put if we wanted to typeset the result, such as this
+
+```{maxima}
+integrate(1 / (1 + x^4), x);
 ```
 
 `pandoc` automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, `pandoc` takes care of how mathematical equations delimited by `$$` are rendered.
@@ -101,7 +131,7 @@ assume(R > 0);
 However, we can also change Maxima's output format to MathML, which works if the output document is a HTML document. 
 
 ```{r}
-maxima.engine.format <- "mathml"
+maxima.engine.format("mathml")
 ```
 
 ```{maxima}
@@ -125,12 +155,31 @@ You can also replay other previous expressions by referring to their output labe
 log(%o1);
 ```
 
+## Direct Usage
 
 If you are calling `maxima.get()` the returned value is a character vector with an attribute `output.label`, among others:
 
-```{r}
-maxima.start(restart = TRUE)
+```{r, results="markup"}
 maxima.get("1+1")
+```
+
+Note: In this document where I'm mixing direct usage and the knitr engine, I'm setting the chunk option `results="markup"` for the direct usage.
+
+In direct use, one also change the output format using `maxima.setformat()`. Possible options are `"linear"` (default), `"latex"`, `"MathML"` and `"text2d"`. The last options is probably convenient for console output
+
+```{r, results="markup"}
+maxima.setformat("text2d")
+maxima.get("jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )")
+```
+
+Finally, a session can be restarted and stopped, notably for the effect of getting a new clean Maxima session
+
+```{r, results="markup"}
+maxima.start()
+maxima.start(restart = TRUE)
+maxima.setformat("text2d")
+maxima.get("integrate(x / (1 + x^3), x);")
+maxima.stop()
 maxima.stop()
 ```
 
