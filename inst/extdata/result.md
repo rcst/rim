@@ -1,5 +1,6 @@
 ---
 title: "knitr engine test page"
+output: pdf_document
 ---
 
 maxima.engine.format("latex")## [1] "latex"
@@ -21,7 +22,9 @@ maxima.engine.format("latex")## [1] "latex"
 
 # Normal Distribution
 
-(%i16) normal(x) :=(2*%pi*sigma^2)^(-1/2) *exp(-(x-mu)^2/(2*sigma^2));$${\it normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)$$(%i17) assume(sigma > 0)$(%i18) area(normal(x));$$1$$(%i19) mean(normal(x));$$\mu$$(%i20) variance(normal(x));$$\frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$(%i21) mgf(normal(x));$$e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
+(%i16) normal(x) := 
+      (2*%pi*sigma^2)^(-1/2) * 
+      exp(-(x-mu)^2/(2*sigma^2));$${\it normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)$$(%i17) assume(sigma > 0)$(%i18) area(normal(x));$$1$$(%i19) mean(normal(x));$$\mu$$(%i20) variance(normal(x));$$\frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$(%i21) mgf(normal(x));$$e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
 
 # Laplace Distribution
 
@@ -34,3 +37,11 @@ maxima.engine.format("latex")## [1] "latex"
 # Matrices
 
 (%i33) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);$$\begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}$$(%i34) transpose(m);$$\begin{pmatrix}0 & 1 & 1 \\ 1 & 0 & 1 \\ a & 1 & 0 \\ \end{pmatrix}$$(%i35) determinant(m);$$a+1$$(%i36) f: invert(m), detout;$$\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}$$(%i37) m . f;$$\begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}\right)$$(%i38) expand(%);$$\begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} & 0 & 0 \\ 0 & \frac{a}{a+1}+\frac{1}{a+1} & 0 \\ 0 & 0 & \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}$$(%i39) factor(%);$$\begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{pmatrix}$$
+
+# If-then-else
+
+(%i40) x: 1234;$$1234$$(%i41) y: 2345;$$2345$$
+
+(%i42) if x > y
+  then x
+  else y;$$2345$$

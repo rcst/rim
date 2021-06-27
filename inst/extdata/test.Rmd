@@ -1,5 +1,6 @@
 ---
 title: "knitr engine test page"
+output: pdf_document
 ---
 
 ```{r}
@@ -93,4 +94,17 @@ f: invert(m), detout;
 m . f;
 expand(%);
 factor(%);
+```
+
+# If-then-else
+
+```{maxima}
+x: 1234;
+y: 2345;
+```
+
+```{maxima}
+if x > y
+  then x
+  else y;
 ```

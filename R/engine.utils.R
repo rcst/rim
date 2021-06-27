@@ -161,3 +161,33 @@ maxima.engine.format <- function(format = "linear") {
   }
   return(maxima.env$engine.format)
 }
+
+#' Cluster a code chunk into commands
+#' @param code Character vector containing the code chunk, one line per element. 
+#' @return A \code{list} where each element holds the indices of \code{code} that make up one command, i.e. terminates with either ';' or '$' 
+#' @noRd
+gather <- function(code) {
+  hits <- grepl(pattern = ";|\\$", x = code)
+  marks <- rev(cumsum(rev(hits)))
+  marks[code == ""] <- NA
+  sapply(X = unique(marks), 
+	 FUN = function(um, m) which(um == m), 
+	 m = marks, 
+	 simplify = FALSE)
+}
+
+# test_code <- c("area(dist) := integrate(dist, x, minf, inf)$",
+# "mean(dist) := area(dist*x)$",
+# "EX2(dist) := area(dist*x^2)$",
+# "variance(dist) := EX2(dist) - mean(dist)^2$",
+# "mgf(dist) := area(dist*%e^(x*t))$",
+# "normal(x) := ","normal(x) := ",
+# "      (2*%pi*sigma^2)^(-1/2) * ",
+# "      exp(-(x-mu)^2/(2*sigma^2));",
+# "",
+# "assume(sigma > 0)$",
+# "",
+# "area(normal(x));",
+# "mean(normal(x));",
+# "variance(normal(x));",
+# "mgf(normal(x));")

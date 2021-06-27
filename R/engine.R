@@ -16,18 +16,18 @@ utils::globalVariables(c("engine", "engine.format", "engine.reflabels", "mx"))
 maxima.engine <- function(options) { 
   maxima.engine.start()
   code <- options$code
-  code <- collect_ends(code)
+  # code <- collect_ends(code)
+  code <- code[nchar(code) > 0]
+  cmds <- gather(code)
   ll <- list()
   ccode <- character()
-  for(i in 1:length(code)) {
+  for(i in 1:length(cmds)) {
+    tt <- maxima.env$mx$get(paste0(code[cmds[[i]]], collapse = "\n"))
     if(maxima.env$engine.format == "text2d") { 
-      tt <- maxima.env$mx$get(code[i])
       if(!maxima.env$engine.reflabels)
 	 tt <- str_strip_col(x = tt, n = nchar(tt$outputLabel), side = "left") 
     }
     else 
-      tt <- maxima.env$mx$get(code[i])
-
       ccode <- append(ccode, iprint(tt))
       if(!attr(tt, "suppressed")) {
 	ll <- append(ll, list(structure(list(src = ccode), class = "source")))

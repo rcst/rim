@@ -1,3 +1,6 @@
+# rim 0.4.1
+- fixed issue #16. code chunks that contain commands spanning multiple lines are now printed as-is (except for empty lines, which are removed) with the preceding input reference label 
+
 # rmaxima 0.4.0/ rim 0.4.0
 - added `maxima.engine.format()` function that can be used to change the output format of the knitr engine
 - fixed issue that arises when Maxima takes longer to start (which previously caused the interface to freez)
