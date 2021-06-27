@@ -47,7 +47,6 @@ join_code <- function(code, opener = c("(", "[", "{"), closer = c(")", "]", "}")
 #' @import stringr
 collect_ends <- function(code) {
   if(length(code)>1){
-    code <- str_trim(code, side = "both")
     a <- grepl(x = code, pattern = ";|\\$")
     lbs <- c(FALSE, as.logical(rev(cumsum(rev(diff(a))))))
     for(i in length(lbs):2)
