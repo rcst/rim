@@ -10,7 +10,6 @@
 #'
 #' To send a single command to Maxima and receive the corresponding output use \code{maxima.get()}. The output is returned in the format currently set (\code{maxima.getformat()}). The format can be changed using \code{maxima.setformat())}.
 #'
-#' @keywords internal
 #' @import methods
 #' @import digest 
 ## usethis namespace: start
