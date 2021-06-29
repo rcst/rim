@@ -8,7 +8,7 @@ test_that("maxima knitr engine works", {
 		    package = "rim")
   fo <- paste0(dirname(fr[1]), "/test.md")
   hash <- digest(readLines(fr[2]), "sha256")
-  knit(input = fr[1], output = fo, quiet = TRUE, envir = .GlobalEnv)
+  suppressWarnings(knit(input = fr[1], output = fo, quiet = TRUE, envir = .GlobalEnv))
 
   expect_match(digest(readLines(fo), "sha256"), hash)
 
