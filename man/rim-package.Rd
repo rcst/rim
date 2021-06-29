@@ -47,7 +47,9 @@ iprint(x)
 
 \item{format}{A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".}
 
-\item{label}{Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.}
+\item{x}{S3 object of class "maxima"}
+
+\item{...}{Additional arguments}
 }
 \description{
 Provides an interface to Maxima, a computer algebra system.
@@ -102,4 +104,3 @@ Authors:
 }
 
 }
-\keyword{internal}

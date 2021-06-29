@@ -43,7 +43,6 @@ maxima.stop <- function() {
 
 #' @describeIn rim-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 #' @param command A character vector containing the maxima command.
-#' @param label Logical (FALSE). Returns character vector including output label (TRUE). If FALSE (default), return character vector without output label.
 #' @seealso \code{\link{maxima.engine}}
 #' @export
 maxima.get <- function(command) {
@@ -99,6 +98,8 @@ iprint <- function(x) {
 }
 
 #' @describeIn rim-package Prints the maxima output part of an S3 object returned by maxima.get() 
+#' @param x S3 object of class "maxima"
+#' @param ... Additional arguments
 #' @method print maxima
 #' @export
 print.maxima <- function(x, ...) {
