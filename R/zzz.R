@@ -13,8 +13,11 @@
 #' @importFrom Rcpp loadModule
 # loadModule("Maxima", TRUE)
 
-.onAttach <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) {
   maxima.env$maxima <- RMaxima$new()
+}
+
+.onAttach <- function(libname, pkgname) {
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
     setup_hooks()

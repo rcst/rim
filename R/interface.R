@@ -1,4 +1,44 @@
 #' @import R6
+MReader <- R6::R6Class("MReader",
+  public = list(
+    initialize = function(con) {
+      private$rc <- con
+      private$stash <- ""
+      private$complete <- TRUE
+    },
+    wasComplete = function() {
+      private$complete
+    }
+  ),
+  active = list(
+    read = function(value) {
+      browser()
+      if(!missing(value))
+	message("Input value ignored.")
+      private$complete <- TRUE 
+      suppressWarnings(withCallingHandlers(
+      {
+        x <- readLines(private$rc, n = 1) 
+        z <- paste0(private$stash, x)
+      },
+      warning = function(cnd) {
+	private$complete <- FALSE 
+      }))
+      if(private$complete) 
+	private$stash <- ""
+      else 
+	private$stash <- z
+
+      return(z)
+    }
+  ),
+  private = list(
+    stash = character(0),
+    complete = logical(0),
+    rc = NULL
+  )
+)
+
 Reply <- R6::R6Class("Reply",  
   public = list(
     initialize = function(con) {
@@ -9,8 +49,14 @@ Reply <- R6::R6Class("Reply",
       
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
-      repeat {
+      # rdr <- MReader$new(con)
+      repeat { 
 	z <- readLines(con, n = 1, warn = FALSE)
+# 	repeat {
+# 	  z <- rdr$read
+# 	  if(rdr$wasComplete())
+# 	    break
+# 	}
 	if(length(z)) {
 	  private$reply <- c(private$reply, z)
 	  if(grepl(pattern = promptExpr, x = z)) 
@@ -294,7 +340,7 @@ RMaxima <- R6::R6Class("RMaxima",
 
       }
 
-      private$crudeExecute(";") 
+      # private$crudeExecute(";") 
       stop(paste("Unsupported:", private$reply$concatenateParts()))
     },
     getLastPromptID = function() {
@@ -371,7 +417,7 @@ RMaxima <- R6::R6Class("RMaxima",
       
       private$maximaSocket <- socketAccept(socket = scon, 
 					   blocking = FALSE, 
-					   open = "r+b")
+					   open = "r+")
       close(scon)
 
       private$parseStartUp()

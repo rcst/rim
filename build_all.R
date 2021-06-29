@@ -5,20 +5,36 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::document()
   devtools::load_all()
   devtools::test()
-  devtools::test(filter = "setformat")
+  devtools::test(filter = "execute")
   devtools::build()
   devtools::check()
 
   devtools::check_win_devel()
   devtools::check_win_oldrelease()
   devtools::check_win_release()
+  devtools::release()
+  devtools::submit_cran()
 
-  drat::insertPackage(file = "../builds/rmaxima/source/rim_0.4.0.tar.gz",  
-		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/devel/rim_0.4.0.zip", 
-		      repodir = "../drat")
-  drat::insertPackage(file = "../builds/rmaxima/win/release/rim_0.4.0.zip", 
-		      repodir = "../drat")
+  # drat
+  options(dratRepo = "/home/eric/documents/R/packages/drat/")
+  drat::insertPackage(file = "../builds/rim/source/rim_0.4.0.tar.gz",  
+		      action = "archive", commit = TRUE)
+
+#   drat::insertPackage(file = "../builds/rim/win/devel/rim_0.4.0.zip", 
+# 		      repodir = "../drat", action = "archive")
+
+  a <- drat::insertPackage(file = "../builds/rim/win/release/rim_0.4.0.zip", 
+			   action = "archive",
+			   commit = TRUE)
+
+  a <- drat::insertPackage(file = "../builds/rim/win/oldrelease/rim_0.4.0.zip", 
+			   action = "archive",
+			   commit = TRUE)
+  a  <- drat:::getRepoInfo()
+  drat::pruneRepo(pkg = "rim", version = "0.4.0", remove = TRUE)
+  drat:::getPackageInfo("../builds/rim/win/release/rim_0.4.0.zip")
+  drat:::identifyPackageType("../builds/rim/win/release/rim_0.4.0.zip")
+  drat::updateRepo()
 
   detach("package:rim", unload = TRUE)
 }

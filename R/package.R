@@ -61,8 +61,11 @@ maxima.load <- function(module) maxima.env$maxima$loadModule(module)
 #' @describeIn rim-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 #' @param keystring A character vector containing a search term.
 #' @export
-maxima.apropos <- function(keystring) 
-  maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")) 
+maxima.apropos <- function(keystring) {
+  m <- maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")) 
+  attr(m, "format") <- maxima.getformat()
+  return(m)
+}
 
 
 #' @describeIn rim-package Sets the format of the output string from Maxima.
