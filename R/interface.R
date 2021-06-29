@@ -12,7 +12,6 @@ MReader <- R6::R6Class("MReader",
   ),
   active = list(
     read = function(value) {
-      browser()
       if(!missing(value))
 	message("Input value ignored.")
       private$complete <- TRUE 
@@ -24,10 +23,12 @@ MReader <- R6::R6Class("MReader",
       warning = function(cnd) {
 	private$complete <- FALSE 
       }))
-      if(private$complete) 
+      if(private$complete && length(x)) 
 	private$stash <- ""
-      else 
+      else {
 	private$stash <- z
+	private$complete <- FALSE
+      }
 
       return(z)
     }
@@ -49,17 +50,22 @@ Reply <- R6::R6Class("Reply",
       
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
-      # rdr <- MReader$new(con)
+      promptHit <- FALSE
+      rdr <- MReader$new(con)
       repeat { 
-	z <- readLines(con, n = 1, warn = FALSE)
-# 	repeat {
-# 	  z <- rdr$read
-# 	  if(rdr$wasComplete())
-# 	    break
-# 	}
-	if(length(z)) {
+	# z <- readLines(con, n = 1, warn = FALSE)
+	repeat {
+	  z <- rdr$read
+	  if(grepl(pattern = promptExpr, x = z)) {
+	    promptHit <- TRUE
+	    break
+	  }
+	  if(rdr$wasComplete())
+	    break
+	}
+	if(nchar(z)) {
 	  private$reply <- c(private$reply, z)
-	  if(grepl(pattern = promptExpr, x = z)) 
+	  if(promptHit) 
 	    break
 	}
       }
@@ -417,7 +423,7 @@ RMaxima <- R6::R6Class("RMaxima",
       
       private$maximaSocket <- socketAccept(socket = scon, 
 					   blocking = FALSE, 
-					   open = "r+")
+					   open = "r+b")
       close(scon)
 
       private$parseStartUp()
