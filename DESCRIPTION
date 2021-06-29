@@ -13,7 +13,7 @@ Description: Provides an interface to the powerful and fairly complete computer 
     enabling 'Maxima' code chunks to be written in 'RMarkdown' documents.
 URL: https://rcst.github.io/rim/
 BugReports: https://github.com/rcst/rim/issues
-SystemRequirements: Maxima (>= 5.42.1)
+SystemRequirements: Maxima (https://sourceforge.net/projects/maxima/, tested with versions >=5.42.1), needs to be on PATH
 License: GPL (>= 3)
 Imports: 
     methods,

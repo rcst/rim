@@ -378,10 +378,13 @@ RMaxima <- R6::R6Class("RMaxima",
 	return(NA_integer_)
     },
     getVersion = function() {
-      if(private$running)
+      if(private$running) {
 	return(private$version)
-      else
+      }
+      else {
+	message("Version number undetermined. Maxima needs to be running.")
 	return(NULL)
+      }
     }
     ),
   private = list(
