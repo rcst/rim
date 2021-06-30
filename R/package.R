@@ -88,6 +88,12 @@ maxima.version <- function() {
   maxima.env$maxima$getVersion()
 }
 
+#' @describeIn rim-package Returns TRUE when an installation of Maxima has been detected, otherwise FALSE
+#' @export
+maxima.isInstalled <- function() {
+  maxima.env$maxima$isInstalled()
+}
+
 #' @describeIn rim-package Prints the input command preceding with the corresponding input reference label of an maxima S3-object returned by maxima.get()
 #' @export
 iprint <- function(x) {

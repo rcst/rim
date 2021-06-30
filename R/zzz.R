@@ -1,27 +1,20 @@
-
-## Up until R 2.15.0, the require("methods") is needed but (now)
-## triggers an warning from R CMD check
-#.onLoad <- function(libname, pkgname){
-#    #require("methods")  ## needed with R <= 2.15.0
-#    loadRcppModules()
-#}
-
-
-## For R 2.15.1 and later this also works. Note that calling loadModule() triggers
-## a load action, so this does not have to be placed in .onLoad() or evalqOnLoad().
-
-#' @importFrom Rcpp loadModule
-# loadModule("Maxima", TRUE)
-
 .onLoad <- function(libname, pkgname) {
   maxima.env$maxima <- RMaxima$new()
 }
 
 .onAttach <- function(libname, pkgname) {
-  maxima.start()
-  if(maxima.version() < "5.42.1")
-   packageStartupMessage(paste("Installed Maxima version ", maxima.version, 
-			       "is untested. Consider updating.")) 
+  if(maxima.isInstalled()) { 
+    maxima.start() 
+    if(maxima.version() < "5.42.1") {
+      packageStartupMessage(paste("Installed Maxima version ", maxima.version, 
+				  "is untested. Consider updating.")) 
+    }
+  }
+  else {
+    packageStartupMessage(paste("Could not find Maxima executable, please download from\n", 
+			  "https://maxima.sourceforge.io/download.html\n",
+			  "and install"))
+  }
 
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
