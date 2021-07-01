@@ -8,7 +8,7 @@ Authors@R: c(
     person("Hans W.", "Borchers", email = "hwborchers@googlemail.com", role = c("aut")),
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")))
 Description: Provides an interface to the powerful and fairly complete computer algebra system maxima.
-    It can be used to start and control maxima from within R by entering 'Maxima' commands. 
+    It can be used to start and control 'Maxima' from within R by entering 'Maxima' commands. 
     It facilitates outputting results from 'Maxima' in 'LaTeX' and 'MathML'. 2D and 3D plots can be displayed directly. This package also registers a 'knitr'-engine 
     enabling 'Maxima' code chunks to be written in 'RMarkdown' documents.
 URL: https://rcst.github.io/rim/
