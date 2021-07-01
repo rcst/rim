@@ -5,18 +5,28 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-Development version of the yet-to-be-released CRAN package. rim provides an interface to the powerful and fairly complete maxima computer algebra system
+[![](https://cranlogs.r-pkg.org/badges/rim)](https://cran.rstudio.com/web/packages/rim/index.html)
+
+[![](https://cranlogs.r-pkg.org/badges/grand-total/rim)](https://cran.rstudio.com/web/packages/rim/index.html)
+
+Development version of CRAN package. `rim` provides an interface to the powerful and fairly complete maxima computer algebra system
 
 This repository is a fork from RMaxima, the original version created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
 
 # Installation
 
+```{r, eval = FALSE}
+install.packages("rim")
+```
+
+
 ## Requirements
-- Maxima
+- Maxima (https://sourceforge.net/projects/maxima/, tested with versions >=5.42.1), needs to be on PATH
 
-## Steps
 
-If you want to install the latest version (currently the only one available) install the R package `drat` first and add this github account as a repo:
+## Latest Version
+
+If you want to install the latest version install the R package `drat` first and add this github account as a repo:
 
 ```{r, eval = FALSE}
 install.packages("drat")
@@ -40,7 +50,18 @@ library(rim)
 ```{r}
 maxima.start(restart = TRUE)
 maxima.get("1+1;")
-maxima.get("y: 0.5 * t^2 * g + g*t;")
-maxima.get("diff(y, t);")
+r <- maxima.get("sum(1/x^2, x, 1, 10000)")
+print(r)
+iprint(r)
+maxima.isInstalled()
+maxima.version()
+maxima.getformat()
+maxima.setformat("text2d")
+maxima.apropos("int")
+maxima.get("integrate(1 / (x^4 + 1), x);")
+maxima.get("jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )")
+l <- maxima.get("%;")
+unclass(l)
+maxima.load("abs_integrate")
 maxima.stop()
 ```
