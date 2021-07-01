@@ -171,24 +171,21 @@ pre code {
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <p>Development version of the CRAN package. <code>rim</code> provides an interface to the powerful and fairly complete maxima computer algebra system</p>
 <p>This repository is a fork from the original <code>RMaxima</code> created by Kseniia Shumelchyk and Hans W. Borcher <a href="https://github.com/shumelchyk/rmaxima">shumelchyk/rmaxima</a>, which is currently not maintained.</p>
-<div id="installation" class="section level1">
-<h1>Installation</h1>
-<div id="requirements" class="section level2">
-<h2>Requirements</h2>
+<div id="requirements" class="section level1">
+<h1>Requirements</h1>
 <ul>
 <li>Maxima (&gt;= 5.42.1), this package has been tested with 5.42.1 and 5.45.0, but may also work with older versios</li>
 </ul>
 </div>
-<div id="installation-1" class="section level2">
-<h2>Installation</h2>
-<p>To install the current release version</p>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>To install the current release version from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;rim&quot;)</code></pre>
 <p>If you want to install the latest version the easiest way is to install the R package <code>drat</code> first and add this github account as a repo:</p>
 <pre class="r"><code>install.packages(&quot;drat&quot;)
 drat::addRepo(&quot;rcst&quot;)</code></pre>
 <p>Now you can easily install it the usual way:</p>
 <pre class="r"><code>install.packages(&quot;rim&quot;)</code></pre>
-</div>
 </div>
 <div id="usage" class="section level1">
 <h1>Usage</h1>
@@ -207,9 +204,6 @@ maxima.engine.format(&quot;latex&quot;)</code></pre>
           destfile = &quot;index.Rmd&quot;)
 maxima.engine.format(&quot;latex&quot;)
 rmarkdown::render(&quot;index.Rmd&quot;)</code></pre>
-</div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
 <p>Now we can enter Maxima expression inside code chunks. Note that we need to end each line by <code>;</code> or <code>$</code> (suppressing output). For example we can type the following code chunk into our RMarkdown document file:</p>
 <pre><code>
 ```{maxima}
@@ -247,43 +241,11 @@ assume(R &gt; 0)$
 <pre class="maxima"><code>(%i10) log(%o1);</code></pre>
 <p><span class="math display">\[\frac{\log \left(1-\frac{1}{R^2}\right)}{2}\]</span></p>
 </div>
-<div id="direct-usage" class="section level2">
-<h2>Direct Usage</h2>
-<p>If you are calling <code>maxima.get()</code> the returned value is a character vector with an attribute <code>output.label</code>, among others:</p>
-<pre class="r"><code>maxima.get(&quot;1+1&quot;)</code></pre>
-<pre><code>## 2</code></pre>
-<p>Note: In this document where I’m mixing direct usage and the knitr engine, I’m setting the chunk option <code>results=&quot;markup&quot;</code> for the direct usage.</p>
-<p>In direct use, one also change the output format using <code>maxima.setformat()</code>. Possible options are <code>&quot;linear&quot;</code> (default), <code>&quot;latex&quot;</code>, <code>&quot;MathML&quot;</code> and <code>&quot;text2d&quot;</code>. The last options is probably convenient for console output</p>
-<pre class="r"><code>maxima.setformat(&quot;text2d&quot;)
-maxima.get(&quot;jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )&quot;)</code></pre>
-<pre><code>##            [      1              alpha                alpha        ]
-##            [ ------------ - ---------------    - ---------------   ]
-##            [ beta + alpha                 2                    2   ]
-##            [                (beta + alpha)       (beta + alpha)    ]
-## (%o3)      [                                                       ]
-##            [                1                           1          ]
-##            [     - -------------------       - ------------------- ]
-##            [                       3/2                         3/2 ]
-##            [       2 (beta + alpha)            2 (beta + alpha)    ]</code></pre>
-<p>Finally, a session can be restarted and stopped, notably for the effect of getting a new clean Maxima session</p>
-<pre class="r"><code>maxima.start()</code></pre>
-<pre><code>## Maxima is already running.</code></pre>
-<pre class="r"><code>maxima.start(restart = TRUE)
-maxima.setformat(&quot;text2d&quot;)
-maxima.get(&quot;integrate(x / (1 + x^3), x);&quot;)</code></pre>
-<pre><code>##                                         2 x - 1
-##                       2            atan(-------)
-##                  log(x  - x + 1)        sqrt(3)    log(x + 1)
-## (%o2)            --------------- + ------------- - ----------
-##                         6             sqrt(3)          3</code></pre>
-<pre class="r"><code>maxima.stop()
-maxima.stop()</code></pre>
-<pre><code>## Maxima is not running.</code></pre>
 </div>
-<div id="demos" class="section level2">
-<h2>Demos</h2>
-<div id="distributions" class="section level3">
-<h3>Distributions</h3>
+<div id="demos" class="section level1">
+<h1>Demos</h1>
+<div id="distributions" class="section level2">
+<h2>Distributions</h2>
 <p>This is basically a reproduced demo for <code>Sympy</code> from <a href="https://brianzhang01.github.io/2018/04/distributions-with-sympy/">Bryan Zhang’s Blog</a>.</p>
 <p>First we define some helper functions:</p>
 <pre class="maxima"><code>(%i11) area(dist) := integrate(dist, x, minf, inf)$
@@ -291,9 +253,11 @@ maxima.stop()</code></pre>
 (%i13) EX2(dist) := area(dist*x^2)$
 (%i14) variance(dist) := EX2(dist) - mean(dist)^2$
 (%i15) mgf(dist) := area(dist*%e^(x*t))$</code></pre>
-<div id="normal-distribution" class="section level4">
-<h4>Normal Distribution</h4>
-<pre class="maxima"><code>(%i16) normal(x) :=(2*%pi*sigma^2)^(-1/2) *exp(-(x-mu)^2/(2*sigma^2));</code></pre>
+<div id="normal-distribution" class="section level3">
+<h3>Normal Distribution</h3>
+<pre class="maxima"><code>(%i16) normal(x) := 
+      (2*%pi*sigma^2)^(-1/2) * 
+      exp(-(x-mu)^2/(2*sigma^2));</code></pre>
 <p><span class="math display">\[{\it normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)\]</span></p>
 <pre class="maxima"><code>(%i17) assume(sigma &gt; 0)$
 (%i18) area(normal(x));</code></pre>
@@ -305,8 +269,8 @@ maxima.stop()</code></pre>
 <pre class="maxima"><code>(%i21) mgf(normal(x));</code></pre>
 <p><span class="math display">\[e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}\]</span></p>
 </div>
-<div id="laplace-distribution" class="section level4">
-<h4>Laplace Distribution</h4>
+<div id="laplace-distribution" class="section level3">
+<h3>Laplace Distribution</h3>
 <pre class="maxima"><code>(%i22) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);</code></pre>
 <p><span class="math display">\[{\it laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)\]</span></p>
 <pre class="maxima"><code>(%i23) load(&quot;abs_integrate&quot;)$
@@ -318,8 +282,8 @@ maxima.stop()</code></pre>
 <pre class="maxima"><code>(%i27) variance(laplace(x));</code></pre>
 <p><span class="math display">\[\frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2\]</span></p>
 </div>
-<div id="exponential-distribution" class="section level4">
-<h4>Exponential Distribution</h4>
+<div id="exponential-distribution" class="section level3">
+<h3>Exponential Distribution</h3>
 <pre class="maxima"><code>(%i28) expo(x) := unit_step(x) * lambda * exp(-lambda * x);</code></pre>
 <p><span class="math display">\[{\it expo}\left(x\right):={\it unit\_step}\left(x\right)\,\lambda\,\exp \left(\left(-\lambda\right)\,x\right)\]</span></p>
 <pre class="maxima"><code>(%i29) assume(lambda &gt; 0)$
@@ -331,6 +295,33 @@ maxima.stop()</code></pre>
 <p><span class="math display">\[\frac{1}{\lambda^2}\]</span></p>
 </div>
 </div>
+<div id="matrices" class="section level2">
+<h2>Matrices</h2>
+<pre class="maxima"><code>(%i33) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);</code></pre>
+<p><span class="math display">\[\begin{pmatrix}0 &amp; 1 &amp; a \\ 1 &amp; 0 &amp; 1 \\ 1 &amp; 1 &amp; 0 \\ \end{pmatrix}\]</span></p>
+<pre class="maxima"><code>(%i34) transpose(m);</code></pre>
+<p><span class="math display">\[\begin{pmatrix}0 &amp; 1 &amp; 1 \\ 1 &amp; 0 &amp; 1 \\ a &amp; 1 &amp; 0 \\ \end{pmatrix}\]</span></p>
+<pre class="maxima"><code>(%i35) determinant(m);</code></pre>
+<p><span class="math display">\[a+1\]</span></p>
+<pre class="maxima"><code>(%i36) f: invert(m), detout;</code></pre>
+<p><span class="math display">\[\frac{\begin{pmatrix}-1 &amp; a &amp; 1 \\ 1 &amp; -a &amp; a \\ 1 &amp; 1 &amp; -1 \\ \end{pmatrix}}{a+1}\]</span></p>
+<pre class="maxima"><code>(%i37) m . f;</code></pre>
+<p><span class="math display">\[\begin{pmatrix}0 &amp; 1 &amp; a \\ 1 &amp; 0 &amp; 1 \\ 1 &amp; 1 &amp; 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 &amp; a &amp; 1 \\ 1 &amp; -a &amp; a \\ 1 &amp; 1 &amp; -1 \\ \end{pmatrix}}{a+1}\right)\]</span></p>
+<pre class="maxima"><code>(%i38) expand(%);</code></pre>
+<p><span class="math display">\[\begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} &amp; 0 &amp; 0 \\ 0 &amp; \frac{a}{a+1}+\frac{1}{a+1} &amp; 0 \\ 0 &amp; 0 &amp; \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}\]</span></p>
+<pre class="maxima"><code>(%i39) factor(%);</code></pre>
+<p><span class="math display">\[\begin{pmatrix}1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1 \\ \end{pmatrix}\]</span></p>
+</div>
+<div id="if-then-else" class="section level2">
+<h2>If-then-else</h2>
+<pre class="maxima"><code>(%i40) x: 1234;</code></pre>
+<p><span class="math display">\[1234\]</span></p>
+<pre class="maxima"><code>(%i41) y: 2345;</code></pre>
+<p><span class="math display">\[2345\]</span></p>
+<pre class="maxima"><code>(%i42) if x &gt; y
+  then x
+  else y;</code></pre>
+<p><span class="math display">\[2345\]</span></p>
 </div>
 </div>
 

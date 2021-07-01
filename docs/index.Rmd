@@ -9,14 +9,12 @@ Development version of the CRAN package. `rim` provides an interface to the powe
 
 This repository is a fork from the original `RMaxima` created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
 
-# Installation
-
-## Requirements
+# Requirements
 - Maxima (>= 5.42.1), this package has been tested with 5.42.1 and 5.45.0, but may also work with older versios 
 
-## Installation
+# Installation
 
-To install the current release version
+To install the current release version from CRAN:
 
 ```{r, eval = FALSE}
 install.packages("rim")
@@ -62,8 +60,6 @@ download.file(url = "https://raw.githubusercontent.com/rcst/rim/master/docs/inde
 maxima.engine.format("latex")
 rmarkdown::render("index.Rmd")
 ```
-
-## Introduction
 
 ```{r, echo = FALSE, eval = FALSE}
 old <- knitr::knit_hooks$get("source")
@@ -155,37 +151,9 @@ You can also replay other previous expressions by referring to their output labe
 log(%o1);
 ```
 
-## Direct Usage
+# Demos
 
-If you are calling `maxima.get()` the returned value is a character vector with an attribute `output.label`, among others:
-
-```{r, results="markup"}
-maxima.get("1+1")
-```
-
-Note: In this document where I'm mixing direct usage and the knitr engine, I'm setting the chunk option `results="markup"` for the direct usage.
-
-In direct use, one also change the output format using `maxima.setformat()`. Possible options are `"linear"` (default), `"latex"`, `"MathML"` and `"text2d"`. The last options is probably convenient for console output
-
-```{r, results="markup"}
-maxima.setformat("text2d")
-maxima.get("jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )")
-```
-
-Finally, a session can be restarted and stopped, notably for the effect of getting a new clean Maxima session
-
-```{r, results="markup"}
-maxima.start()
-maxima.start(restart = TRUE)
-maxima.setformat("text2d")
-maxima.get("integrate(x / (1 + x^3), x);")
-maxima.stop()
-maxima.stop()
-```
-
-## Demos
-
-### Distributions
+## Distributions
 
 This is basically a reproduced demo for `Sympy` from [Bryan Zhang's Blog](https://brianzhang01.github.io/2018/04/distributions-with-sympy/).
 
@@ -199,7 +167,7 @@ variance(dist) := EX2(dist) - mean(dist)^2$
 mgf(dist) := area(dist*%e^(x*t))$
 ```
 
-#### Normal Distribution
+### Normal Distribution
 
 ```{maxima}
 normal(x) := 
@@ -214,7 +182,7 @@ variance(normal(x));
 mgf(normal(x));
 ```
 
-#### Laplace Distribution
+### Laplace Distribution
 
 ```{maxima}
 laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
@@ -228,7 +196,7 @@ mean(laplace(x));
 variance(laplace(x));
 ```
 
-#### Exponential Distribution
+### Exponential Distribution
 
 ```{maxima}
 expo(x) := unit_step(x) * lambda * exp(-lambda * x);
@@ -240,3 +208,27 @@ mean(expo(x));
 variance(expo(x));
 ```
 
+## Matrices
+
+```{maxima}
+m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);
+transpose(m);
+determinant(m);
+f: invert(m), detout;
+m . f;
+expand(%);
+factor(%);
+```
+
+## If-then-else
+
+```{maxima}
+x: 1234;
+y: 2345;
+```
+
+```{maxima}
+if x > y
+  then x
+  else y;
+```
