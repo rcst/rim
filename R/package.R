@@ -53,8 +53,12 @@ maxima.get <- function(command) {
 
 #' @describeIn rim-package A wrapper to load a Maxima module named by \code{module}
 #' @param module A character vector naming the maxima module to be loaded.
+#' @return Invisibly returns NULL.
 #' @export
-maxima.load <- function(module) maxima.env$maxima$loadModule(module) 
+maxima.load <- function(module) {
+  maxima.env$maxima$loadModule(module) 
+  invisible(NULL)
+}
 
 #' @describeIn rim-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 #' @param keystring A character vector containing a search term.

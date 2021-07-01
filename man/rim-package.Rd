@@ -54,6 +54,9 @@ iprint(x)
 
 \item{...}{Additional arguments}
 }
+\value{
+Invisibly returns NULL.
+}
 \description{
 Provides an interface to Maxima, a computer algebra system.
 }
