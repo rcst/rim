@@ -1,0 +1,27 @@
+(load("mactex-utilities"), load("alt-display.mac"));
+
+define_alt_display(twod_display(x),
+        block([alt_display1d:false,alt_display2d:false,display2d:true],displa(x)))$
+define_alt_display(oned_display(x),
+        block([alt_display1d:false,alt_display2d:false,display2d:false],displa(x)))$
+define_alt_display(tex_display(x),
+	block([alt_display1d:false,alt_display2d:false,display2d:false],
+	printf(true,"~a~a~a","$$",tex1(?caddr(x)),"$$")))$
+define_alt_display(
+	mathml_display(x), 
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))));
+
+define_alt_display(multi_display_for_rim(x),
+  block([alt_display1d:false,alt_display2d:false,type:op(x)],
+    if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
+    else (
+    printf(true,"~&out;>>"),
+    printf(true,"~&tex;>>;~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
+    printf(true,"~&html;>>~%")    ,mathml_display(x) ,printf(true,"~&<<html;~%"),
+    printf(true,"~&lin;>>~%")     ,oned_display(x)   ,printf(true,"~&<<lin;~%"),
+    printf(true,"~&two>>;~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
+    printf(true,"~&<<out;")
+    )));
+
+set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;")$
+set_alt_display(2, multi_display_for_rim)$
