@@ -1,10 +1,14 @@
 ---
 title: "knitr engine test page"
-output: pdf_document
+output: 
+   pdf_document:
+     keep_tex: true
 ---
 
 ```{r}
-maxima.engine.format("latex")
+maxima.options(engine.format = "latex", 
+	       inline.format = "inline", 
+	       inline.label = FALSE)
 ```
 
 ```{maxima}
@@ -17,6 +21,9 @@ assume(R > 0);
 'L = L;
 'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
 ```
+
+This is an inline test: `r maxima.inline("'L = L;")`.
+
 
 ```{maxima}
 sqrt(3/4);

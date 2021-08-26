@@ -21,18 +21,14 @@
 #> [1] "_PACKAGE"
 
 maxima.env <- new.env()
-maxima.env$format <- "linear"
-maxima.env$engine.format <- "linear"
-maxima.env$display <- "maxima-init-lin"
-maxima.env$ref.label <- TRUE 
-maxima.env$engine.reflabels <- TRUE 
 
 #' @describeIn rim-package (re-)starts Maxima.
 #' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
   maxima.env$maxima$start(restart) 
-  maxima.env$format <- "linear"
+  maxima.options(format = "linear")
+  maxima.options(label = TRUE)
 }
 
 #' @describeIn rim-package Quits Maxima.
@@ -46,9 +42,7 @@ maxima.stop <- function() {
 #' @seealso \code{\link{maxima.engine}}
 #' @export
 maxima.get <- function(command) {
-  m <- maxima.env$maxima$get(command) 
-  attr(m, "format") <- maxima.getformat()
-  return(m)
+  return(maxima.env$maxima$get(command))
 }
 
 #' @describeIn rim-package A wrapper to load a Maxima module named by \code{module}
@@ -64,27 +58,9 @@ maxima.load <- function(module) {
 #' @param keystring A character vector containing a search term.
 #' @export
 maxima.apropos <- function(keystring) {
-  m <- maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")) 
-  attr(m, "format") <- maxima.getformat()
-  return(m)
+  return(maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")))
 }
 
-
-#' @describeIn rim-package Sets the format of the output string from Maxima.
-#' @param format A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".
-#' @export
-maxima.setformat <- function(format = "linear") {
-  if(!is.character(format))
-    stop("Invalid input: expected character vector")
-
-  maxima.env$format <- switch_format(maxima.env$maxima, format)
-}
-
-#' @describeIn rim-package Returns the currently set format as a character vector
-#' @export
-maxima.getformat <- function() {
-  maxima.env$format
-}
 
 #' @describeIn rim-package Returns the version number of Maxima that is used
 #' @export
@@ -112,9 +88,15 @@ iprint <- function(x) {
 #' @param ... Additional arguments
 #' @method print maxima
 #' @export
-print.maxima <- function(x, ...) {
-  if(attr(x, "format") != "text2d") 
-    cat(paste0("(", attr(x, "output.label"), ") ", x, "\n"))
-  else
-    cat(paste0(x, "\n"))
+print.maxima <- function(x) {
+  switch(maxima.options$label + 1,
+	 {
+	   cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	   invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	 },
+	 {
+	   cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
+	   invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	 }
+  )
 }

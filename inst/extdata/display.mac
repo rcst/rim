@@ -6,20 +6,34 @@ define_alt_display(oned_display(x),
         block([alt_display1d:false,alt_display2d:false,display2d:false],displa(x)))$
 define_alt_display(tex_display(x),
 	block([alt_display1d:false,alt_display2d:false,display2d:false],
-	printf(true,"~a~a~a","$$",tex1(?caddr(x)),"$$")))$
+	printf(true,"~a~a~a","$$",tex1(x),"$$")))$
+define_alt_display(tin_display(x),
+	block([alt_display1d:false,alt_display2d:false,display2d:false],
+	printf(true,"~a~a~a","$",tex1(x),"$")))$
 define_alt_display(
 	mathml_display(x), 
-	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))));
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(x)));
 
 define_alt_display(multi_display_for_rim(x),
   block([alt_display1d:false,alt_display2d:false,type:op(x)],
     if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
     else (
     printf(true,"~&out;>>"),
+    printf(true,"~&lab;>>~%~a~%<<lab;", first(x)),
+    printf(true,"~&wtl;>>"),
     printf(true,"~&tex;>>;~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&html;>>~%")    ,mathml_display(x) ,printf(true,"~&<<html;~%"),
+    printf(true,"~&tin;>>;~%")    ,tin_display(x)    ,printf(true,"~&<<tin;~%"),
+    printf(true,"~&htm;>>~%")    ,mathml_display(x) ,printf(true,"~&<<htm;~%"),
     printf(true,"~&lin;>>~%")     ,oned_display(x)   ,printf(true,"~&<<lin;~%"),
-    printf(true,"~&two>>;~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
+    printf(true,"~&two;>>~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
+    printf(true,"~&<<wtl;"),
+    printf(true,"~&wol;>>"),
+    printf(true,"~&tex;>>;~%")    ,tex_display(?caddr(x))    ,printf(true,"~&<<tex;~%"),
+    printf(true,"~&tin;>>;~%")    ,tin_display(?caddr(x))    ,printf(true,"~&<<tin;~%"),
+    printf(true,"~&htm;>>~%")    ,mathml_display(?caddr(x)) ,printf(true,"~&<<htm;~%"),
+    printf(true,"~&lin;>>~%")     ,oned_display(?caddr(x))   ,printf(true,"~&<<lin;~%"),
+    printf(true,"~&two;>>~%")     ,twod_display(?caddr(x))   ,printf(true,"~&<<two;~%"),
+    printf(true,"~&<<wol;"),
     printf(true,"~&<<out;")
     )));
 

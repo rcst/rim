@@ -9,8 +9,6 @@
 \alias{maxima.get}
 \alias{maxima.load}
 \alias{maxima.apropos}
-\alias{maxima.setformat}
-\alias{maxima.getformat}
 \alias{maxima.version}
 \alias{maxima.isInstalled}
 \alias{iprint}
@@ -27,17 +25,13 @@ maxima.load(module)
 
 maxima.apropos(keystring)
 
-maxima.setformat(format = "linear")
-
-maxima.getformat()
-
 maxima.version()
 
 maxima.isInstalled()
 
 iprint(x)
 
-\method{print}{maxima}(x, ...)
+\method{print}{maxima}(x)
 }
 \arguments{
 \item{restart}{If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.}
@@ -47,8 +41,6 @@ iprint(x)
 \item{module}{A character vector naming the maxima module to be loaded.}
 
 \item{keystring}{A character vector containing a search term.}
-
-\item{format}{A character vector naming the output display format. Can be one of "linear" (default), "text2d", "latex" (i.e. $$...$$), "mathml".}
 
 \item{x}{S3 object of class "maxima"}
 
@@ -78,10 +70,6 @@ To send a single command to Maxima and receive the corresponding output use \cod
 \item \code{maxima.load}: A wrapper to load a Maxima module named by \code{module}
 
 \item \code{maxima.apropos}: A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
-
-\item \code{maxima.setformat}: Sets the format of the output string from Maxima.
-
-\item \code{maxima.getformat}: Returns the currently set format as a character vector
 
 \item \code{maxima.version}: Returns the version number of Maxima that is used
 
