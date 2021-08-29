@@ -88,7 +88,7 @@ Useful links:
 }
 
 
-\code{\link{maxima.engine}}
+\code{\link{maxima.engine}}, \code{\link{maxima.options}}
 }
 \author{
 \strong{Maintainer}: Eric Stemmler \email{stemmler.eric@gmail.com}

@@ -39,7 +39,7 @@ maxima.stop <- function() {
 
 #' @describeIn rim-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 #' @param command A character vector containing the maxima command.
-#' @seealso \code{\link{maxima.engine}}
+#' @seealso \code{\link{maxima.engine}}, \code{\link{maxima.options}}
 #' @export
 maxima.get <- function(command) {
   return(maxima.env$maxima$get(command))

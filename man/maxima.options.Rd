@@ -13,14 +13,21 @@ maxima.options(
 )
 }
 \arguments{
-\item{format}{Character vector of length 1.}
+\item{format}{Character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of "linear", "ascii", "latex" or "mathml".}
 
-\item{engine.format}{...}
+\item{engine.format}{Same as option \code{format}, but for outputs in RMarkdown documents.}
 
-\item{inline.format}{...}
+\item{inline.format}{Character vector of length 1 setting the output format for \code{maxima.inline()}, for knitting outputs inline into RMarkdown documents. Can be one of "linear", "latex" or "mathml". Note: Not "ascii".}
 
-\item{label}{...}
+\item{label}{Logical of length 1, whether output reference labels should be printed for returned S3 objects from \code{maxima.get()} (TRUE, default), or not (FALSE).}
+
+\item{engine.label}{Same as \code{label}, but for outputs in RMarkdown documents.}
+
+\item{inline.label}{Same as \code{label}, but for inline outputs in RMarkdown documents.}
 }
 \description{
-Function for globally setting various options.
+Function for globally setting and retrieving options.
+}
+\details{
+To print out a table of available options, current settings and a description simply print the function object (without parentheses), i.e. \code{maxima.options} or \code{print(maxima.options)}.
 }

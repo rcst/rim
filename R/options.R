@@ -1,11 +1,15 @@
 #' maxima.options
 #'
-#' Function for globally setting various options.
+#' Function for globally setting and retrieving options.
 #'
-#' @param format Character vector of length 1.
-#' @param engine.format ...
-#' @param inline.format ...
-#' @param label ...
+#' To print out a table of available options, current settings and a description simply print the function object (without parentheses), i.e. \code{maxima.options} or \code{print(maxima.options)}.
+#'
+#' @param format Character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of "linear", "ascii", "latex" or "mathml".
+#' @param engine.format Same as option \code{format}, but for outputs in RMarkdown documents.
+#' @param inline.format Character vector of length 1 setting the output format for \code{maxima.inline()}, for knitting outputs inline into RMarkdown documents. Can be one of "linear", "latex" or "mathml". Note: Not "ascii".
+#' @param label Logical of length 1, whether output reference labels should be printed for returned S3 objects from \code{maxima.get()} (TRUE, default), or not (FALSE).
+#' @param engine.label Same as \code{label}, but for outputs in RMarkdown documents.
+#' @param inline.label Same as \code{label}, but for inline outputs in RMarkdown documents.
 #'
 #' @import GlobalOptions
 #' @export

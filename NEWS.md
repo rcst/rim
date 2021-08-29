@@ -1,3 +1,15 @@
+# rim 0.5.0
+## Minor
+- Restructured the return type of the get function: Instead of a character string, now a list is returned storing every outputformat of the result including both with and without reference labels.
+- Added inline output function to be used when knitting RMarkdown documents.
+- Added a global option handling function `maxima.options()` and removed individual option setting functions `maxima.setformat()`, `maxima.engine.format()` and friends
+
+## Modifications
+- Removed some unused utility functions from code
+- Removed C++17 compiler flag
+- Improved documentation
+- Updated heuristics for catching warnings and errors
+
 # rim 0.4.1
 ## Modifications
 - fixed issue #16. code chunks that contain commands spanning multiple lines are now printed as-is (except for empty lines, which are removed) with the preceding input reference label 

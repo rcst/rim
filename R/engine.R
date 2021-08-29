@@ -1,11 +1,11 @@
 # utils::globalVariables(c("engine", "engine.format", "engine.reflabels", "mx"))
 #' knitr maxima engine
 #'
-#' An R-function that is registered as a knitr engine when package \code{rim} is attached, i.e. \code{library(rim)}. 
+#' Functions to process Maxima code chunks by \code{knitr}.
 #'
-#' \code{maxima.engine} is called by \code{knit()} to evaluate maxima code chunks. When called upon the first code chunk of a document it runs Maxima in the in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (using e.g. Maxima reference labels).  
+#' Upon attachement, i.e. \code{library(rim)} function \code{maxima.engine} is registered as a \code{knitr} engine. Thus, \code{maxima.engine()} is called by \code{knit()} to evaluate Maxima code chunks. When called upon the first code chunk of a document it starts Maxima in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (e.g. by using Maxima reference labels). \code{maxima.options(engine.format = ..., engine.label = ...)} configures the output format and whether or not output reference labels should be printed.
 #'
-#' In addition, this function sets up Maxima specific output and chunk hooks to be used via chunk options.
+#' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the RMarkdown file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
 #' @param options Named \code{list} of knitr options. Currently there are no maxima specific chunk options. To change the output format of the maxima engine set the variable \code{maxima.engine.format} to either "linear" (default), "latex", "mathml" or "text2d".
 #' 
@@ -75,8 +75,8 @@ engine_print <- function(x){
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.
-#' @param command Character vector of length 1 containing the maxima command to be executed
-#' @return Character string of length 1 containing the maxima result printed according options set by \code{maxima.options()}
+#' @param command Character vector of length 1 containing the Maxima command to be executed
+#' @return Character string of length 1 containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}
 #' @export
 maxima.inline <- function(command) {
   maxima.engine.start()
@@ -86,16 +86,3 @@ maxima.inline <- function(command) {
 	 paste0(c(x[["wol"]][[maxima.options$inline.format]], ""), collapse = "\n"),
 	 paste0(c(x[["wtl"]][[maxima.options$inline.format]], ""), collapse = "\n"))
 }
-
-
-# #' @describeIn maxima.engine Sets the global option of whether reference labels of maxima results should be printed (TRUE) or not (FALSE). If not provided  
-# #' @param label Character vector of length 1
-# maxima.engine.label <- function(label) {
-#   if(missing(label)) {
-#     return(maxima.env$engine.label)
-#   }
-#   else {
-#     stopifnot(is.logical(label) && length(label) == 1L)
-#     return(maxima.env$engine.label <- label)
-#   }
-# }
