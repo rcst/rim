@@ -12,8 +12,8 @@ test_that("maxima.apropos returns exact result", {
   expect_true(!attr(to, "suppressed"))
 
   expect_named(to, expected = c("wtl", "wol"))
-  expect_named(to$wtl, expected = c("linear", "ascii", "latex", "mathml"))
-  expect_named(to$wol, expected = c("linear", "ascii", "latex", "mathml"))
+  expect_named(to$wtl, expected = c("linear", "ascii", "latex", "inline", "mathml"))
+  expect_named(to$wol, expected = c("linear", "ascii", "latex", "inline", "mathml"))
 
   expect_length(to$wtl$linear, 25L)
   expect_length(to$wtl$ascii, 22L)

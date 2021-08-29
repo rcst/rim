@@ -89,14 +89,16 @@ iprint <- function(x) {
 #' @method print maxima
 #' @export
 print.maxima <- function(x) {
-  switch(maxima.options$label + 1,
-	 {
-	   cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	   invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	 },
-	 {
-	   cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
-	   invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	 }
-  )
+  if(!attr(x, "suppressed")) {
+    switch(maxima.options$label + 1,
+	   {
+	     cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	   },
+	   {
+	     cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
+	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	   }
+    )
+  }
 }

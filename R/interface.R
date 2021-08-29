@@ -155,21 +155,13 @@ Reply <- R6::R6Class("Reply",
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
 	      x = private$prompt))
   },
-  checkMaximaWarning = function() {
-    any(grepl(pattern = "WARNING",
-	      x = private$betweens))
-  },
-  checkMaximaError = function() {
-    any(grepl(pattern = "^[[:space:]|[:print:]]{2,}$", 
-	      x = private$betweens))
-  },
   concatenateParts = function() {
     paste0(private$reply, collapse = "\n")
   },
   getPrompt = function() { 
     paste0(private$prompt, collapse = "\n")
   },
-  getBetweens = function() { 
+  getBetweens = function() {
     paste0(private$betweens, collapse = "\n")
   },
   getOuts = function() {
@@ -202,18 +194,23 @@ Reply <- R6::R6Class("Reply",
     result = function(value) {
       if(!missing(value))
 	stop("'result' is read-only") 
-      wtl <- extract("wtl;>>|<<wtl;", private$outs)
-      wol <- extract("wol;>>|<<wol;", private$outs)
-      return(list("wtl" = list("linear" = extract("lin;>>|<<lin;", wtl),
-			       "ascii" = extract("two;>>|<<two;", wtl),
-			       "latex" = extract("tex;>>|<<tex;", wtl),
-			       "inline" = extract("tin;>>|<<tin;", wtl),
-			       "mathml" = extract("htm;>>|<<htm;", wtl)),
-		  "wol" = list("linear" = extract("lin;>>|<<lin;", wol),
-			       "ascii" = extract("two;>>|<<two;", wol),
-			       "latex" = extract("tex;>>|<<tex;", wol),
-			       "inline" = extract("tin;>>|<<tin;", wol),
-			       "mathml" = extract("htm;>>|<<htm;", wol))))
+      if(self$suppressed){
+	return(list())
+      }
+      else {
+	wtl <- extract("wtl;>>|<<wtl;", private$outs)
+	wol <- extract("wol;>>|<<wol;", private$outs)
+	return(list("wtl" = list("linear" = extract("lin;>>|<<lin;", wtl),
+				 "ascii" = extract("two;>>|<<two;", wtl),
+				 "latex" = extract("tex;>>|<<tex;", wtl),
+				 "inline" = extract("tin;>>|<<tin;", wtl),
+				 "mathml" = extract("htm;>>|<<htm;", wtl)),
+		    "wol" = list("linear" = extract("lin;>>|<<lin;", wol),
+				 "ascii" = extract("two;>>|<<two;", wol),
+				 "latex" = extract("tex;>>|<<tex;", wol),
+				 "inline" = extract("tin;>>|<<tin;", wol),
+				 "mathml" = extract("htm;>>|<<htm;", wol))))
+      }
     })
 )
 
@@ -304,55 +301,43 @@ RMaxima <- R6::R6Class("RMaxima",
 
       private$crudeExecute(command)
 
+
       if(private$reply$is.empty()) {
 	if(private$reply$requireUser()) {
 	  return(regex(text = private$reply$getPrompt(), 
-		      pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
+		       pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
 	}
 
 	if(!private$reply$checkPrompt()) {
-	   stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
-	 				     replacement = "", 
-	 				     x = private$reply$getBetweens())))
+	  stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
+					  replacement = "", 
+					  x = private$reply$getBetweens())))
 	}
 
 	if(private$reply$isInterrupted()) {
 	  stop("Command execution was interrupted.")
 	}
 
-	if(private$reply$checkMaximaWarning()) {
-	  w <- gsub(pattern = "TEXT;>>|<<TEXT;", 
-		       replacement = "", 
-		       x = private$reply$getBetweens())
-	  warning(w)
-	  return(structure("",
-			   input.label = private$lastInputLabel,
-			   output.label = private$lastOutputLabel, 
-			   command = command, 
-			   suppressed = private$reply$suppressed,
-			   class = "maxima"
-			   ))
-	}
+	# conclusion: error
+	if(nchar(err <- private$reply$getBetweens())) {
+	     stop(err) 
+	 }
 
-	if(private$reply$checkMaximaError()) {
-	  stop(gsub(pattern = "TEXT;>>|<<TEXT;", 
-		    replacement = "", 
-		    x = private$reply$getBetweens())) 
-	}
-
-	return(structure("",
+	return(structure(private$reply$result,
 			 input.label = private$lastInputLabel,
-			 output.label = private$lastOutputLabel, 
-			 command = command, 
+			 output.label = private$lastOutputLabel,
+			 command = command,
 			 suppressed = private$reply$suppressed,
-			 class = "maxima"
-			 ))
+			 class = "maxima"))
       }
+
+      # forward any messages
+      if(nchar(private$reply$getBetweens()))
+	warning(private$reply$getBetweens())
 
       # validate output and return if valid
       if(!is.na(private$reply$getOutputLabel())) {
 	private$lastOutputLabel <- private$reply$getOutputLabel()
-	# return(private$reply$getResult())
 	return(structure(private$reply$result,
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
