@@ -150,6 +150,10 @@ Reply <- R6::R6Class("Reply",
   isInterrupted = function() {
     any(grepl(pattern = "Console interrupt|User break|Interactive interrupt", 
 	      x = private$betweens))
+  }, 
+  hasWarning = function() { 
+    any(grepl(pattern = "warning", ignore.case = TRUE, 
+	      x = private$betweens)) 
   },
   requireUser = function() {
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
@@ -301,7 +305,9 @@ RMaxima <- R6::R6Class("RMaxima",
 
       private$crudeExecute(command)
 
-
+      if(private$reply$hasWarning())
+	warning(private$reply$getBetweens())
+      
       if(private$reply$is.empty()) {
 	if(private$reply$requireUser()) {
 	  return(regex(text = private$reply$getPrompt(), 
@@ -317,12 +323,14 @@ RMaxima <- R6::R6Class("RMaxima",
 	if(private$reply$isInterrupted()) {
 	  stop("Command execution was interrupted.")
 	}
-
-	# conclusion: error
-	if(nchar(err <- private$reply$getBetweens())) {
+        
+	# logic: it's an error, if it's not definitely a warning
+	if(nchar(err <- private$reply$getBetweens()) && 
+	   !private$reply$hasWarning()) {
 	     stop(err) 
 	 }
 
+	# conclusion: output must have been suppressed
 	return(structure(private$reply$result,
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
@@ -331,8 +339,9 @@ RMaxima <- R6::R6Class("RMaxima",
 			 class = "maxima"))
       }
 
-      # forward any messages
-      if(nchar(private$reply$getBetweens()))
+      # forward any messages if no warning has been detected already
+      if(nchar(private$reply$getBetweens()) && 
+	 !private$reply$hasWarning())
 	warning(private$reply$getBetweens())
 
       # validate output and return if valid
@@ -362,15 +371,11 @@ RMaxima <- R6::R6Class("RMaxima",
       if(length(module) > 0 && nchar(module))
 	self$get(paste0("load(\"", module, "\")$")) 
     },
-    # loadInit = function(file) {
-    #   if(length(file) > 0 && nchar(file) > 0) {
-    #     self$get(paste0("(load(\"", private$utilsDir, "/", file, "\"),",
-    #     		"linnum:linenum-1, %);"))
-    #   }
-
-    #   # return NULL
-    #   invisible()
-    # },
+    get_stuck = function(command) {
+      # executes command without advancing reference labels
+      if(length(command) && nchar(command))
+	self$get(paste0("(", command, "linenum:linenum-1, %)$"))
+    },
     getPort = function() {
       if(private$running) 
 	return(private$port)
