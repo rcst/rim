@@ -10,14 +10,14 @@ maxima.engine(options)
 maxima.inline(command)
 }
 \arguments{
-\item{options}{Named \code{list} of knitr options. Currently there are no maxima specific chunk options. To change the output format of the maxima engine set the variable \code{maxima.engine.format} to either "linear" (default), "latex", "mathml" or "text2d".}
+\item{options}{named \code{list} of knitr options. Currently there are no maxima specific chunk options. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either "linear" (default), "ascii", "latex" or "mathml".}
 
-\item{command}{Character vector of length 1 containing the Maxima command to be executed}
+\item{command}{character string containing the Maxima command to be executed.}
 }
 \value{
 This functions prints the resulting output from maxima together with it's code
 
-Character string of length 1 containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}
+character string containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}.
 }
 \description{
 Functions to process Maxima code chunks by \code{knitr}.
