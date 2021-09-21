@@ -6,9 +6,9 @@
 #' @details
 #' Note: You need to install the Maxima software separately in order to make use of this package. 
 #' 
-#' Maxima is set up automatically on attachment via \code{library(rim)} and automatically started when a command is send (if it isn't running already) using \code{maxima.get()}. Using \code{maxima.start()} and \code{maxima.stop()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history.
+#' Maxima is set up automatically on attachment via \code{library(rim)} and automatically started when a command is send (if it isn't running already) using \code{\link{maxima.get}()}. Using \code{\link{maxima.start}()} and \code{\link{maxima.stop}()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history.
 #'
-#' To send a single command to Maxima and receive the corresponding output use \code{maxima.get()}. The output is returned in the format currently set (\code{maxima.getformat()}). The format can be changed using \code{maxima.setformat())}.
+#' To send a single command to Maxima and receive the corresponding output use \code{\link{maxima.get}()}. This function returns a S3 object of class "maxima". The output is printed by printing the object and will be printed in a format currently set by \code{\link{maxima.options}(format)}. The output format can be changed by setting it, e.g. \code{\link{maxima.options}(format = "ascii")}. Output labels are printed according to option \code{\link{maxima.options}(label)}.
 #'
 #' @import methods
 #' @import digest 
@@ -23,7 +23,7 @@
 maxima.env <- new.env()
 
 #' @describeIn rim-package (re-)starts Maxima.
-#' @param restart If FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
+#' @param restart if FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 maxima.start <- function(restart = FALSE) { 
   maxima.env$maxima$start(restart) 
@@ -38,7 +38,7 @@ maxima.stop <- function() {
 }
 
 #' @describeIn rim-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
-#' @param command A character vector containing the maxima command.
+#' @param command character string containing the Maxima command.
 #' @seealso \code{\link{maxima.engine}}, \code{\link{maxima.options}}
 #' @export
 maxima.get <- function(command) {
@@ -46,16 +46,15 @@ maxima.get <- function(command) {
 }
 
 #' @describeIn rim-package A wrapper to load a Maxima module named by \code{module}
-#' @param module A character vector naming the maxima module to be loaded.
-#' @return Invisibly returns NULL.
+#' @param module character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.
+#' @return invisibly returns NULL.
 #' @export
 maxima.load <- function(module) {
   maxima.env$maxima$loadModule(module) 
-  invisible(NULL)
 }
 
 #' @describeIn rim-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
-#' @param keystring A character vector containing a search term.
+#' @param keystring character vector containing a search term.
 #' @export
 maxima.apropos <- function(keystring) {
   return(maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")))
@@ -74,21 +73,36 @@ maxima.isInstalled <- function() {
   maxima.env$maxima$isInstalled()
 }
 
-#' @describeIn rim-package Prints the input command preceding with the corresponding input reference label of an maxima S3-object returned by maxima.get()
+#' @describeIn rim-package Prints the input command of an maxima S3-object returned by \code{\link{maxima.get}()}
+#' @param x S3-Object of class "maxima", the returned type of object from \code{maxima.get()}.
+#' @return Character vector of length 1 of the input command. Depending on whether option "label" is set to TRUE, the corresponding input reference label is printed preceding the input command.
 #' @export
 iprint <- function(x) {
   if(class(x) != "maxima")
     stop("x is not a maxima object")
-
-  paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
+  # cll <- deparse(sys.call())
+  # cll <- deparse(sys.calls()[[sys.parent()]])
+  if(exists("mx", maxima.env)) {
+  # if(grepl("^engine\\(options\\)$", cll)) {
+    if(maxima.options$engine.label) 
+      paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
+    else
+      paste0(attr(x, "command"))
+  }
+  else {
+    if(maxima.options$label) 
+      paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
+    else
+      paste0(attr(x, "command"))
+  }
 }
 
-#' @describeIn rim-package Prints the maxima output part of an S3 object returned by maxima.get() 
+#' @describeIn rim-package Prints the maxima output part of an S3 object returned by \code{\link{maxima.get}()} 
 #' @param x S3 object of class "maxima"
-#' @param ... Additional arguments
+#' @param ... other arguments (ignored).
 #' @method print maxima
 #' @export
-print.maxima <- function(x) {
+print.maxima <- function(x, ...) {
   if(!attr(x, "suppressed")) {
     switch(maxima.options$label + 1,
 	   {

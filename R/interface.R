@@ -152,8 +152,7 @@ Reply <- R6::R6Class("Reply",
 	      x = private$betweens))
   }, 
   hasWarning = function() { 
-    any(grepl(pattern = "warning", ignore.case = TRUE, 
-	      x = private$betweens)) 
+    any(grepl(pattern = "warning|converting float", ignore.case = TRUE, x = private$betweens)) 
   },
   requireUser = function() {
     any(grepl(pattern = "TEXT;>>|<<TEXT;", 
@@ -342,7 +341,7 @@ RMaxima <- R6::R6Class("RMaxima",
       # forward any messages if no warning has been detected already
       if(nchar(private$reply$getBetweens()) && 
 	 !private$reply$hasWarning())
-	warning(private$reply$getBetweens())
+	message(private$reply$getBetweens())
 
       # validate output and return if valid
       if(!is.na(private$reply$getOutputLabel())) {
