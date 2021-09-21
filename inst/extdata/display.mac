@@ -6,7 +6,7 @@ define_alt_display(oned_display(x),
         block([alt_display1d:false,alt_display2d:false,display2d:false],displa(x)))$
 define_alt_display(tex_display(x),
 	block([alt_display1d:false,alt_display2d:false,display2d:false],
-	printf(true,"~a~a~a","$$",tex1(x),"$$")))$
+	printf(true,"~a~a~a",get_tex_environment_default()[1],tex1(x),get_tex_environment_default()[2])))$
 define_alt_display(tin_display(x),
 	block([alt_display1d:false,alt_display2d:false,display2d:false],
 	printf(true,"~a~a~a","$",tex1(x),"$")))$
