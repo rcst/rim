@@ -1,8 +1,8 @@
 ---
 title: "knitr engine test page"
 output: 
-   pdf_document:
-     keep_tex: true
+  pdf_document: 
+    keep_tex: true
 ---
 
 maxima.options(engine.format = "latex", 
