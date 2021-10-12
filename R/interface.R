@@ -223,6 +223,7 @@ RMaxima <- R6::R6Class("RMaxima",
 			  workDir, 
 			  utilsDir, 
 			  display = "display", 
+			  preload,
 			  port = 27182) {
 
       if(missing(maximaPath))
@@ -234,6 +235,11 @@ RMaxima <- R6::R6Class("RMaxima",
 	private$workDir = getwd()
       else
 	private$workDir
+
+      if(!missing(preload))
+	private$preload <- paste0("-p ", preload, ".lisp")
+      else
+	private$preload <- ""
 
       if(missing(utilsDir)) {
 	private$utilsDir <- dirname(system.file("extdata", 
@@ -248,6 +254,11 @@ RMaxima <- R6::R6Class("RMaxima",
       }
       else
 	private$utilsDir <- utilsDir
+
+      if(!missing(preload))
+	private$preload <- paste0("-p ", private$utilsDir, "/", preload, ".lisp")
+      else
+	private$preload <- ""
 
       private$display <- display
       private$port <- port
@@ -400,6 +411,7 @@ RMaxima <- R6::R6Class("RMaxima",
     utilsDir = character(),
     maximaPath = NA_character_,
     display = character(),
+    preload = character(),
     reply = NULL,
     running = FALSE,
     lastPromptID = integer(),
@@ -423,7 +435,8 @@ RMaxima <- R6::R6Class("RMaxima",
 	      c(# "-q", 
 		paste0("-s ", private$port), 
 		paste0("--userdir=", private$utilsDir), 
-		paste0("--init=", private$display)), 
+		paste0("--init=", private$display),
+		paste0(private$preload)), 
 	      wait = FALSE, 
 	      stdout = FALSE, 
 	      stderr = stdout())

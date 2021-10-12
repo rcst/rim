@@ -1,6 +1,1 @@
-load("mactex-utilities")$
-load("alt-display.mac")$
-set_prompt('prefix, "prompt;>>")$
-set_prompt('suffix, "<<prompt;")$
-my_display(x):=(?princ("out;>>"), printf(true, "~a", x), ?princ("<<out;"))$
-set_alt_display(2, my_display)$
+x: 3;

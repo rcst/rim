@@ -1,6 +1,7 @@
 if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) { 
   rmarkdown::render(input = "docs/index.Rmd", output_file = "index.html") 
   rmarkdown::render(input = "README.Rmd", output_file = "README.md") 
+
   Rcpp::compileAttributes() 
   devtools::document()
   devtools::load_all()
@@ -18,9 +19,6 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   options(dratRepo = "/home/eric/documents/R/packages/drat/")
   drat::insertPackage(file = "../builds/rim/source/rim_0.4.1.tar.gz",  
 		      action = "archive", commit = TRUE)
-
-#   drat::insertPackage(file = "../builds/rim/win/devel/rim_0.4.0.zip", 
-# 		      repodir = "../drat", action = "archive")
 
   a <- drat::insertPackage(file = "../builds/rim/win/release/rim_0.4.0.zip", 
 			   action = "archive",

@@ -50,6 +50,12 @@ variance(dist) := EX2(dist) - mean(dist)^2$
 mgf(dist) := area(dist*%e^(x*t))$
 ```
 
+# Plots
+
+```{maxima, fig.cap = "figure caption"}
+plot2d(sin(x), [x, -5, 5]);
+```
+
 # Normal Distribution
 
 ```{maxima}

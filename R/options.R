@@ -2,17 +2,27 @@
 #'
 #' Function for globally setting and retrieving options.
 #'
-#' To print out a table of available options, current settings and a description simply print the function object (without parentheses), i.e. \code{maxima.options} or \code{print(maxima.options)}.
-#'
-#' @param format Character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of "linear", "ascii", "latex" or "mathml".
-#' @param engine.format Same as option \code{format}, but for outputs in RMarkdown documents.
-#' @param inline.format Character vector of length 1 setting the output format for \code{maxima.inline()}, for knitting outputs inline into RMarkdown documents. Can be one of "linear", "latex" or "mathml". Note: Not "ascii".
-#' @param label Logical of length 1, whether output reference labels should be printed for returned S3 objects from \code{maxima.get()} (TRUE, default), or not (FALSE).
-#' @param engine.label Same as \code{label}, but for outputs in RMarkdown documents.
-#' @param inline.label Same as \code{label}, but for inline outputs in RMarkdown documents.
+#' \describe{
+#'   \item{\code{format}: }{character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of "linear", "ascii", "latex" or "mathml".}
+#'   \item{\code{engine.format}: }{same as option \code{format}, but for outputs in RMarkdown documents.}
+#'   \item{\code{inline.format}: }{character string setting the output format for \code{maxima.inline()}, for knitting outputs inline into RMarkdown documents. Can be one of "linear", "latex" or "mathml", but \emph{not} "ascii".}
+#'   \item{\code{label}: }{logical of length 1, whether reference labels should be printed for returned S3 objects from \code{\link{maxima.get}()} (TRUE, default), or not (FALSE). This also applies to printing of input commands using \code{\link{iprint}()}.}
+#'   \item{\code{engine.label}: }{same as \code{label}, but for outputs in RMarkdown documents.}
+#'   \item{\code{inline.label}: }{same as \code{label}, but for inline outputs in RMarkdown documents.}
+#' }
+# #'
+# #' To print a table of available options, current settings and a description simply print the function object (without parentheses), i.e. \code{maxima.options} or \code{print(maxima.options)}.
+# #'
+#' @param ... options to be accessed by using \code{name = value}. Options can be added by setting \code{ADD = TRUE}, but only those mentioned below will be used my rim. 
+#' @param RESET logical of length 1, whether to reset all options to default values.
+#' @param READ.ONLY logical of length 1, can be used to output all options that are read-only.
+#' @param LOCAL logical of length 1, to output all options that are defined locally. 
+#' @param ADD logical of length 1, whether to add the specified option in \code{...} (TRUE), default is FALSE. 
+# 
 #'
 #' @import GlobalOptions
 #' @export
+maxima.options = function(..., RESET = FALSE, READ.ONLY = NULL, LOCAL = FALSE, ADD = FALSE) {}
 maxima.options = set_opt(
   format = list(.value = "linear",
 		.length = 1L,
@@ -51,7 +61,7 @@ maxima.options = set_opt(
 	       .length = 1L,
 	       .class = "logical",
 	       .read.only = FALSE,
-	       .description = "Sets whether a maxima reference output label should be printed  when printing a maxima return object."),
+	       .description = "Sets whether a maxima reference label should be printed  when printing a maxima return object."),
   engine.label = list(.value = TRUE,
 		      .length = 1L,
 		      .class = "logical",
@@ -65,5 +75,11 @@ maxima.options = set_opt(
   display = list(.value = "display",
 		 .length = 1L,
 		 .class = "character",
-		 .read.only = TRUE)
-)
+		 .private = TRUE, 
+		 .visible = FALSE),
+  preload = list(.value = "plot-knitr",
+		 .length = 1L,
+		 .class = "character",
+		 .private = TRUE, 
+		 .visible = FALSE,
+		 .description = "Specifies a file name that will be loaded after initialization to overwrite plotting function to include graphics into RMarkdown documents."))
