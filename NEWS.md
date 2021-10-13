@@ -1,14 +1,18 @@
 # rim 0.5.0
 ## Minor
-- Restructured the return type of the get function: Instead of a character string, now a list is returned storing every outputformat of the result including both with and without reference labels.
+- knitr-engine now supports plot2d() and plot3d() command, depending on the output format (PDF or HTML), plots are saved as PDF or PNG respectively
 - Added inline output function to be used when knitting RMarkdown documents.
+- Restructured the return type of the get function: Instead of a character string, now a list is returned storing every outputformat of the result including both with and without reference labels.
 - Added a global option handling function `maxima.options()` and removed individual option setting functions `maxima.setformat()`, `maxima.engine.format()` and friends
+- Whether reference labels are printed or not when knitting a RMarkdown document can now be controlled by setting `maxima.options(engine.label)`
 
 ## Modifications
 - Removed some unused utility functions from code
-- Removed C++17 compiler flag
+- Removed unnecessary C++17 compiler flag
 - Improved documentation
 - Updated heuristics for catching warnings and errors
+- Improved typesetting of output labels when knitting RMarkdown documents 
+- Improved warning/ error handling heuristics (fixing issue #20)
 
 # rim 0.4.1
 ## Modifications

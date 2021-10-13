@@ -52,8 +52,16 @@ mgf(dist) := area(dist*%e^(x*t))$
 
 # Plots
 
-```{maxima, fig.cap = "figure caption"}
-plot2d(sin(x), [x, -5, 5]);
+```{maxima}
+r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
+plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
+```
+
+```{maxima, fig.cap = "figure caption: plot3d()", out.width = "12cm", fig.align = "center"}
+plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
+       [palette, [gradient, red, orange, yellow, green]],
+       color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
+       [color_bar_tics, 4]);
 ```
 
 # Normal Distribution

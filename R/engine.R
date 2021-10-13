@@ -21,12 +21,13 @@ maxima.engine <- function(options) {
   ll <- list()
   ccode <- character()
   for(i in 1:length(cmds)) {
-    tt <- maxima.env$mx$get(paste0(code[cmds[[i]]], collapse = "\n"))
+    pc <- paste0(code[cmds[[i]]], collapse = "\n")
+    tt <- maxima.env$mx$get(pc)
     ccode <- append(ccode, iprint(tt))
 
     if(!attr(tt, "suppressed")) {
       ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-      if(grepl(pattern = "^plot2d\\([[:print:]]+\\);", x = code[cmds[[i]]])[1]) {
+      if(grepl(pattern = "^plot[2|3]d\\([[:print:]|[:space:]]+\\);", x = pc)) {
 	pm <- regexec(text = tt$wol$ascii, 
 		      pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.pdf)\\]")
 	pm <- unlist(regmatches(m = pm, 
