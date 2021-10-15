@@ -28,8 +28,7 @@ maxima.engine <- function(options) {
     if(!attr(tt, "suppressed")) {
       ll <- append(ll, list(structure(list(src = ccode), class = "source")))
       if(grepl(pattern = "^plot[2|3]d\\([[:print:]|[:space:]]+\\);", x = pc)) {
-	pm <- regexec(text = tt$wol$ascii, 
-		      pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.pdf)\\]")
+	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
 	pm <- unlist(regmatches(m = pm, 
 				x = tt$wol$ascii))[2]
 	ll <- append(ll, list(knitr::include_graphics(pm)))
@@ -53,10 +52,12 @@ maxima.engine <- function(options) {
 
 maxima.engine.start <- function() {
   if(!exists("mx", envir = maxima.env)) { 
+#     maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
+# 				 preload = maxima.options$preload)
     maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
-				 preload = maxima.options$preload)
-    maxima.env$engine.reflabels <- TRUE
+				 preload = maxima.options$preload[knitr::is_html_output()+1])
   }
+  
 }
 
 maxima.engine.stop <- function() { 

@@ -36,51 +36,60 @@ This is an inline test: $L=\sqrt{1-\frac{1}{R^2}}$
 
 (%i12) area(dist) := integrate(dist, x, minf, inf)$(%i13) mean(dist) := area(dist*x)$(%i14) EX2(dist) := area(dist*x^2)$(%i15) variance(dist) := EX2(dist) - mean(dist)^2$(%i16) mgf(dist) := area(dist*%e^(x*t))$
 
+# Plots
+
+(%i17) r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$(%i18) plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);./plot2d-95d531.pdf
+
+(%i19) plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
+       [palette, [gradient, red, orange, yellow, green]],
+       color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
+       [color_bar_tics, 4]);./plot3d-ea8c4c.pdf
+
 # Normal Distribution
 
-(%i17) normal(x) := 
+(%i20) normal(x) := 
       (2*%pi*sigma^2)^(-1/2) * 
-      exp(-(x-mu)^2/(2*sigma^2));$$\mathtt{(\textit{\%o}_{17})}\quad \textit{normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)$$
-(%i18) assume(sigma > 0)$(%i19) area(normal(x));$$\mathtt{(\textit{\%o}_{19})}\quad 1$$
-(%i20) mean(normal(x));$$\mathtt{(\textit{\%o}_{20})}\quad \mu$$
-(%i21) variance(normal(x));$$\mathtt{(\textit{\%o}_{21})}\quad \frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$
-(%i22) mgf(normal(x));$$\mathtt{(\textit{\%o}_{22})}\quad e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
+      exp(-(x-mu)^2/(2*sigma^2));$$\mathtt{(\textit{\%o}_{20})}\quad \textit{normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)$$
+(%i21) assume(sigma > 0)$(%i22) area(normal(x));$$\mathtt{(\textit{\%o}_{22})}\quad 1$$
+(%i23) mean(normal(x));$$\mathtt{(\textit{\%o}_{23})}\quad \mu$$
+(%i24) variance(normal(x));$$\mathtt{(\textit{\%o}_{24})}\quad \frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$
+(%i25) mgf(normal(x));$$\mathtt{(\textit{\%o}_{25})}\quad e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
 
 
 # Laplace Distribution
 
-(%i23) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);$$\mathtt{(\textit{\%o}_{23})}\quad \textit{laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)$$
-(%i24) load("abs_integrate")$(%i25) assume(b > 0)$(%i26) area(laplace(x));$$\mathtt{(\textit{\%o}_{26})}\quad 1$$
-(%i27) mean(laplace(x));$$\mathtt{(\textit{\%o}_{27})}\quad \mu$$
-(%i28) variance(laplace(x));$$\mathtt{(\textit{\%o}_{28})}\quad \frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2$$
+(%i26) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);$$\mathtt{(\textit{\%o}_{26})}\quad \textit{laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)$$
+(%i27) load("abs_integrate")$(%i28) assume(b > 0)$(%i29) area(laplace(x));$$\mathtt{(\textit{\%o}_{29})}\quad 1$$
+(%i30) mean(laplace(x));$$\mathtt{(\textit{\%o}_{30})}\quad \mu$$
+(%i31) variance(laplace(x));$$\mathtt{(\textit{\%o}_{31})}\quad \frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2$$
 
 
 # Exponential Distribution
 
-(%i29) expo(x) := unit_step(x) * lambda * exp(-lambda * x);$$\mathtt{(\textit{\%o}_{29})}\quad \textit{expo}\left(x\right):=\textit{unit\_step}\left(x\right)\,\lambda\,\exp \left(\left(-\lambda\right)\,x\right)$$
-(%i30) assume(lambda > 0)$(%i31) area(expo(x));$$\mathtt{(\textit{\%o}_{31})}\quad 1$$
-(%i32) mean(expo(x));$$\mathtt{(\textit{\%o}_{32})}\quad \frac{1}{\lambda}$$
-(%i33) variance(expo(x));$$\mathtt{(\textit{\%o}_{33})}\quad \frac{1}{\lambda^2}$$
+(%i32) expo(x) := unit_step(x) * lambda * exp(-lambda * x);$$\mathtt{(\textit{\%o}_{32})}\quad \textit{expo}\left(x\right):=\textit{unit\_step}\left(x\right)\,\lambda\,\exp \left(\left(-\lambda\right)\,x\right)$$
+(%i33) assume(lambda > 0)$(%i34) area(expo(x));$$\mathtt{(\textit{\%o}_{34})}\quad 1$$
+(%i35) mean(expo(x));$$\mathtt{(\textit{\%o}_{35})}\quad \frac{1}{\lambda}$$
+(%i36) variance(expo(x));$$\mathtt{(\textit{\%o}_{36})}\quad \frac{1}{\lambda^2}$$
 
 
 # Matrices
 
-(%i34) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);$$\mathtt{(\textit{\%o}_{34})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}$$
-(%i35) transpose(m);$$\mathtt{(\textit{\%o}_{35})}\quad \begin{pmatrix}0 & 1 & 1 \\ 1 & 0 & 1 \\ a & 1 & 0 \\ \end{pmatrix}$$
-(%i36) determinant(m);$$\mathtt{(\textit{\%o}_{36})}\quad a+1$$
-(%i37) f: invert(m), detout;$$\mathtt{(\textit{\%o}_{37})}\quad \frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}$$
-(%i38) m . f;$$\mathtt{(\textit{\%o}_{38})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}\right)$$
-(%i39) expand(%);$$\mathtt{(\textit{\%o}_{39})}\quad \begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} & 0 & 0 \\ 0 & \frac{a}{a+1}+\frac{1}{a+1} & 0 \\ 0 & 0 & \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}$$
-(%i40) factor(%);$$\mathtt{(\textit{\%o}_{40})}\quad \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{pmatrix}$$
+(%i37) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);$$\mathtt{(\textit{\%o}_{37})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}$$
+(%i38) transpose(m);$$\mathtt{(\textit{\%o}_{38})}\quad \begin{pmatrix}0 & 1 & 1 \\ 1 & 0 & 1 \\ a & 1 & 0 \\ \end{pmatrix}$$
+(%i39) determinant(m);$$\mathtt{(\textit{\%o}_{39})}\quad a+1$$
+(%i40) f: invert(m), detout;$$\mathtt{(\textit{\%o}_{40})}\quad \frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}$$
+(%i41) m . f;$$\mathtt{(\textit{\%o}_{41})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}\right)$$
+(%i42) expand(%);$$\mathtt{(\textit{\%o}_{42})}\quad \begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} & 0 & 0 \\ 0 & \frac{a}{a+1}+\frac{1}{a+1} & 0 \\ 0 & 0 & \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}$$
+(%i43) factor(%);$$\mathtt{(\textit{\%o}_{43})}\quad \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{pmatrix}$$
 
 
 # If-then-else
 
-(%i41) x: 1234;$$\mathtt{(\textit{\%o}_{41})}\quad 1234$$
-(%i42) y: 2345;$$\mathtt{(\textit{\%o}_{42})}\quad 2345$$
+(%i44) x: 1234;$$\mathtt{(\textit{\%o}_{44})}\quad 1234$$
+(%i45) y: 2345;$$\mathtt{(\textit{\%o}_{45})}\quad 2345$$
 
 
-(%i43) if x > y
+(%i46) if x > y
   then x
-  else y;$$\mathtt{(\textit{\%o}_{43})}\quad 2345$$
+  else y;$$\mathtt{(\textit{\%o}_{46})}\quad 2345$$
 
