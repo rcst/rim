@@ -31,7 +31,9 @@ maxima.engine <- function(options) {
 	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
 	pm <- unlist(regmatches(m = pm, 
 				x = tt$wol$ascii))[2]
+	pm <- normalizePath(pm)
 	ll <- append(ll, list(knitr::include_graphics(pm)))
+	maxima.env$plots <- append(maxima.env$plots, pm)
       }
       else 
 	ll <- append(ll, engine_print(tt))
@@ -52,18 +54,19 @@ maxima.engine <- function(options) {
 
 maxima.engine.start <- function() {
   if(!exists("mx", envir = maxima.env)) { 
-#     maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
-# 				 preload = maxima.options$preload)
     maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
 				 preload = maxima.options$preload[knitr::is_html_output()+1])
+    maxima.env$plots <- character()
   }
   
 }
 
 maxima.engine.stop <- function() { 
   maxima.env$mx$stop()
-  rm(mx, 
-     envir = maxima.env) 
+  e <- sys.frame(which = 1)
+  do.call("on.exit", list(quote(file.remove(maxima.env$plots)), add = TRUE), envir = e)
+  do.call("on.exit", list(quote(rm(plots, envir = maxima.env)), add = TRUE), envir = e)
+  rm(mx, envir = maxima.env) 
 }
 
 last_label <- function(label = knitr::opts_current$get('label')) {
