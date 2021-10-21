@@ -25,3 +25,9 @@ rectify <- function(x, set = c("linear", "ascii", "latex", "mathml"), warn = TRU
     invisible(set[1])
   }
 }
+
+function.frame <- function(name) {
+  all <- sys.calls()
+  all <- lapply(FUN=deparse, X=all)
+  which(grepl(pattern=name, x = all))
+}

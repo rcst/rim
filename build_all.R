@@ -9,6 +9,10 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::build()
   devtools::check()
 
+  rmarkdown::render(input="inst/extdata/test.Rmd", 
+		    output_dir = "inst/extdata/", 
+		    output_file = "result.html")
+
   devtools::check_win_devel()
   devtools::check_win_oldrelease()
   devtools::check_win_release()

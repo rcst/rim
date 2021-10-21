@@ -21,7 +21,7 @@
     ;; Otherwise, append another argument for svg_file,
     ;; and then punt to built-in plot2d.
     (let*
-      ((nnn ($substring ($sha256sum ($sconcat "plot2d" ($simplode args))) 1 7))
+      ((nnn ($substring ($sha256sum ($sconcat "/plot2d" ($simplode args))) 1 7))
        (pdf-file ($sconcat $plot2d_output_folder "/plot2d-" nnn ".pdf"))
        (args-new (append args (list `((mlist) $pdf_file ,pdf-file)))))
       ;; (format t "plot2d: append pdf file ~s to arguments and call built-in plot2d.~%" pdf-file)

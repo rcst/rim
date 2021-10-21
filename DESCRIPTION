@@ -20,6 +20,7 @@ Imports:
     Rcpp,
     R6,
     knitr,
+    rmarkdown,
     stringr,
     digest,
     GlobalOptions

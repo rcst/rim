@@ -1,4 +1,4 @@
-utils::globalVariables(c("engine", "mx"))
+utils::globalVariables(c("engine", "mx", "plots"))
 #' knitr maxima engine
 #'
 #' Functions to process Maxima code chunks by \code{knitr}.
@@ -28,9 +28,9 @@ maxima.engine <- function(options) {
     if(!attr(tt, "suppressed")) {
       ll <- append(ll, list(structure(list(src = ccode), class = "source")))
       if(grepl(pattern = "^plot[2|3]d\\([[:print:]|[:space:]]+\\);", x = pc)) {
+	tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
 	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
-	pm <- unlist(regmatches(m = pm, 
-				x = tt$wol$ascii))[2]
+	pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
 	pm <- normalizePath(pm)
 	ll <- append(ll, list(knitr::include_graphics(pm)))
 	maxima.env$plots <- append(maxima.env$plots, pm)
@@ -63,9 +63,10 @@ maxima.engine.start <- function() {
 
 maxima.engine.stop <- function() { 
   maxima.env$mx$stop()
+  n <- function.frame("(render|knit)")[1]
   e <- sys.frame(which = 1)
-  do.call("on.exit", list(quote(file.remove(maxima.env$plots)), add = TRUE), envir = e)
-  do.call("on.exit", list(quote(rm(plots, envir = maxima.env)), add = TRUE), envir = e)
+  do.call("on.exit", list(quote(if(exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
+  do.call("on.exit", list(quote(if(exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
   rm(mx, envir = maxima.env) 
 }
 

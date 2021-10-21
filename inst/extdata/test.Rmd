@@ -1,8 +1,6 @@
 ---
 title: "knitr engine test page"
-output: 
-  pdf_document: 
-    keep_tex: true
+output: html_document
 ---
 
 ```{r}
@@ -52,17 +50,24 @@ mgf(dist) := area(dist*%e^(x*t))$
 
 # Plots
 
-```{maxima, fig.cap = "plot2d()", fig.align="center"}
+```{maxima, fig.cap = "plot2d()", fig.align="center", fig.show='hide'}
 r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
 plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
 ```
 
-```{maxima, fig.cap = "plot3d()", fig.align="center"}
+```{maxima, fig.cap = "plot3d()", fig.align="center", fig.show='hide'}
 plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [palette, [gradient, red, orange, yellow, green]],
        color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
        [color_bar_tics, 4]);
 ```
+
+```{r, warning=FALSE}
+pft <- list.files(pattern = "plot(2|3)d-[[:print:]]+\\.(png|pdf)", full.names = TRUE)
+digest(readLines(pft[1]), algo = "sha256")
+digest(readLines(pft[2]), algo = "sha256")
+```
+
 
 # Normal Distribution
 
