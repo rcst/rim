@@ -9,9 +9,18 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::build()
   devtools::check()
 
+  knit(input = "inst/extdata/test.Rmd", 
+       output = "inst/extdata/result.md", 
+       quiet = TRUE, 
+       envir = .GlobalEnv)
+
   rmarkdown::render(input="inst/extdata/test.Rmd", 
 		    output_dir = "inst/extdata/", 
 		    output_file = "result.html")
+  
+  rmarkdown::render(input="inst/extdata/test.Rmd", 
+		    output_dir = "inst/extdata/", 
+		    output_file = "test.html")
 
   devtools::check_win_devel()
   devtools::check_win_oldrelease()
@@ -38,4 +47,20 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   drat::updateRepo()
 
   detach("package:rim", unload = TRUE)
+
+
+  p1 <- readImage("../../nomnoml-test/test_a.png")
+  p2 <- readImage("../../nomnoml-test/test_b.png")
+
+  p1 <- rgb_2gray(RGB_image = p1)
+  p2 <- rgb_2gray(RGB_image = p2)
+
+  hs1 <- average_hash(p1, hash_size = 32, MODE = "binary")
+  hs2 <- average_hash(p2, hash_size = 32, MODE = "binary")
+
+  if(sum(abs(hs1 - hs2)) < 50) {
+    print("OK")
+  } else print("Not OK")
+
+
 }

@@ -4,6 +4,7 @@ output: html_document
 ---
 
 ```{r}
+library(OpenImageR)
 maxima.options(engine.format = "latex", 
 	       inline.format = "inline", 
 	       inline.label = FALSE)
@@ -62,10 +63,38 @@ plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [color_bar_tics, 4]);
 ```
 
-```{r, warning=FALSE}
-pft <- list.files(pattern = "plot(2|3)d-[[:print:]]+\\.(png|pdf)", full.names = TRUE)
-digest(readLines(pft[1]), algo = "sha256")
-digest(readLines(pft[2]), algo = "sha256")
+```{r, warning=FALSE, results="markup"}
+pft <- list.files(pattern = "plot(2|3)d-[[:print:]]{6}\\.png", full.names = TRUE)
+pref <- system.file("extdata", c("plot2d-ref.png", "plot3d-ref.png"),
+		    package = "rim", mustWork = TRUE)
+
+r1 <- readImage(pref[1])
+r2 <- readImage(pref[2])
+p1 <- readImage(pft[1])
+p2 <- readImage(pft[2])
+
+p1 <- rgb_2gray(RGB_image = p1)
+p2 <- rgb_2gray(RGB_image = p2)
+r1 <- rgb_2gray(RGB_image = r1)
+r2 <- rgb_2gray(RGB_image = r2)
+
+hs1 <- average_hash(p1, hash_size = 32, MODE = "binary")
+hs2 <- average_hash(p2, hash_size = 32, MODE = "binary")
+rs1 <- average_hash(r1, hash_size = 32, MODE = "binary")
+rs2 <- average_hash(r2, hash_size = 32, MODE = "binary")
+
+if((d <- sum(abs(hs1 - rs1))) < 50) {
+  paste0("OK")
+
+} else {
+  paste0("Not OK")
+}
+
+if((d <- sum(abs(hs2 - rs2))) < 50) {
+  paste0("OK")
+} else {
+  paste0("Not OK")
+}
 ```
 
 
