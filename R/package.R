@@ -11,7 +11,6 @@
 #' To send a single command to Maxima and receive the corresponding output use \code{\link{maxima.get}()}. This function returns a S3 object of class "maxima". The output is printed by printing the object and will be printed in a format currently set by \code{\link{maxima.options}(format)}. The output format can be changed by setting it, e.g. \code{\link{maxima.options}(format = "ascii")}. Output labels are printed according to option \code{\link{maxima.options}(label)}.
 #'
 #' @import methods
-#' @import digest 
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib rim, .registration = TRUE

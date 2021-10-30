@@ -11,8 +11,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
 
   knit(input = "inst/extdata/test.Rmd", 
        output = "inst/extdata/result.md", 
-       quiet = TRUE, 
-       envir = .GlobalEnv)
+       quiet = TRUE)
 
   rmarkdown::render(input="inst/extdata/test.Rmd", 
 		    output_dir = "inst/extdata/", 
