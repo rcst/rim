@@ -14,6 +14,9 @@
     packageStartupMessage(paste("Could not find Maxima executable, please download from\n", 
 			  "https://maxima.sourceforge.io/download.html\n",
 			  "and install"))
+    if(.Platform$OS != "unix") 
+      packageStartupMessage(paste("Please make sure maxima executable", 
+				  "is on PATH environment variable."))
   }
 
   if(requireNamespace("knitr", quietly = TRUE)) {
