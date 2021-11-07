@@ -4,6 +4,8 @@
 (defvar *builtin-plot2d* (symbol-function '$plot2d-impl))
 (defvar *builtin-plot3d* (symbol-function '$plot3d-impl))
 (defvar *builtin-draw* (symbol-function '$draw))
+(defvar *builtin-draw2d* (symbol-function '$draw2d))
+(defvar *builtin-draw3d* (symbol-function '$draw3d))
 
 ;; ($set_random_state ($make_random_state ($absolute_real_time)))
 
@@ -58,3 +60,35 @@
        ;; (format t "draw: append pdf file ~s to arguments and call built-in draw.~%" file_name)
        ;; (format t "draw: new args: ~a~%" (mfuncall '$string (cons '(mlist) args-new)))
       (apply *builtin-draw* args-new))))
+
+(defmfun $draw2d (&rest args)
+  (if (member '$file_name args)
+    ;; Hmm. plot2d args already contains svg_file.
+    ;; Just punt the call without modifying the arguments.
+    (apply *builtin-draw2d* args)
+    ;; Otherwise, append another argument for svg_file,
+    ;; and then punt to built-in plot2d.
+    (let*
+      ((nnn ($substring ($sha256sum ($sconcat "draw2d" ($simplode args))) 1 7))
+       (file_name ($sconcat $plot_output_folder "/draw2d-" nnn))
+       (args-new (append args (list `((mequal) $file_name ,file_name))))
+       (args-new (append args-new (list `((mequal) $terminal $pdf)))))
+       ;; (format t "draw: append pdf file ~s to arguments and call built-in draw.~%" file_name)
+       ;; (format t "draw: new args: ~a~%" (mfuncall '$string (cons '(mlist) args-new)))
+      (apply *builtin-draw2d* args-new))))
+
+(defmfun $draw3d (&rest args)
+  (if (member '$file_name args)
+    ;; Hmm. plot2d args already contains svg_file.
+    ;; Just punt the call without modifying the arguments.
+    (apply *builtin-draw3d* args)
+    ;; Otherwise, append another argument for svg_file,
+    ;; and then punt to built-in plot2d.
+    (let*
+      ((nnn ($substring ($sha256sum ($sconcat "draw3d" ($simplode args))) 1 7))
+       (file_name ($sconcat $plot_output_folder "/draw3d-" nnn))
+       (args-new (append args (list `((mequal) $file_name ,file_name))))
+       (args-new (append args-new (list `((mequal) $terminal $pdf)))))
+       ;; (format t "draw: append pdf file ~s to arguments and call built-in draw.~%" file_name)
+       ;; (format t "draw: new args: ~a~%" (mfuncall '$string (cons '(mlist) args-new)))
+      (apply *builtin-draw3d* args-new))))
