@@ -25,8 +25,18 @@
        (args-new (append args (list `((mlist) $png_file ,png-file)))))
       (apply *builtin-plot3d* args-new))))
 
+;; a utility function
+(defun flatten (lst)
+  (labels ((rflatten (lst1 acc)
+             (dolist (el lst1)
+               (if (listp el)
+                   (setf acc (rflatten el acc))
+                   (push el acc)))
+             acc))
+    (reverse (rflatten lst nil))))
+
 (defmfun $draw (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name (flatten args))
     (apply *builtin-draw* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw" ($simplode args))) 1 7))
@@ -34,10 +44,12 @@
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $png)))))
       (apply *builtin-draw* args-new)
+      ;; (format t "inside draw~%")
+      ;; (format t "~a~%" (flatten args-new))
       `((mlist) ,file_name ,($sconcat file_name ".png")))))
 
 (defmfun $draw2d (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name (flatten args))
     (apply *builtin-draw2d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw2d" ($simplode args))) 1 7))
@@ -45,10 +57,12 @@
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $png)))))
       (apply *builtin-draw2d* args-new)
+      ;; (format t "inside draw2d")
+      ;; (format t "~a~%" (flatten args-new))
       `((mlist) ,file_name ,($sconcat file_name ".png")))))
 
 (defmfun $draw3d (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name  (flatten args))
     (apply *builtin-draw3d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw3d" ($simplode args))) 1 7))

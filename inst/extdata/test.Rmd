@@ -6,6 +6,7 @@ output: html_document
 ```{r}
 library(OpenImageR)
 maxima.options(engine.format = "latex", 
+	       engine.label = TRUE,
 	       inline.format = "inline", 
 	       inline.label = FALSE)
 ```
@@ -41,13 +42,6 @@ diff(f(x), x);
 log(%o1);
 ```
 
-```{maxima}
-area(dist) := integrate(dist, x, minf, inf)$
-mean(dist) := area(dist*x)$
-EX2(dist) := area(dist*x^2)$
-variance(dist) := EX2(dist) - mean(dist)^2$
-mgf(dist) := area(dist*%e^(x*t))$
-```
 
 # Plots
 
@@ -63,10 +57,67 @@ plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [color_bar_tics, 4]);
 ```
 
+```{maxima, fig.cap = "draw()", fig.align="center"}
+example1:
+  gr3d (title          = "Controlling color range",
+        enhanced3d     = true,
+        color          = green,
+        cbrange        = [-3,10],
+        explicit(x^2+y^2, x,-2,2,y,-2,2)) $
+
+example2:
+  gr3d (title          = "Playing with tics in colorbox",
+        enhanced3d     = true,
+        color          = green,
+        cbtics         = {["High",10],["Medium",05],["Low",0]},
+        cbrange = [0, 10],
+        explicit(x^2+y^2, x,-2,2,y,-2,2))$
+
+example3:
+  gr3d (title      = "Logarithmic scale to colors",
+        enhanced3d = true,
+        color      = green,
+        logcb      = true,
+        logz       = true,
+        palette    = [-15,24,-9],
+        explicit(exp(x^2-y^2), x,-2,2,y,-2,2))$
+
+draw(
+  dimensions = [300,700],
+  example1, example2, example3)$
+```
+
+```{maxima, fig.cap = "draw2d()", fig.align="center"}
+draw2d(
+  proportional_axes = xy,
+  fill_color        = sea_green,
+  color             = aquamarine,
+  line_width        = 6,
+  ellipse(7,6,2,3,0,360))$
+```
+
+
+```{maxima, fig.cap = "draw3d()", fig.align="center"}
+draw3d(
+   surface_hide      = true,
+   axis_3d           = false,
+   proportional_axes = xyz,
+ 
+   color             = blue,
+   cylindrical(z,z,-2,2,a,0,2*%pi), 
+ 
+   color            = brown,
+   cylindrical(3,z,-2,2,az,0,%pi),
+ 
+   color            = green,
+   cylindrical(sqrt(25-z^2),z,-5,5,a,0,%pi))$
+```
+
+
 ```{r, warning=FALSE, results="markup"}
-pft <- list.files(pattern = "plot(2|3)d-[[:print:]]{6}\\.png", full.names = TRUE)
-pref <- system.file("inst", c("plot2d-ref.png", "plot3d-ref.png"), package = "rim")
-pref
+# pft <- list.files(pattern = "plot(2|3)d-[[:print:]]{6}\\.png", full.names = TRUE)
+# pref <- system.file("inst", c("plot2d-ref.png", "plot3d-ref.png"), package = "rim")
+# 
 # r1 <- readImage(pref[1])
 # r2 <- readImage(pref[2])
 # p1 <- readImage(pft[1])
@@ -96,8 +147,15 @@ pref
 # }
 ```
 
-
 # Normal Distribution
+
+```{maxima}
+area(dist) := integrate(dist, x, minf, inf)$
+mean(dist) := area(dist*x)$
+EX2(dist) := area(dist*x^2)$
+variance(dist) := EX2(dist) - mean(dist)^2$
+mgf(dist) := area(dist*%e^(x*t))$
+```
 
 ```{maxima}
 normal(x) := 

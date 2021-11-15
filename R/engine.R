@@ -22,12 +22,15 @@ maxima.engine <- function(options) {
   ccode <- character()
   for(i in 1:length(cmds)) {
     pc <- paste0(code[cmds[[i]]], collapse = "\n")
+    # if plotting command, then it needs to end with ";"
+    if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*\\$$", x = pc))
+      pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
     tt <- maxima.env$mx$get(pc)
     ccode <- append(ccode, iprint(tt))
 
     if(!attr(tt, "suppressed")) {
       ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-      if(grepl(pattern = "^plot[2|3]d\\([[:print:]|[:space:]]+\\);", x = pc)) {
+      if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
 	tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
 	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
 	pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])

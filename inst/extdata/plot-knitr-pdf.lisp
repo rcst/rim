@@ -25,8 +25,18 @@
        (args-new (append args (list `((mlist) $pdf_file ,pdf-file)))))
       (apply *builtin-plot3d* args-new))))
 
+;; a utility function
+(defun flatten (lst)
+  (labels ((rflatten (lst1 acc)
+             (dolist (el lst1)
+               (if (listp el)
+                   (setf acc (rflatten el acc))
+                   (push el acc)))
+             acc))
+    (reverse (rflatten lst nil))))
+
 (defmfun $draw (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name (flatten args))
     (apply *builtin-draw* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw" ($simplode args))) 1 7))
@@ -34,21 +44,25 @@
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $pdf)))))
       (apply *builtin-draw* args-new)
+      ;; (format t "inside draw~%")
+      ;; (format t "~a~%" (flatten args-new))
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))
 
 (defmfun $draw2d (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name (flatten args))
     (apply *builtin-draw2d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw2d" ($simplode args))) 1 7))
        (file_name ($sconcat $plot_output_folder "/draw2d-" nnn))
        (args-new (append args (list `((mequal) $file_name ,file_name))))
-       (args-new (append args-new (list `((mequal) $terminal $pdf)))))
+       (args-new (append args-new (list `((mequal) $terminal $pdfcairo)))))
       (apply *builtin-draw2d* args-new)
+      ;; (format t "inside draw2d")
+      ;; (format t "~a~%" (flatten args-new))
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))
 
 (defmfun $draw3d (&rest args)
-  (if (member '$file_name args)
+  (if (member '$file_name (flatten args))
     (apply *builtin-draw3d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw3d" ($simplode args))) 1 7))
@@ -56,4 +70,6 @@
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $pdf)))))
       (apply *builtin-draw3d* args-new)
+      (format t "inside draw3d")
+      (format t "~a~%" (cdr (cadr (reverse args))))
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))
