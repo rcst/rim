@@ -157,28 +157,28 @@ rs2 <- average_hash(r2, hash_size = 32, MODE = "binary")
 rs3 <- average_hash(r3, hash_size = 32, MODE = "binary")
 rs4 <- average_hash(r4, hash_size = 32, MODE = "binary")
 
-if((d <- sum(abs(hs1 - rs1))) < 50) {
+if((d <- sum(abs(hs1 - rs1))) < 100) {
   paste0("OK")
 } else {
-  paste0("Not OK")
+  paste0("Not OK: ", d)
 }
 
-if((d <- sum(abs(hs2 - rs2))) < 50) {
+if((d <- sum(abs(hs2 - rs2))) < 100) {
   paste0("OK")
 } else {
-  paste0("Not OK")
+  paste0("Not OK: ", d)
 }
 
-if((d <- sum(abs(hs3 - rs3))) < 50) {
+if((d <- sum(abs(hs3 - rs3))) < 100) {
   paste0("OK")
 } else {
-  paste0("Not OK")
+  paste0("Not OK: ", d)
 }
 
-if((d <- sum(abs(hs4 - rs4))) < 50) {
+if((d <- sum(abs(hs4 - rs4))) < 100) {
   paste0("OK")
 } else {
-  paste0("Not OK")
+  paste0("Not OK: ", d)
 }
 ```
 
