@@ -81,9 +81,12 @@ last_label <- function(label = knitr::opts_current$get('label')) {
 }
 
 engine_print <- function(x){
-  switch(maxima.options$engine.label + 1,
+  pp <- switch(maxima.options$engine.label + 1,
 	 paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
 	 paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n"))
+  if(knitr::is_html_output()) {
+    gsub(pattern = "\\\\%", replacement = "%", x = pp)
+  }
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.
