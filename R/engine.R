@@ -34,9 +34,9 @@ maxima.engine <- function(options) {
 	tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
 	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
 	pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
-	pm <- normalizePath(pm)
+	# pm <- normalizePath(pm)
 	ll <- append(ll, list(knitr::include_graphics(pm)))
-	maxima.env$plots <- append(maxima.env$plots, pm)
+	maxima.env$plots <- append(maxima.env$plots, normalizePath(pm))
       }
       else 
 	ll <- append(ll, engine_print(tt))

@@ -54,7 +54,7 @@ This is an inline test: $L=\sqrt{1-\frac{1}{R^2}}$
         palette    = [-15,24,-9],
         explicit(exp(x^2-y^2), x,-2,2,y,-2,2))$(%i18) draw(
   dimensions = [500,1500],
-  example1, example2, example3);/home/eric/documents/R/packages/rim/inst/extdata/draw-3c24e0.png
+  example1, example2, example3);./draw-3c24e0.png
 
 (%i19) draw2d(
   dimensions = [1000, 1000],
@@ -62,7 +62,7 @@ This is an inline test: $L=\sqrt{1-\frac{1}{R^2}}$
   fill_color        = sea_green,
   color             = aquamarine,
   line_width        = 6,
-  ellipse(7,6,2,3,0,360));/home/eric/documents/R/packages/rim/inst/extdata/draw2d-d3aebe.png
+  ellipse(7,6,2,3,0,360));./draw2d-d3aebe.png
 
 
 (%i20) draw3d(
@@ -78,7 +78,7 @@ This is an inline test: $L=\sqrt{1-\frac{1}{R^2}}$
    cylindrical(3,z,-2,2,az,0,%pi),
  
    color            = green,
-   cylindrical(sqrt(25-z^2),z,-5,5,a,0,%pi));/home/eric/documents/R/packages/rim/inst/extdata/draw3d-24f8a9.png
+   cylindrical(sqrt(25-z^2),z,-5,5,a,0,%pi));./draw3d-24f8a9.png
 
 
 pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)pref <- system.file("inst/extdata", 
