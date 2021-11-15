@@ -77,7 +77,7 @@ maxima.options = set_opt(
 		 .class = "character",
 		 .private = TRUE, 
 		 .visible = FALSE),
-  preload = list(.value = c("plot-knitr-pdf", "plot-knitr-png"),
+  preload = list(.value = c("plot-knitr-png", "plot-knitr-pdf"),
 		 .length = 1L,
 		 .class = "character",
 		 .private = TRUE, 

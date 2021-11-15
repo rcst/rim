@@ -70,6 +70,6 @@
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $pdf)))))
       (apply *builtin-draw3d* args-new)
-      (format t "inside draw3d")
-      (format t "~a~%" (cdr (cadr (reverse args))))
+      ;; (format t "inside draw3d")
+      ;; (format t "~a~%" (cdr (cadr (reverse args))))
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))

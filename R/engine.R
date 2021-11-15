@@ -58,7 +58,7 @@ maxima.engine <- function(options) {
 maxima.engine.start <- function() {
   if(!exists("mx", envir = maxima.env)) { 
     maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
-				 preload = maxima.options$preload[knitr::is_html_output()+1])
+				 preload = maxima.options$preload[knitr::is_latex_output()+1])
     maxima.env$plots <- character()
   }
   
