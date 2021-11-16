@@ -3,12 +3,12 @@
 #' Function for globally setting and retrieving options.
 #'
 #' \describe{
-#'   \item{\code{format}: }{character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of "linear", "ascii", "latex" or "mathml".}
-#'   \item{\code{engine.format}: }{same as option \code{format}, but for outputs in RMarkdown documents.}
-#'   \item{\code{inline.format}: }{character string setting the output format for \code{maxima.inline()}, for knitting outputs inline into RMarkdown documents. Can be one of "linear", "latex" or "mathml", but \emph{not} "ascii".}
+#'   \item{\code{format}: }{character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of \code{"linear",} \code{"ascii",} \code{"latex"} or \code{"mathml"}.}
+#'   \item{\code{engine.format}: }{same as option \code{format}, but for outputs in \code{RMarkdown} documents.}
+#'   \item{\code{inline.format}: }{character string setting the output format for \code{maxima.inline()}, for knitting outputs inline into \code{RMarkdown} documents. Can be one of \code{"linear"}, \code{"latex"} or \code{"mathml"}, but \emph{not} \code{"ascii"}.}
 #'   \item{\code{label}: }{logical of length 1, whether reference labels should be printed for returned S3 objects from \code{\link{maxima.get}()} (TRUE, default), or not (FALSE). This also applies to printing of input commands using \code{\link{iprint}()}.}
-#'   \item{\code{engine.label}: }{same as \code{label}, but for outputs in RMarkdown documents.}
-#'   \item{\code{inline.label}: }{same as \code{label}, but for inline outputs in RMarkdown documents.}
+#'   \item{\code{engine.label}: }{same as \code{label}, but for outputs in \code{RMarkdown} documents.}
+#'   \item{\code{inline.label}: }{same as \code{label}, but for inline outputs in \code{RMarkdown} documents.}
 #' }
 # #'
 # #' To print a table of available options, current settings and a description simply print the function object (without parentheses), i.e. \code{maxima.options} or \code{print(maxima.options)}.
@@ -49,7 +49,7 @@ maxima.options = set_opt(
 			 return(r)
 		       }, 
 		       .failed_msg = "'format' must be one of 'linear', 'ascii', 'latex' or 'mathml'",
-		       .description = "Same as 'format', but for maxima code chunks in RMarkdown documents."),
+		       .description = "Same as 'format', but for maxima code chunks in 'RMarkdown' documents."),
   inline.format = list(.value = "linear", 
 		       .length = 1L, 
 		       .class = "character", 
@@ -82,4 +82,4 @@ maxima.options = set_opt(
 		 .class = "character",
 		 .private = TRUE, 
 		 .visible = FALSE,
-		 .description = "Specifies a file name that will be loaded after initialization to overwrite plotting function to include graphics into RMarkdown documents."))
+		 .description = "Specifies a file name that will be loaded after initialization to overwrite plotting function to include graphics into 'RMarkdown' documents."))

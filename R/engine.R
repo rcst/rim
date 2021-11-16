@@ -1,13 +1,13 @@
 utils::globalVariables(c("engine", "mx", "plots"))
-#' knitr maxima engine
+#' \code{knitr} maxima engine
 #'
 #' Functions to process Maxima code chunks by \code{knitr}.
 #'
-#' Upon attachement, i.e. \code{library(rim)} function \code{maxima.engine} is registered as a \code{knitr} engine. Thus, \code{maxima.engine()} is called by \code{knit()} to evaluate Maxima code chunks. When called upon the first code chunk of a document it starts Maxima in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an RMarkdown document. Inputs and outputs can thus be used across chunks (e.g. by using Maxima reference labels). \code{maxima.options(engine.format = ..., engine.label = ...)} configures the output format and whether or not output reference labels should be printed.
+#' Upon attachment, i.e. \code{library(rim)} function \code{maxima.engine} is registered as a \code{knitr} engine. Thus, \code{maxima.engine()} is called by \code{knit()} to evaluate Maxima code chunks. When called upon the first code chunk of a document it starts Maxima in a separate process in server mode. This means that a single Maxima session is used for all Maxima code chunks of an \code{RMarkdown} document. Inputs and outputs can thus be used across chunks (e.g. by using Maxima reference labels). \code{maxima.options(engine.format = ..., engine.label = ...)} configures the output format and whether or not output reference labels should be printed.
 #'
-#' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the RMarkdown file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
+#' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the \code{RMarkdown} file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
-#' @param options named \code{list} of knitr options. Currently there are no maxima specific chunk options. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either "linear" (default), "ascii", "latex" or "mathml".
+#' @param options named \code{list} of \code{knitr} options. Currently there are no maxima specific chunk options. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
 #' 
 #' @import knitr
 #' @importFrom utils tail
