@@ -9,7 +9,7 @@ test_that("maxima knitr engine works", {
   fo <- paste0(dirname(fr[1]), "/test.md")
 
   hash <- digest::digest(readLines(con = fr[2]), "sha256")
-  suppressWarnings(knit(input = fr[1], output = fo, quiet = TRUE, envir = .GlobalEnv))
+  suppressWarnings(knit(input = fr[1], output = fo, quiet = TRUE))
 #  suppressWarnings(rmarkdown::render(input=fr[1], 
 #		    output_dir = dirname(fr[1]), 
 #		    output_file = "test.html", 
@@ -23,8 +23,9 @@ test_that("maxima knitr engine works", {
   # gnuplot files
   td <- dirname(dirname(tempfile()))
   rf <- list.files(path = td, 
-		   pattern = "maxout[[:digit:]]*\\.gnuplot", 
+		   pattern = "(?:maxout|data)[[:digit:]]*\\.gnuplot", 
 		   full.names = TRUE)
+
   file.remove(rf)
 })
 

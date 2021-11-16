@@ -57,7 +57,7 @@ plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [color_bar_tics, 4]);
 ```
 
-```{maxima, fig.cap = "draw()", fig.align="center"}
+```{maxima, fig.cap = "draw()", fig.align="center", fig.show='hide'}
 example1:
   gr3d (title          = "Controlling color range",
         enhanced3d     = true,
@@ -87,7 +87,7 @@ draw(
   example1, example2, example3)$
 ```
 
-```{maxima, fig.cap = "draw2d()", fig.align="center"}
+```{maxima, fig.cap = "draw2d()", fig.align="center", fig.show='hide'}
 draw2d(
   dimensions = [1000, 1000],
   proportional_axes = xy,
@@ -95,10 +95,9 @@ draw2d(
   color             = aquamarine,
   line_width        = 6,
   ellipse(7,6,2,3,0,360))$
-```
+``` 
 
-
-```{maxima, fig.cap = "draw3d()", fig.align="center"}
+```{maxima, fig.cap = "draw3d()", fig.align="center", fig.show='hide'}
 draw3d(
    dimensions = [1000, 1000],
    surface_hide      = true,
@@ -118,7 +117,8 @@ draw3d(
 
 ```{r, eval = TRUE, warning=FALSE, results="markup"}
 pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)
-pref <- system.file("inst/extdata", 
+
+pref <- system.file("extdata", 
 		    c("draw-ref.png",
 		      "draw2d-ref.png", 
 		      "draw3d-ref.png", 

@@ -61,7 +61,6 @@ maxima.engine.start <- function() {
 				 preload = maxima.options$preload[knitr::is_latex_output()+1])
     maxima.env$plots <- character()
   }
-  
 }
 
 maxima.engine.stop <- function() { 
@@ -85,8 +84,9 @@ engine_print <- function(x){
 	 paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
 	 paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n"))
   if(knitr::is_html_output()) {
-    gsub(pattern = "\\\\%", replacement = "%", x = pp)
+    pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
   }
+  pp
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.
