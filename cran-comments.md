@@ -8,3 +8,6 @@
 
 # Downstream dependencies
 There are currently no downstream dependencies for this package.
+
+## re-submission
+* fixed non-canonical link in README.md
