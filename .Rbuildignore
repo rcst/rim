@@ -16,3 +16,4 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^rim-logo\.svg$
+^inst/extdata/binary
