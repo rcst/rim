@@ -49,7 +49,10 @@ When attaching the package and Maxima is installed already, then it will be set 
 
 ```{r}
 library(rim)
-maxima.engine.format("latex")
+maxima.options(engine.format = "latex", 
+	       engine.label = TRUE,
+	       inline.format = "latex", 
+	       inline.label = FALSE)
 ```
 
 For example, to generate this page you can download it's source `index.Rmd` from [here](https://raw.githubusercontent.com/rcst/rim/master/docs/index.Rmd) and then use `rmarkdown::render` to generate it.
@@ -57,7 +60,6 @@ For example, to generate this page you can download it's source `index.Rmd` from
 ```{r, eval = FALSE}
 download.file(url = "https://raw.githubusercontent.com/rcst/rim/master/docs/index.Rmd", 
 	      destfile = "index.Rmd")
-maxima.engine.format("latex")
 rmarkdown::render("index.Rmd")
 ```
 
@@ -89,7 +91,6 @@ knitr::knit_hooks$set(source = function(x, options){
 
 Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output). For example we can type the following code chunk into our RMarkdown document file:
 
-
 ````
 
 ```{maxima}`r ''`
@@ -100,7 +101,7 @@ assume(R > 0)$
 
 ````
 
-In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas data base to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression. This, when rendered into a document will be printed as 
+In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas database to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression. This, when rendered into a document will be printed as 
 
 ```{maxima}
 L: sqrt(1 - 1/R^2);
@@ -127,7 +128,7 @@ integrate(1 / (1 + x^4), x);
 However, we can also change Maxima's output format to MathML, which works if the output document is a HTML document. 
 
 ```{r}
-maxima.engine.format("mathml")
+maxima.options(engine.format = "mathml")
 ```
 
 ```{maxima}
@@ -145,13 +146,86 @@ diff(f(x), x);
 
 Notice, that we can use the symbol `%` to refer to the last expression and that this works across code chunks.
 
-You can also replay other previous expressions by referring to their output labels. Output labels are printed in the default maxima output format `"linear"`. 
+You can also replay other previous expressions by referring to their output labels, as already demonstrated above. Whether or not reference labels are printed via the `knitr` engine has no influence on their existence in Maxima internally. 
 
-```{maxima}
-log(%o1);
+`rim` also supports printing Maxima output as inline. This works by putting an `r` inline code chunk and using `maxima.inline()`. Example: `` `r '\x60r maxima.inline("log(%o1);")\x60'` `` results in `r maxima.inline("log(%o1);")`. 
+
+```{r}
+maxima.options(engine.format = "latex")
 ```
 
 # Demos
+
+## Plots
+
+```{maxima, fig.cap = "plot2d()", fig.align="center"}
+r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
+plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
+```
+
+```{maxima, fig.cap = "plot3d()", fig.align="center"}
+plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
+       [palette, [gradient, red, orange, yellow, green]],
+       color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
+       [color_bar_tics, 4]);
+```
+
+```{maxima, fig.cap = "draw()", fig.align="center"}
+example1:
+  gr3d (title          = "Controlling color range",
+        enhanced3d     = true,
+        color          = green,
+        cbrange        = [-3,10],
+        explicit(x^2+y^2, x,-2,2,y,-2,2)) $
+
+example2:
+  gr3d (title          = "Playing with tics in colorbox",
+        enhanced3d     = true,
+        color          = green,
+        cbtics         = {["High",10],["Medium",05],["Low",0]},
+        cbrange = [0, 10],
+        explicit(x^2+y^2, x,-2,2,y,-2,2))$
+
+example3:
+  gr3d (title      = "Logarithmic scale to colors",
+        enhanced3d = true,
+        color      = green,
+        logcb      = true,
+        logz       = true,
+        palette    = [-15,24,-9],
+        explicit(exp(x^2-y^2), x,-2,2,y,-2,2))$
+
+draw(
+  dimensions = [500,1500],
+  example1, example2, example3)$
+```
+
+```{maxima, fig.cap = "draw2d()", fig.align="center"}
+draw2d(
+  dimensions = [1000, 1000],
+  proportional_axes = xy,
+  fill_color        = sea_green,
+  color             = aquamarine,
+  line_width        = 6,
+  ellipse(7,6,2,3,0,360))$
+``` 
+
+```{maxima, fig.cap = "draw3d()", fig.align="center"}
+draw3d(
+   dimensions = [1000, 1000],
+   surface_hide      = true,
+   axis_3d           = false,
+   proportional_axes = xyz,
+ 
+   color             = blue,
+   cylindrical(z,z,-2,2,a,0,2*%pi), 
+ 
+   color            = brown,
+   cylindrical(3,z,-2,2,az,0,%pi),
+ 
+   color            = green,
+   cylindrical(sqrt(25-z^2),z,-5,5,a,0,%pi))$
+```
 
 ## Distributions
 

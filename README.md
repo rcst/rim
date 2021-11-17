@@ -3,8 +3,8 @@ rim - R’s interface to Maxima
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![](https://cranlogs.r-pkg.org/badges/rim)](https://cran.rstudio.com/web/packages/rim/index.html)
-[![](https://cranlogs.r-pkg.org/badges/grand-total/rim)](https://cran.rstudio.com/web/packages/rim/index.html)
+[![](https://cranlogs.r-pkg.org/badges/rim)](https://cran.rstudio.com/web/packages/rim/)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/rim)](https://cran.rstudio.com/web/packages/rim/)
 
 Development version of CRAN package. `rim` provides an interface to the
 powerful and fairly complete maxima computer algebra system
@@ -93,8 +93,8 @@ maxima.options
     ##  format        linear
     ##                (Printing format of returned object from maxima.get())
     ##  engine.format linear
-    ##                (Same as 'format', but for maxima code chunks in RMarkdown
-    ##                documents.)
+    ##                (Same as 'format', but for maxima code chunks in
+    ##                'RMarkdown' documents.)
     ##  inline.format linear
     ##                (Same as 'label', but for printing output inline via
     ##                maxima.inline())
