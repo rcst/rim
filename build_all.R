@@ -29,7 +29,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
 
   # drat
   options(dratRepo = "/home/eric/documents/R/packages/drat/")
-  drat::insertPackage(file = "../builds/rim/source/rim_0.4.1.tar.gz",  
+  drat::insertPackage(file = "../builds/rim/source/rim_0.5.0.tar.gz",  
 		      action = "archive", commit = TRUE)
 
   a <- drat::insertPackage(file = "../builds/rim/win/release/rim_0.4.0.zip", 
