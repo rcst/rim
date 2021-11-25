@@ -6,7 +6,7 @@
   if(maxima.isInstalled()) { 
     maxima.start() 
     if(maxima.version() < "5.42.1") {
-      packageStartupMessage(paste("Installed Maxima version ", maxima.version, 
+      packageStartupMessage(paste("Installed Maxima version ", maxima.version(), 
 				  "is untested. Consider updating.")) 
     }
   }
