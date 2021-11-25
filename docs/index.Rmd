@@ -43,7 +43,7 @@ This section demonstrates the use of `rim` via it's knitr engine. Alternatively,
 
 This page has been generated using `rim`'s knitr engine itself. 
 
-Note that you can set the output format to LaTeX `maxima.engine.format("latex")` to get LaTeX-style expression rendering, when using pandoc as well as MathJax is loaded or embedded. Alternatively, expression outputs can be printed in MathML directly using `maxima.engine.format("mathml")`. 
+Note that you can set the output format, e.g. `maxima.options(engine.format = "latex")` to get LaTeX-style expression rendering. When using pandoc to render the resulting file, MathJax is loaded or embedded automatically, when the ouput is a HTML document and so the Maxima output expressions are rendered nicely. Alternatively, expression outputs can be printed in MathML directly using `maxima.options(engine.format = "mathml")`. 
 
 When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package `knitr` (which get's installed by default with this package as well), it will register maxima as a `knitr` engine. If this worked, maxima code can be used and rendered in RMarkdown documents.
 
@@ -61,32 +61,6 @@ For example, to generate this page you can download it's source `index.Rmd` from
 download.file(url = "https://raw.githubusercontent.com/rcst/rim/master/docs/index.Rmd", 
 	      destfile = "index.Rmd")
 rmarkdown::render("index.Rmd")
-```
-
-```{r, echo = FALSE, eval = FALSE}
-old <- knitr::knit_hooks$get("source")
-knitr::knit_hooks$set(source = function(x, options){
-  if (options$engine == "maxima") {
-    if(!is.null(options$explicit)) {
-      if(options$explicit) {
-	opts <- gsub(",\\s*verbatim\\s*=\\s*TRUE\\s*", "", options$params.src)
-	opts <- gsub(",?\\s*engine\\s*=\"maxima\"", "", opts)
-	if(opts=="") bef = sprintf('\n\n    ```{maxima}\n', opts, "\n")
-	else bef = sprintf('\n\n    ```{maxima,%s}\n', opts, "\n")
-	stringr::str_c(
-		       bef, 
-		       knitr:::indent_block(paste(x, collapse = '\n'), "    "), 
-		       "\n    ```\n"
-	)
-      } 
-    }
-  }
-  else {
-    stringr::str_c("\n\n```", tolower(options$engine), "\n", 
-		   paste(x, collapse = '\n'), "\n```\n\n"
-    )
-  }
-})
 ```
 
 Now we can enter Maxima expression inside code chunks. Note that we need to end each line by `;` or `$` (suppressing output). For example we can type the following code chunk into our RMarkdown document file:

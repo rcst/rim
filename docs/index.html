@@ -194,10 +194,11 @@ drat::addRepo(&quot;rcst&quot;)</code></pre>
 <h2>RMarkdown</h2>
 <p>This section demonstrates the use of <code>rim</code> via it’s knitr engine. Alternatively, you can run each line of the Maxima code chunks via <code>maxima.get()</code>.</p>
 <p>This page has been generated using <code>rim</code>’s knitr engine itself.</p>
-<p>Note that you can set the output format to LaTeX <code>maxima.engine.format(&quot;latex&quot;)</code> to get LaTeX-style expression rendering, when using pandoc as well as MathJax is loaded or embedded. Alternatively, expression outputs can be printed in MathML directly using <code>maxima.engine.format(&quot;mathml&quot;)</code>.</p>
+<p>Note that you can set the output format, e.g. <code>maxima.options(engine.format = &quot;latex&quot;)</code> to get LaTeX-style expression rendering. When using pandoc to render the resulting file, MathJax is loaded or embedded automatically, when the ouput is a HTML document and so the Maxima output expressions are rendered nicely. Alternatively, expression outputs can be printed in MathML directly using <code>maxima.options(engine.format = &quot;mathml&quot;)</code>.</p>
 <p>When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package <code>knitr</code> (which get’s installed by default with this package as well), it will register maxima as a <code>knitr</code> engine. If this worked, maxima code can be used and rendered in RMarkdown documents.</p>
-<pre class="r"><code>library(rim)
-maxima.options(engine.format = &quot;latex&quot;, 
+<pre class="r"><code>library(rim)</code></pre>
+<pre><code>## Maxima successfully registered as knitr engine!</code></pre>
+<pre class="r"><code>maxima.options(engine.format = &quot;latex&quot;, 
            engine.label = TRUE,
            inline.format = &quot;latex&quot;, 
            inline.label = FALSE)</code></pre>
