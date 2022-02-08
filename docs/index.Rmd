@@ -103,6 +103,7 @@ However, we can also change Maxima's output format to MathML, which works if the
 
 ```{r}
 maxima.options(engine.format = "mathml")
+maxima.options()
 ```
 
 ```{maxima}
@@ -134,7 +135,9 @@ The following chunk options are currently available:
 
 - `echo`: Should the code chunk be printed (default is `TRUE`). If `eval=FALSE`, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation
 - `eval`: Should the code chunk be evaluated by Maxima (default is `TRUE`)
+- `include`:  whether code chunk and results should be printed (default is `TRUE`). If `FALSE`, code is still evaluated
 
+**NOTE:** The `results` chunk option is explicitly ignored from chunk header and implicitly controlled via `maxima.options(engine.format = ...)`. 
 
 # Demos
 

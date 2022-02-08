@@ -196,9 +196,8 @@ drat::addRepo(&quot;rcst&quot;)</code></pre>
 <p>This page has been generated using <code>rim</code>’s knitr engine itself.</p>
 <p>Note that you can set the output format, e.g. <code>maxima.options(engine.format = &quot;latex&quot;)</code> to get LaTeX-style expression rendering. When using pandoc to render the resulting file, MathJax is loaded or embedded automatically, when the ouput is a HTML document and so the Maxima output expressions are rendered nicely. Alternatively, expression outputs can be printed in MathML directly using <code>maxima.options(engine.format = &quot;mathml&quot;)</code>.</p>
 <p>When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package <code>knitr</code> (which get’s installed by default with this package as well), it will register maxima as a <code>knitr</code> engine. If this worked, maxima code can be used and rendered in RMarkdown documents.</p>
-<pre class="r"><code>library(rim)</code></pre>
-<pre><code>## Maxima successfully registered as knitr engine!</code></pre>
-<pre class="r"><code>maxima.options(engine.format = &quot;latex&quot;, 
+<pre class="r"><code>library(rim)
+maxima.options(engine.format = &quot;latex&quot;, 
            engine.label = TRUE,
            inline.format = &quot;latex&quot;, 
            inline.label = FALSE)</code></pre>
@@ -229,7 +228,25 @@ assume(R &gt; 0)$
 <p><span class="math display">\[\mathtt{(\textit{%o}_{5})}\quad \frac{\log \left(x^2+\sqrt{2}\,x+1\right)}{2^{\frac{5}{2}}}-\frac{\log \left(x^2-\sqrt{2}\,x+1\right)}{2^{\frac{5}{2}}}+\frac{\arctan \left(\frac{2\,x+\sqrt{2}}{\sqrt{2}}\right)}{2^{\frac{3}{2}}}+\frac{\arctan \left(\frac{2\,x-\sqrt{2}}{\sqrt{2}}\right)}{2^{\frac{3}{2}}}\]</span></p>
 <p><code>pandoc</code> automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, <code>pandoc</code> takes care of how mathematical equations delimited by <code>$$</code> are rendered.</p>
 <p>However, we can also change Maxima’s output format to MathML, which works if the output document is a HTML document.</p>
-<pre class="r"><code>maxima.options(engine.format = &quot;mathml&quot;)</code></pre>
+<pre class="r"><code>maxima.options(engine.format = &quot;mathml&quot;)
+maxima.options()</code></pre>
+<pre><code>## $format
+## [1] &quot;linear&quot;
+## 
+## $engine.format
+## [1] &quot;mathml&quot;
+## 
+## $inline.format
+## [1] &quot;inline&quot;
+## 
+## $label
+## [1] TRUE
+## 
+## $engine.label
+## [1] TRUE
+## 
+## $inline.label
+## [1] FALSE</code></pre>
 <pre class="maxima"><code>(%i6) sqrt(3/4);</code></pre>
 <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>mlabel</mi> <mfenced separators><msub><mi>%o</mi> <mn>6</mn></msub> <mo>,</mo><mfrac><mrow><msqrt><mn>3</mn> </msqrt></mrow> <mrow> <mn>2</mn> </mrow></mfrac> </mfenced> </math></p>
 <pre class="maxima"><code>(%i7) f(x) := e^(x^2)$
@@ -241,6 +258,16 @@ assume(R &gt; 0)$
 <p>You can also replay other previous expressions by referring to their output labels, as already demonstrated above. Whether or not reference labels are printed via the <code>knitr</code> engine has no influence on their existence in Maxima internally.</p>
 <p><code>rim</code> also supports printing Maxima output as inline. This works by putting an <code>r</code> inline code chunk and using <code>maxima.inline()</code>. Example: <code>`r maxima.inline(&quot;log(%o1);&quot;)`</code> results in <span class="math inline">\(\frac{\log \left(1-\frac{1}{R^2}\right)}{2}\)</span> .</p>
 <pre class="r"><code>maxima.options(engine.format = &quot;latex&quot;)</code></pre>
+<div id="chunk-options" class="section level3">
+<h3>Chunk Options</h3>
+<p>The following chunk options are currently available:</p>
+<ul>
+<li><code>echo</code>: Should the code chunk be printed (default is <code>TRUE</code>). If <code>eval=FALSE</code>, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation</li>
+<li><code>eval</code>: Should the code chunk be evaluated by Maxima (default is <code>TRUE</code>)</li>
+<li><code>include</code>: whether code chunk and results should be printed (default is <code>TRUE</code>). If <code>FALSE</code>, code is still evaluated</li>
+</ul>
+<p><strong>NOTE:</strong> The <code>results</code> chunk option is explicitly ignored from chunk header and implicitly controlled via <code>maxima.options(engine.format = ...)</code>.</p>
+</div>
 </div>
 </div>
 <div id="demos" class="section level1">
