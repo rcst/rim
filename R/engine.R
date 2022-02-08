@@ -59,7 +59,8 @@ maxima.engine <- function(options) {
   }
 
   # engine_output(options, options$code, out)
-  engine_output(options, out = ll)
+  # engine_output(options, out = ll)
+  engine_output(opts_current$merge(list(results = maxima.options$engine.results)), out = ll)
 }
 
 maxima.engine.start <- function() {

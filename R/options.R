@@ -38,18 +38,30 @@ maxima.options = set_opt(
 		       .validate = function(x) {
 			# add side effect: knitr::opts_chunk$set(result = "markup"/ "asis")
 			 r <- x %in% c("linear", "ascii", "latex", "mathml")
-			 if(r) {
-			   switch(x,
-				  latex = knitr::opts_chunk$set(results = "asis"),
-				  linear = knitr::opts_chunk$set(results = "markup"),
-				  ascii = knitr::opts_chunk$set(results = "markup"),
-				  mathml =  knitr::opts_chunk$set(results = "asis"),
-			   )
-			 }
+			 # if(r) {
+			 #   switch(x,
+			 #          latex = knitr::opts_chunk$set(results = "asis"),
+			 #          linear = knitr::opts_chunk$set(results = "markup"),
+			 #          ascii = knitr::opts_chunk$set(results = "markup"),
+			 #          mathml =  knitr::opts_chunk$set(results = "asis"),
+			 #   )
+			 # }
 			 return(r)
 		       }, 
 		       .failed_msg = "'format' must be one of 'linear', 'ascii', 'latex' or 'mathml'",
 		       .description = "Same as 'format', but for maxima code chunks in 'RMarkdown' documents."),
+  engine.results = list(.value = function() {
+			  switch(.v$engine.format,
+				 latex = "asis",
+				 linear = "markup",
+				 ascii = "markup",
+				 mathml = "asis",
+			  )
+		       }, 
+		       .class = "character",
+		       .length = 1L,
+		       .private = TRUE, 
+		       .visible = FALSE),
   inline.format = list(.value = "linear", 
 		       .length = 1L, 
 		       .class = "character", 
