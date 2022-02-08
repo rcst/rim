@@ -29,7 +29,8 @@ maxima.engine <- function(options) {
     ccode <- append(ccode, iprint(tt))
 
     if(!attr(tt, "suppressed")) {
-      ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+      if(options$echo)
+	ll <- append(ll, list(structure(list(src = ccode), class = "source")))
       if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
 	tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
 	pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
@@ -45,7 +46,8 @@ maxima.engine <- function(options) {
   }
 
   if(length(ccode))
-    ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+    if(options$echo)
+      ll <- append(ll, list(structure(list(src = ccode), class = "source")))
 
   if (last_label(options$label)) { 
     maxima.engine.stop()
