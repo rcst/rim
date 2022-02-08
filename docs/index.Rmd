@@ -128,6 +128,14 @@ You can also replay other previous expressions by referring to their output labe
 maxima.options(engine.format = "latex")
 ```
 
+### Chunk Options
+
+The following chunk options are currently available:
+
+- `echo`: Should the code chunk be printed (default is `TRUE`). If `eval=FALSE`, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation
+- `eval`: Should the code chunk be evaluated by Maxima (default is `TRUE`)
+
+
 # Demos
 
 ## Plots
