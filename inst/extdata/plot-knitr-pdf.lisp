@@ -1,13 +1,25 @@
 ($load "draw")
 ;;by default denotes the current working directory
 (defvar $plot_output_folder ".") 
-(defvar *builtin-plot2d* (symbol-function '$plot2d-impl))
-(defvar *builtin-plot3d* (symbol-function '$plot3d-impl))
+; (defvar *builtin-plot2d* (symbol-function '$plot2d))
+(defvar *builtin-plot2d* (if (fboundp 'plot2d-impl) (symbol-function 'plot2d-impl)
+			     (if (fboundp '$plot2d-impl) (symbol-function '$plot2d-impl)
+				 (if (fboundp '$plot2d) (symbol-function '$plot2d)
+				     (error "rim: failed to identify built-in plot2d function.")))))
+; (defvar *builtin-plot3d* (symbol-function '$plot3d))
+(defvar *builtin-plot3d* (if (fboundp 'plot3d-impl) (symbol-function 'plot3d-impl)
+			     (if (fboundp '$plot3d-impl) (symbol-function '$plot3d-impl)
+				 (if (fboundp '$plot3d) (symbol-function '$plot3d)
+				     (error "rim: failed to identify built-in plot3d function.")))))  
 (defvar *builtin-draw* (symbol-function '$draw))
 (defvar *builtin-draw2d* (symbol-function '$draw2d))
 (defvar *builtin-draw3d* (symbol-function '$draw3d))
 
 (defmfun $plot2d (&rest args)
+  (declare (notinline $substring)
+	   (notinline $simplode)
+	   (notinline $sha256sum)
+	   (notinline $sconcat))
   (if (member '$pdf_file args)
     (apply *builtin-plot2d* args)
     (let*
@@ -17,6 +29,10 @@
       (apply *builtin-plot2d* args-new))))
 
 (defmfun $plot3d (&rest args)
+  (declare (notinline $substring)
+	   (notinline $simplode)
+	   (notinline $sha256sum)
+	   (notinline $sconcat))
   (if (member '$pdf_file args)
     (apply *builtin-plot3d* args)
     (let*
@@ -36,6 +52,10 @@
     (reverse (rflatten lst nil))))
 
 (defmfun $draw (&rest args)
+  (declare (notinline $substring)
+	   (notinline $simplode)
+	   (notinline $sha256sum)
+	   (notinline $sconcat))
   (if (member '$file_name (flatten args))
     (apply *builtin-draw* args)
     (let*
@@ -49,6 +69,10 @@
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))
 
 (defmfun $draw2d (&rest args)
+  (declare (notinline $substring)
+	   (notinline $simplode)
+	   (notinline $sha256sum)
+	   (notinline $sconcat))
   (if (member '$file_name (flatten args))
     (apply *builtin-draw2d* args)
     (let*
@@ -62,6 +86,10 @@
       `((mlist) ,file_name ,($sconcat file_name ".pdf")))))
 
 (defmfun $draw3d (&rest args)
+  (declare (notinline $substring)
+	   (notinline $simplode)
+	   (notinline $sha256sum)
+	   (notinline $sconcat))
   (if (member '$file_name (flatten args))
     (apply *builtin-draw3d* args)
     (let*

@@ -1,4 +1,5 @@
-(load("mactex-utilities"), load("alt-display.mac"));
+load("mactex-utilities")$
+load("alt-display.mac")$
 
 define_alt_display(twod_display(x),
         block([alt_display1d:false,alt_display2d:false,display2d:true],displa(x)))$
@@ -14,8 +15,27 @@ define_alt_display(
 	mathml_display(x), 
 	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(x)));
 
+define_alt_display(twod_display_noref(x),
+        block([alt_display1d:false,alt_display2d:false,display2d:true],displa(?caddr(x))))$
+define_alt_display(oned_display_noref(x),
+        block([alt_display1d:false,alt_display2d:false,display2d:false],displa(?caddr(x))))$
+define_alt_display(tex_display_noref(x),
+	block([alt_display1d:false,alt_display2d:false,display2d:false],
+	printf(true,"~a~a~a",get_tex_environment_default()[1],tex1(?caddr(x)),get_tex_environment_default()[2])))$
+define_alt_display(tin_display_noref(x),
+	block([alt_display1d:false,alt_display2d:false,display2d:false],
+	printf(true,"~a~a~a","$",tex1(?caddr(x)),"$")))$
+define_alt_display(
+	mathml_display_noref(x), 
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))));
+
+/* overwrittes default setting from alt-display package */
+alt_display_text_prefix: "TEXT;>>";
+alt_display_text_suffix: "<<TEXT;";
+
 define_alt_display(multi_display_for_rim(x),
   block([alt_display1d:false,alt_display2d:false,type:op(x)],
+  /* this is still needed for backwards compatibility */
     if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
     else (
     printf(true,"~&out;>>"),
@@ -28,11 +48,11 @@ define_alt_display(multi_display_for_rim(x),
     printf(true,"~&two;>>~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
     printf(true,"~&<<wtl;"),
     printf(true,"~&wol;>>"),
-    printf(true,"~&tex;>>;~%")    ,tex_display(?caddr(x))    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&tin;>>;~%")    ,tin_display(?caddr(x))    ,printf(true,"~&<<tin;~%"),
-    printf(true,"~&htm;>>~%")    ,mathml_display(?caddr(x)) ,printf(true,"~&<<htm;~%"),
-    printf(true,"~&lin;>>~%")     ,oned_display(?caddr(x))   ,printf(true,"~&<<lin;~%"),
-    printf(true,"~&two;>>~%")     ,twod_display(?caddr(x))   ,printf(true,"~&<<two;~%"),
+    printf(true,"~&tex;>>;~%")    ,tex_display_noref(x)    ,printf(true,"~&<<tex;~%"),
+    printf(true,"~&tin;>>;~%")    ,tin_display_noref(x)    ,printf(true,"~&<<tin;~%"),
+    printf(true,"~&htm;>>~%")    ,mathml_display_noref(x) ,printf(true,"~&<<htm;~%"),
+    printf(true,"~&lin;>>~%")     ,oned_display_noref(x)   ,printf(true,"~&<<lin;~%"),
+    printf(true,"~&two;>>~%")     ,twod_display_noref(x)   ,printf(true,"~&<<two;~%"),
     printf(true,"~&<<wol;"),
     printf(true,"~&<<out;")
     )));

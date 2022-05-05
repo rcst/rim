@@ -115,7 +115,7 @@ draw3d(
 ```
 
 
-```{r, eval = TRUE, warning=FALSE, results="markup"}
+```{r, warning=FALSE, results="markup"}
 pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)
 
 pref <- system.file("extdata", 
