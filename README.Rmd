@@ -22,20 +22,13 @@ install.packages("rim")
 ## Requirements
 - Maxima (https://sourceforge.net/projects/maxima/, tested with versions >=5.42.1), needs to be on PATH
 
-
 ## Latest Version
 
-If you want to install the latest version install the R package `drat` first and add this github account as a repo:
+If you want to install the latest version install the R package `remotes` first and then install the package from this github repo:
 
 ```{r, eval = FALSE}
-install.packages("drat")
-drat::addRepo("rcst")
-```
-
-Now you can easily install it the usual way:
-
-```{r eval = FALSE}
-install.packages("rim")
+install.packages("remotes")
+remotes::install_github("rcst/rim")
 ```
 
 # Usage

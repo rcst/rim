@@ -10,7 +10,7 @@ Development version of the CRAN package. `rim` provides an interface to the powe
 This repository is a fork from the original `RMaxima` created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
 
 # Requirements
-- Maxima (>= 5.42.1), this package has been tested with 5.42.1 and 5.45.0, but may also work with older versios 
+- Maxima (>= 5.42.1), this package has been tested with version between 5.42.1 and 5.46.0, but may also work with older versios 
 
 # Installation
 
@@ -20,17 +20,11 @@ To install the current release version from CRAN:
 install.packages("rim")
 ```
 
-If you want to install the latest version the easiest way is to install the R package `drat` first and add this github account as a repo:
+If you want to install the latest version the easiest way is to install the R package `remotes` first and install the package from this github repo:
 
 ```{r, eval = FALSE}
-install.packages("drat")
-drat::addRepo("rcst")
-```
-
-Now you can easily install it the usual way:
-
-```{r eval = FALSE}
-install.packages("rim")
+install.packages("remotes")
+remotes::install_github(repo = "rcst/rim")
 ```
 
 # Usage

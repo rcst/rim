@@ -27,18 +27,12 @@ install.packages("rim")
 
 ## Latest Version
 
-If you want to install the latest version install the R package `drat`
-first and add this github account as a repo:
+If you want to install the latest version install the R package
+`remotes` first and then install the package from this github repo:
 
 ``` r
-install.packages("drat")
-drat::addRepo("rcst")
-```
-
-Now you can easily install it the usual way:
-
-``` r
-install.packages("rim")
+install.packages("remotes")
+remotes::install_github("rcst/rim")
 ```
 
 # Usage
@@ -92,10 +86,10 @@ maxima.options
     ##  -------------:-----------------------------------------------------------------
     ##  format        linear
     ##                (Printing format of returned object from maxima.get())
-    ##  engine.format linear
+    ##  engine.format latex 
     ##                (Same as 'format', but for maxima code chunks in
     ##                'RMarkdown' documents.)
-    ##  inline.format linear
+    ##  inline.format inline
     ##                (Same as 'engine.format', but for printing output inline
     ##                via maxima.inline(). Cannot be set to 'ascii'.)
     ##  label         TRUE  
@@ -103,7 +97,7 @@ maxima.options
     ##                when printing a maxima return object.)
     ##  engine.label  TRUE  
     ##                (Same as 'label', but for maxima code chunks.)
-    ##  inline.label  TRUE  
+    ##  inline.label  FALSE 
     ##                (Same as 'label', but for inline code chunks)
 
 ``` r

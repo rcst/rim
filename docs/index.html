@@ -60,6 +60,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 .main-container {
   max-width: 940px;
@@ -80,6 +81,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -174,18 +178,16 @@ pre code {
 <div id="requirements" class="section level1">
 <h1>Requirements</h1>
 <ul>
-<li>Maxima (&gt;= 5.42.1), this package has been tested with 5.42.1 and 5.45.0, but may also work with older versios</li>
+<li>Maxima (&gt;= 5.42.1), this package has been tested with version between 5.42.1 and 5.46.0, but may also work with older versios</li>
 </ul>
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
 <p>To install the current release version from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;rim&quot;)</code></pre>
-<p>If you want to install the latest version the easiest way is to install the R package <code>drat</code> first and add this github account as a repo:</p>
-<pre class="r"><code>install.packages(&quot;drat&quot;)
-drat::addRepo(&quot;rcst&quot;)</code></pre>
-<p>Now you can easily install it the usual way:</p>
-<pre class="r"><code>install.packages(&quot;rim&quot;)</code></pre>
+<p>If you want to install the latest version the easiest way is to install the R package <code>remotes</code> first and install the package from this github repo:</p>
+<pre class="r"><code>install.packages(&quot;remotes&quot;)
+remotes::install_github(repo = &quot;rcst/rim&quot;)</code></pre>
 </div>
 <div id="usage" class="section level1">
 <h1>Usage</h1>
