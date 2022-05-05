@@ -1,3 +1,8 @@
+# rim 0.5.1
+## Minor
+- `knitr`-engine now supports chunk options `echo` and `eval`, a description can be found in the documentation page
+- fixed several issues related to changes with Maxima version 5.46.0
+
 # rim 0.5.0
 ## Minor
 - `knitr`-engine now supports plotting commands: plot2d(), plot3d(), draw(), draw2d(), draw3d() (and others that are based on those mentioned), depending on the output format (PDF or HTML), plots are saved as PDF or PNG respectively

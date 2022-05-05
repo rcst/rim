@@ -1,12 +1,12 @@
 Package: rim
 Type: Package
 Title: R's Interface to Maxima, Bringing Symbolic Computation into R
-Version: 0.5.0
-Date: 2021-11-16
+Version: 0.5.1
+Date: 2022-05-06
 Authors@R: c(
+    person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")),
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
-    person("Hans W.", "Borchers", email = "hwborchers@googlemail.com", role = c("aut")),
-    person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")))
+    person("Hans W.", "Borchers", email = "hwborchers@googlemail.com", role = c("aut")))
 Description: Provides an interface to the powerful and fairly complete computer algebra system maxima.
     It can be used to start and control 'Maxima' from within R by entering 'Maxima' commands. 
     It facilitates outputting results from 'Maxima' in 'LaTeX' and 'MathML'. 2D and 3D plots can be displayed directly. This package also registers a 'knitr'-engine 
