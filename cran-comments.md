@@ -1,5 +1,5 @@
 # Test environments
-* local debian 11 buster install, R 4.1.1
+* local debian 11 buster install, R 4.2.0
 * win-builder (devel, release and oldrel)
 * Fedora 34 Virtual Machine
 
@@ -8,6 +8,3 @@
 
 # Downstream dependencies
 There are currently no downstream dependencies for this package.
-
-## re-submission
-* fixed non-canonical link in README.md
