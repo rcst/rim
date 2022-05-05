@@ -1,6 +1,6 @@
 # rim 0.5.1
 ## Minor
-- `knitr`-engine now supports chunk options `echo` and `eval`, a description can be found in the documentation page
+- `knitr`-engine now supports chunk options `echo`, `eval` and `include`, a description can be found in the documentation page
 - fixed several issues related to changes with Maxima version 5.46.0
 
 # rim 0.5.0
