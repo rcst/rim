@@ -1,5 +1,5 @@
 # Test environments
-* local debian 11 buster install, R 4.2.0
+* local debian 11 bullseye install, R 4.2.0
 * win-builder (devel, release and oldrel)
 * Fedora 34 Virtual Machine
 

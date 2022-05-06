@@ -25,7 +25,6 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::check_win_oldrelease()
   devtools::check_win_release()
   devtools::release()
-  devtools::submit_cran()
 
   # drat
   options(dratRepo = "/home/eric/documents/R/packages/drat/")
