@@ -77,8 +77,7 @@ maxima.isInstalled <- function() {
 #' @return Character vector of length 1 of the input command. Depending on whether option "label" is set to TRUE, the corresponding input reference label is printed preceding the input command.
 #' @export
 iprint <- function(x) {
-  if(class(x) != "maxima")
-    stop("x is not a maxima object")
+  stopifnot(isa(x, what = "maxima"))
   # cll <- deparse(sys.call())
   # cll <- deparse(sys.calls()[[sys.parent()]])
   if(exists("mx", maxima.env)) {
