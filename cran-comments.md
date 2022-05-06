@@ -8,3 +8,8 @@
 
 # Downstream dependencies
 There are currently no downstream dependencies for this package.
+
+## Resubmission
+This is a resubmission. In this version I have:
+
+* fixed NOTE about comparison of returned value from class() to a character vector, now using function isa()
