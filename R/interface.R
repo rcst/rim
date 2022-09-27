@@ -5,15 +5,18 @@ MReader <- R6::R6Class("MReader",
       private$rc <- con
       private$stash <- ""
       private$complete <- TRUE
+      private$Nnon <- 0L
     },
     wasComplete = function() {
       private$complete
-    },
-    trials = function() {
-      private$Nnon
     }
   ),
   active = list(
+    trials = function(value) {
+      if(!missing(value))
+	message("Input value ignored.")
+      private$Nnon
+    },
     read = function(value) {
       if(!missing(value))
 	message("Input value ignored.")
@@ -28,9 +31,11 @@ MReader <- R6::R6Class("MReader",
       }))
       if(private$complete && length(x)) {
 	private$stash <- ""
+        private$Nnon <- 0L
       } else {
 	private$stash <- z
 	private$complete <- FALSE
+	private$Nnon <- private$Nnon + 1L
       }
 
       return(z)
@@ -39,7 +44,8 @@ MReader <- R6::R6Class("MReader",
   private = list(
     stash = character(0),
     complete = logical(0),
-    rc = NULL
+    rc = NULL,
+    Nnon = integer(0)
   )
 )
 
@@ -476,29 +482,36 @@ RMaxima <- R6::R6Class("RMaxima",
       if(grepl("\\$$", command))
 	private$reply$suppressed <- TRUE
     },
-    parseStartUp = function() {
+    parseStartUp = function(nmax = 100000L) {
       # pid
       pidExpr <- "pid=(\\d+)"
+      rdr <- MReader$new(private$maximaSocket)
       repeat {
-	z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	# z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	z <- rdr$read
 	if(length(z)) {
 	  if(grepl(pattern = pidExpr, x = z)) { 
 	    private$pid <- as.integer(regex(text = z, pattern = pidExpr)[2])
 	    break
 	  }
 	}
+	if(rdr$trials > nmax)
+	  stop("Failed to read process ID - couldn't start Maxima.")
       }
 
       # version
       verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
       repeat {
-	z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	# z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+	z <- rdr$read
 	if(length(z)) {
 	  if(grepl(pattern = verExpr, x = z)) { 
 	    private$version <- numeric_version(regex(text = z, pattern = verExpr)[2])
 	    break
 	  }
 	}
+	if(rdr$trials > nmax)
+	  stop("Failed to read version number - Maxima seems stuck.")
       }
     }
   )
