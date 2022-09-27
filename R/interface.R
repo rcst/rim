@@ -8,6 +8,9 @@ MReader <- R6::R6Class("MReader",
     },
     wasComplete = function() {
       private$complete
+    },
+    trials = function() {
+      private$Nnon
     }
   ),
   active = list(
@@ -23,9 +26,9 @@ MReader <- R6::R6Class("MReader",
       warning = function(cnd) {
 	private$complete <- FALSE 
       }))
-      if(private$complete && length(x)) 
+      if(private$complete && length(x)) {
 	private$stash <- ""
-      else {
+      } else {
 	private$stash <- z
 	private$complete <- FALSE
       }
@@ -45,6 +48,7 @@ Reply <- R6::R6Class("Reply",
     initialize = function(con) {
       if(missing(con)) 
 	stop("Please provide a connection object to initialize.") 
+
       if(!(isOpen(con, rw = "read") && isOpen(con, rw = "write"))) 
 	stop("Connection without read/write access")
       
@@ -251,6 +255,9 @@ RMaxima <- R6::R6Class("RMaxima",
 				 replacement = "Z:", 
 				 x = private$utilsDir, 
 				 ignore.case = TRUE)
+
+	if(.Platform$OS.type == "windows")
+		private$utilsDir <- shortPathName(private$utilsDir)
       }
       else
 	private$utilsDir <- utilsDir
