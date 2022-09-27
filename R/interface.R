@@ -60,6 +60,7 @@ Reply <- R6::R6Class("Reply",
       
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
+      promptDefault <- "^\\(%i\\d+\\) $"
       promptHit <- FALSE
       rdr <- MReader$new(con)
       repeat { 
@@ -68,7 +69,8 @@ Reply <- R6::R6Class("Reply",
 	  if(grepl(pattern = promptExpr, x = z)) {
 	    promptHit <- TRUE
 	    break
-	  }
+	  } else if(grepl(pattern = promptDefault, x = z))
+		  stop("Detected default prompt - failed to initialize Maxima.")
 	  if(rdr$wasComplete())
 	    break
 	}
