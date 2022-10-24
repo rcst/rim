@@ -63,25 +63,25 @@ To send a single command to Maxima and receive the corresponding output use \cod
 }
 \section{Functions}{
 \itemize{
-\item \code{maxima.start}: (re-)starts Maxima.
+\item \code{maxima.start()}: (re-)starts Maxima.
 
-\item \code{maxima.stop}: Quits Maxima.
+\item \code{maxima.stop()}: Quits Maxima.
 
-\item \code{maxima.get}: Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
+\item \code{maxima.get()}: Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 
-\item \code{maxima.load}: A wrapper to load a Maxima module named by \code{module}
+\item \code{maxima.load()}: A wrapper to load a Maxima module named by \code{module}
 
-\item \code{maxima.apropos}: A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
+\item \code{maxima.apropos()}: A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 
-\item \code{maxima.version}: Returns the version number of Maxima that is used
+\item \code{maxima.version()}: Returns the version number of Maxima that is used
 
-\item \code{maxima.isInstalled}: Returns TRUE when an installation of Maxima has been detected, otherwise FALSE
+\item \code{maxima.isInstalled()}: Returns TRUE when an installation of Maxima has been detected, otherwise FALSE
 
-\item \code{iprint}: Prints the input command of an maxima S3-object returned by \code{\link{maxima.get}()}
+\item \code{iprint()}: Prints the input command of an maxima S3-object returned by \code{\link{maxima.get}()}
 
-\item \code{print.maxima}: Prints the maxima output part of an S3 object returned by \code{\link{maxima.get}()}
+\item \code{print(maxima)}: Prints the maxima output part of an S3 object returned by \code{\link{maxima.get}()}
+
 }}
-
 \seealso{
 Useful links:
 \itemize{

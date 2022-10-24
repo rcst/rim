@@ -29,6 +29,6 @@ The purpose of \code{maxima.inline} is to insert Maxima results as inline text, 
 }
 \section{Functions}{
 \itemize{
-\item \code{maxima.inline}: This function can be used to insert maxima outputs as inline.
-}}
+\item \code{maxima.inline()}: This function can be used to insert maxima outputs as inline.
 
+}}

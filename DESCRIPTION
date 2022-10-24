@@ -1,7 +1,7 @@
 Package: rim
 Type: Package
 Title: R's Interface to Maxima, Bringing Symbolic Computation into R
-Version: 0.5.1
+Version: 0.5.2
 Date: 2022-05-06
 Authors@R: c(
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")),
@@ -22,7 +22,7 @@ Imports:
     knitr,
     GlobalOptions
 LinkingTo: Rcpp
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Suggests: 
     testthat (>= 3.0.0),
     digest,

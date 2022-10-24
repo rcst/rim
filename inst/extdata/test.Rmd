@@ -214,9 +214,9 @@ load("abs_integrate")$
 
 assume(b > 0)$
 
-area(laplace(x));
-mean(laplace(x));
-variance(laplace(x));
+area(laplace(x))$
+mean(laplace(x))$
+variance(laplace(x))$
 ```
 
 # Exponential Distribution

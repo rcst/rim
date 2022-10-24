@@ -134,10 +134,7 @@ if((d <- sum(abs(hs4 - rs4))) < 100) {
 # Laplace Distribution
 
 (%i32) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);$$\mathtt{(\textit{\%o}_{32})}\quad \textit{laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)$$
-(%i33) load("abs_integrate")$(%i34) assume(b > 0)$(%i35) area(laplace(x));$$\mathtt{(\textit{\%o}_{35})}\quad 1$$
-(%i36) mean(laplace(x));$$\mathtt{(\textit{\%o}_{36})}\quad \mu$$
-(%i37) variance(laplace(x));$$\mathtt{(\textit{\%o}_{37})}\quad \frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2$$
-
+(%i33) load("abs_integrate")$(%i34) assume(b > 0)$(%i35) area(laplace(x))$(%i36) mean(laplace(x))$(%i37) variance(laplace(x))$
 
 # Exponential Distribution
 

@@ -24,6 +24,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::check_win_devel()
   devtools::check_win_oldrelease()
   devtools::check_win_release()
+  devtools::submit_cran()
   devtools::release()
 
   # drat
