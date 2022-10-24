@@ -1,3 +1,9 @@
+# rim 0.5.2
+## Minor
+- fixed tests to pass for Fedora 36
+- built-in safeguards against infinite loops when Maxima couldn't be started or initialized (issue #29)
+- reading process ID and version number now using class MReader
+
 # rim 0.5.1
 ## Minor
 - `knitr`-engine now supports chunk options `echo`, `eval` and `include`, a description can be found in the documentation page
