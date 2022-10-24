@@ -111,7 +111,7 @@ if((d <- sum(abs(hs3 - rs3))) < 100) {
 } else {
   paste0("Not OK: ", d)
 }## [1] "OK"
-if((d <- sum(abs(hs4 - rs4))) < 100) {
+if((d <- sum(abs(hs4 - rs4))) < 180) {
   paste0("OK")
 } else {
   paste0("Not OK: ", d)
