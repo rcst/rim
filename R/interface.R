@@ -13,9 +13,10 @@ MReader <- R6::R6Class("MReader",
   ),
   active = list(
     trials = function(value) {
-      if(!missing(value))
-	message("Input value ignored.")
-      private$Nnon
+      if(missing(value)) 
+        private$Nnon
+      else 
+	private$Nnon <- value
     },
     read = function(value) {
       if(!missing(value))
@@ -484,7 +485,7 @@ RMaxima <- R6::R6Class("RMaxima",
       if(grepl("\\$$", command))
 	private$reply$suppressed <- TRUE
     },
-    parseStartUp = function(nmax = 100000L) {
+    parseStartUp = function(nmax = as.integer(1e6)) {
       # pid
       pidExpr <- "pid=(\\d+)"
       rdr <- MReader$new(private$maximaSocket)
@@ -502,6 +503,7 @@ RMaxima <- R6::R6Class("RMaxima",
       }
 
       # version
+      rdr$trials <- 0L
       verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
       repeat {
 	# z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
@@ -512,14 +514,15 @@ RMaxima <- R6::R6Class("RMaxima",
 	    break
 	  }
 	}
-	if(rdr$trials > nmax)
-	  stop("Failed to read version number - Maxima seems stuck.\n", 
-	       "Has read: ", z, "\n", 
-	       "Maxima call: ", paste0(private$maximaPath, 
-				      "-s ", private$port, 
-				      "--userdir=", private$utilsDir, 
-				      " --init=", private$display, 
-				      " ",  private$preload))
+	if(rdr$trials > nmax) {
+		stop("Failed to read version number - Maxima seems stuck.\n", 
+		     "Has read: ", z, "\n", 
+		     "Maxima call: ", paste0(private$maximaPath, 
+					     " -s ", private$port, 
+					     " --userdir=", private$utilsDir, 
+					     " --init=", private$display, 
+					     " ",  private$preload))
+	}
       }
     }
   )
