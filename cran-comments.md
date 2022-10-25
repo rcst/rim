@@ -1,7 +1,7 @@
 # Test environments
-* local debian 11 bullseye install, R 4.2.0
+* local debian 11 bullseye install, R 4.2.1
 * win-builder (devel, release and oldrel)
-* Fedora 34 Virtual Machine
+* Fedora 36 Virtual Machine
 
 # R CMD check results
 * There are no ERRORs or WARNINGs.
@@ -12,4 +12,4 @@ There are currently no downstream dependencies for this package.
 ## Resubmission
 This is a resubmission. In this version I have:
 
-* fixed NOTE about comparison of returned value from class() to a character vector, now using function isa()
+* fixed the test failures under Fedora 36

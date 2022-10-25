@@ -265,7 +265,7 @@ RMaxima <- R6::R6Class("RMaxima",
 				 ignore.case = TRUE)
 
 	if(.Platform$OS.type == "windows")
-		private$utilsDir <- shortPathName(private$utilsDir)
+		private$utilsDir <- paste0("\"", private$utilsDir, "\"")
       }
       else
 	private$utilsDir <- utilsDir
