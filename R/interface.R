@@ -513,7 +513,13 @@ RMaxima <- R6::R6Class("RMaxima",
 	  }
 	}
 	if(rdr$trials > nmax)
-	  stop("Failed to read version number - Maxima seems stuck.")
+	  stop("Failed to read version number - Maxima seems stuck.\n", 
+	       "Has read: ", z, "\n", 
+	       "Maxima call: ", paste0(private$maximaPath, 
+				      "-s ", private$port, 
+				      "--userdir=", private$utilsDir, 
+				      " --init=", private$display, 
+				      " ",  private$preload))
       }
     }
   )
