@@ -239,10 +239,12 @@ RMaxima <- R6::R6Class("RMaxima",
 			  preload,
 			  port = 27182) {
 
-      if(missing(maximaPath))
-	private$maximaPath <- Sys.which("maxima")
+      if(missing(maximaPath)) {
+        if(is.na(private$maximaPath <- Sys.getenv("RIM_MAXIMA_PATH", unset = NA)))
+	  private$maximaPath <- Sys.which("maxima")
+      }
       else
-	private$maximaPath <- maximaPath
+        private$maximaPath <- maximaPath
 
       if(missing(workDir))
 	private$workDir = getwd()
@@ -289,9 +291,9 @@ RMaxima <- R6::R6Class("RMaxima",
     },
     isInstalled = function() {
       if(!nchar(private$maximaPath) || 
-	 !grep(pattern = "maxima", 
-	       x = private$maximaPath, 
-	       ignore.case = TRUE))
+	 length(grep(pattern = "maxima", 
+		     x = private$maximaPath, 
+		     ignore.case = TRUE)) == 0L)
 	return(FALSE)
       else
 	return(TRUE)
@@ -400,7 +402,7 @@ RMaxima <- R6::R6Class("RMaxima",
     get_stuck = function(command) {
       # executes command without advancing reference labels
       if(length(command) && nchar(command))
-	self$get(paste0("(", command, "linenum:linenum-1, %)$"))
+	self$get(paste0("(", command, ", linenum:linenum-1, %)$"))
     },
     getPort = function() {
       if(private$running) 

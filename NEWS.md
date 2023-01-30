@@ -1,3 +1,7 @@
+# rim 0.5.3
+## Minor
+- user can specify custom path to Maxima executable by setting environment variable "RIM_MAXIMA_PATH"
+
 # rim 0.5.2
 ## Minor
 - fixed tests to pass for Fedora 36
