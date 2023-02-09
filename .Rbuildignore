@@ -17,3 +17,4 @@
 ^\.Rproj\.user$
 ^rim-logo\.svg$
 ^inst/extdata/binary
+^CRAN-SUBMISSION$

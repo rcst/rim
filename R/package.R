@@ -6,7 +6,7 @@
 #' @details
 #' Note: You need to install the Maxima software separately in order to make use of this package. 
 #' 
-#' Maxima is set up automatically on attachment via \code{library(rim)} and automatically started when a command is send (if it isn't running already) using \code{\link{maxima.get}()}. Using \code{\link{maxima.start}()} and \code{\link{maxima.stop}()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history.
+#' Maxima is set up automatically on attachment via \code{library(rim)} and automatically started when a command is send (if it isn't running already) using \code{\link{maxima.get}()}. If environment variable RIM_MAXIMA_PATH is not set, rim will search for the Maxima executable, or use the former otherwise. Using \code{\link{maxima.start}()} and \code{\link{maxima.stop}()}, one can stop and (re-)start the current Maxima session if needed, e.g. to clear Maxima command and output history.
 #'
 #' To send a single command to Maxima and receive the corresponding output use \code{\link{maxima.get}()}. This function returns a S3 object of class "maxima". The output is printed by printing the object and will be printed in a format currently set by \code{\link{maxima.options}(format)}. The output format can be changed by setting it, e.g. \code{\link{maxima.options}(format = "ascii")}. Output labels are printed according to option \code{\link{maxima.options}(label)}.
 #'
