@@ -21,9 +21,10 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
 		    output_dir = "inst/extdata/", 
 		    output_file = "test.html")
 
-  devtools::check_win_devel()
-  devtools::check_win_oldrelease()
   devtools::check_win_release()
+  devtools::check_win_oldrelease()
+  devtools::check_win_devel()
+
   devtools::submit_cran()
   devtools::release()
 
