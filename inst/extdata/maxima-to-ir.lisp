@@ -27,7 +27,7 @@
 
 (defparameter *maxima-special-ir-map*
   (let ((ht (make-hash-table)))
-    ; (setf (gethash 'mdefine ht) 'func-def-to-ir)
+    (setf (gethash 'mdefine ht) 'func-def-to-ir)
     ; (setf (gethash '%array ht) 'array-def-to-ir)
     ; (setf (gethash 'mprog ht) 'mprog-to-ir)
     ; (setf (gethash 'mprogn ht) 'mprogn-to-ir)
@@ -90,3 +90,21 @@
 
 ; (defun mexpt-to-ir (form)
 ;   `(funcall (string "exp") ,@(mapcar #'maxima-to-ir (cdr form))))
+
+(defun mlist-to-ir (form)
+  `(list ,@(mapcar #'maxima-to-ir (cdr form))))
+
+;; the second element of the list
+;; should be a pairlist
+;; (defun lambda-to-ir (form)
+;;   `(function ,@(mlist-to-pairlist (cadr form)) ,@(mapcar #'maxima-to-ir (cddr form))))
+
+(defun lambda-to-ir (form)
+  `(funcall (string "function") ,@(mapcar #'maxima-to-ir (cdr form))))
+
+(defun func-def-to-ir (form)
+  `(op-no-bracket <- 
+		  ,(maxima-to-ir (caaadr form)) 
+		  (funcall (string "function") 
+			   ,(mlist-to-ir (cadr form))) 
+		  ,@(mapcar #'maxima-to-ir (cddr form))))
