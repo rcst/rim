@@ -13,6 +13,7 @@
 (setf list-form '((MLIST SIMP) 1 2 7 ((MPLUS SIMP) $X $Y)))
 (setf lambda-form '((LAMBDA SIMP) ((MLIST) $I) ((MPLUS) $I 1)))
 (setf adv-form '((MPLUS) ((MQUOTIENT) ((%LOG SIMP) ((MPLUS SIMP) 1 $X)) 2) ((MMINUS) ((MQUOTIENT) ((%LOG SIMP) ((MPLUS SIMP) -1 $X)) 2))))
+(setf matrix-form '(($MATRIX SIMP) ((MLIST SIMP) 1 2) ((MLIST SIMP) 2 3))
 
 expt-form
 
