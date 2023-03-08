@@ -44,7 +44,7 @@
     ht))
 
 (defun symbol-name-to-string (form)
-  (string-left-trim "$" (symbol-name form)))
+  (string-left-trim "$%" (symbol-name form)))
 
 (defun symbol-to-ir (form)
   `(symbol ,(symbol-name-to-string form)))
