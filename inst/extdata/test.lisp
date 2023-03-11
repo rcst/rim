@@ -1,6 +1,10 @@
 (load "maxima-to-ir.lisp")
+(load "ir-to-r.lisp")
 (load "test-forms.lisp")
 (load "rds.lisp")
+
+(defun maxima-to-r (form)
+  (ir-to-r (maxima-to-ir form)))
 
 (maxima-to-ir simple-form)
 (maxima-to-ir func-form)
@@ -10,9 +14,12 @@
 (maxima-to-ir funcdef-form)
 (maxima-to-ir val-assign-form)
 (maxima-to-ir list-form)
+(maxima-to-ir list-form2)
 (maxima-to-ir lambda-form)
 (maxima-to-ir adv-form)
 (maxima-to-ir matrix-form)
+
+(maxima-to-r simple-form)
 
 (floatp 1.1)
 
