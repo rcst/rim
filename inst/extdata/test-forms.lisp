@@ -3,7 +3,7 @@
 (setf expt-form '((MEXPT) $E ((MEXPT SIMP) $X 2)))
 (setf simple-form '((MPLUS) ((MMINUS) $D) $C $B $A))
 (setf factorial-form '((MFACTORIAL SIMP) $A))
-(setf cplx-form '((MQUOTIENT) ((MTIMES) 4 $%I) 3))
+(setf cplx-form '((MPLUS) ((MTIMES) 3 $%I) 4))
 (setf funcdef-form '((MDEFINE SIMP) (($F) $X) ((%SIN) $X)))
 (setf val-assign-form '((MSETQ SIMP) $A 4))
 (setf list-form '((MLIST SIMP) 1 2 7 ((MPLUS SIMP) $X $Y)))

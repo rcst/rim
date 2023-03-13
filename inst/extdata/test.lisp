@@ -1,10 +1,8 @@
-(load "maxima-to-ir.lisp")
-(load "ir-to-r.lisp")
+; (load "maxima-to-ir.lisp")
+; (load "ir-to-r.lisp")
+(load "parser.lisp")
 (load "test-forms.lisp")
-(load "rds.lisp")
-
-(defun maxima-to-r (form)
-  (ir-to-r (maxima-to-ir form)))
+; (load "rds.lisp")
 
 (maxima-to-ir simple-form)
 (maxima-to-ir func-form)
@@ -20,6 +18,12 @@
 (maxima-to-ir matrix-form)
 
 (maxima-to-r simple-form)
+(maxima-to-r func-form)
+(maxima-to-r adv-form)
+(maxima-to-r expt-form)
+(maxima-to-r cplx-form)
+(maxima-to-r factorial-form)
+(maxima-to-r funcdef-form)
 
 (floatp 1.1)
 
