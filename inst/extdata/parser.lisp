@@ -1,3 +1,21 @@
+; imported just for testing purposes
+(defun maybe-invert-string-case (string)
+  (let ((all-upper t)
+	(all-lower t)
+	(length (length string)))
+    (dotimes (i length)
+      (let ((ch (char string i)))
+	(when (both-case-p ch)
+	  (if (upper-case-p ch)
+	      (setq all-lower nil)
+	      (setq all-upper nil)))))
+    (cond (all-upper
+	   (string-downcase string))
+	  (all-lower
+	   (string-upcase string))
+	  (t
+	   string))))
+
 (defparameter *maxima-direct-ir-map*
   (let ((ht (make-hash-table)))
     (setf (gethash 'mtimes ht) '(op *))
@@ -50,7 +68,7 @@
   (string-left-trim "$%" (symbol-name form)))
 
 (defun symbol-to-ir (form)
-  `(symbol ,(symbol-name-to-string form)))
+  `(symbol ,(maybe-invert-string-case (symbol-name-to-string form))))
 
 ;;; Generates IR for atomic forms
 (defun atom-to-ir (form)
@@ -95,7 +113,7 @@
 ;   `(funcall (string "exp") ,@(mapcar #'maxima-to-ir (cdr form))))
 
 (defun mlist-to-ir (form)
-  `(list ,@(mapcar #'maxima-to-ir (cdr form))))
+  `(STRUCT-LIST ,@(mapcar #'maxima-to-ir (cdr form))))
 
 ;; the second element of the list
 ;; should be a pairlist
@@ -124,6 +142,7 @@
     (setf (gethash 'int ht) 'int-to-r)
     (setf (gethash 'cplx ht) 'cplx-to-r)
     (setf (gethash 'string ht) 'string-to-r)
+    (setf (gethash 'struct-list ht) 'struct-list-to-r)
     ht))
 
 (defun atom-to-r (form)
@@ -213,6 +232,18 @@
 
 (defun string-to-r (form)
   (format nil "~a" (cadr form)))
+
+(defun struct-list-to-r (form)
+  (format nil "list(~{~a~^, ~})" 
+          (mapcar
+            (lambda (elm) (ir-to-r elm))
+            (cdr form))))
+
+(defun func-args-to-r (form)
+  (format nil "~{~a~^, ~}"
+          (mapcar
+            (lambda (elm) (ir-to-r elm))
+            form)))
 
 (defun stripdollar (form) 
   (string-left-trim "$" (symbol-name form)))
