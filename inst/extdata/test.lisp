@@ -26,20 +26,9 @@
 (maxima-to-r list-form)
 (maxima-to-r list-form2)
 (maxima-to-r funcdef-form)
-
-(floatp 1.1)
-
-(maxima-to-r adv-form)
-(mplus-to-r '((MPLUS) A B C))
-
-(cadr '((MPLUS) A B C))
-(cddr '((MPLUS) A B C))
-
-(untrace mplus-to-r)
-(untrace)
-
-(format nil (op-template "+") '(A B C))
-
+(maxima-to-r val-assign-form)
+(maxima-to-r matrix-form)
+(maxima-to-r lambda-form)
 
 ;;; NOTES
 ;;;

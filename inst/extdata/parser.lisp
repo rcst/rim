@@ -124,11 +124,9 @@
   `(funcall (string "function") ,@(mapcar #'maxima-to-ir (cdr form))))
 
 (defun func-def-to-ir (form)
-  `(op-no-bracket <- 
-		  ,(maxima-to-ir (caaadr form)) 
-		  (funcall (string "function") 
-			   ,(mlist-to-ir (cadr form))) 
-		  ,@(mapcar #'maxima-to-ir (cddr form))))
+  `(func-def ,(maxima-to-ir (caaadr form)) 
+             ,(mlist-to-ir (cadr form)) 
+             ,@(mapcar #'maxima-to-ir (cddr form))))
 
 (defvar *maxima-special-r-map* ())
 
@@ -143,6 +141,7 @@
     (setf (gethash 'cplx ht) 'cplx-to-r)
     (setf (gethash 'string ht) 'string-to-r)
     (setf (gethash 'struct-list ht) 'struct-list-to-r)
+    (setf (gethash 'func-def ht) 'func-def-to-r)
     ht))
 
 (defun atom-to-r (form)
@@ -238,6 +237,20 @@
           (mapcar
             (lambda (elm) (ir-to-r elm))
             (cdr form))))
+
+(defun func-args-to-r (form)
+  (format nil "~{~a~^, ~}"
+          (mapcar
+            (lambda (elm) (ir-to-r elm))
+            (cdr form))))
+
+(defun func-def-to-r (form)
+  (format nil "~a <- function(~a) { ~{~a~^~%~} }" 
+          (ir-to-r (cadr form))
+          (func-args-to-r (caddr form))
+          (mapcar
+            (lambda (elm) (ir-to-r elm))
+            (cdddr form))))
 
 (defun func-args-to-r (form)
   (format nil "~{~a~^, ~}"
