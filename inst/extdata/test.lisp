@@ -4,6 +4,8 @@
 (load "test-forms.lisp")
 ; (load "rds.lisp")
 
+(declaim (optimize (debug 3)))
+
 (maxima-to-ir simple-form)
 (maxima-to-ir func-form)
 (maxima-to-ir expt-form)
@@ -28,9 +30,10 @@
 (maxima-to-r funcdef-form)
 (maxima-to-r val-assign-form)
 (maxima-to-r matrix-form)
+(maxima-to-r matrix-compl)
 (maxima-to-r lambda-form)
 
-;;; NOTES
+(;;;) NOTES
 ;;;
 ;;; function maybe-invert-string-case turns the string
 ;;; FOO into foo
