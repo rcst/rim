@@ -35,6 +35,13 @@
 (maxima-to-r matrix-compl)
 (maxima-to-r lambda-form)
 
+;;; TODO
+(maxima-to-ir pi-form)
+(maxima-to-ir atan-form)
+
+(maxima-to-r pi-form)
+(maxima-to-r atan-form)
+
 (;;;) NOTES
 ;;;
 ;;; function maybe-invert-string-case turns the string

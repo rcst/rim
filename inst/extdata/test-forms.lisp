@@ -15,3 +15,5 @@
 (setf matrix-compl '(($MATRIX SIMP) ((MLIST SIMP) ((MPLUS SIMP) ((MTIMES SIMP) -1 $ALPHA ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -2)) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -1)) ((MTIMES SIMP) -1 $ALPHA ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -2))) ((MLIST SIMP) ((MTIMES SIMP) ((RAT SIMP) -1 2) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) ((RAT SIMP) -3 2))) ((MTIMES SIMP) ((RAT SIMP) -1 2) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) ((RAT SIMP) -3 2))))))
 (setf jfunc-form '((MDEFINE SIMP) (($F) $X $Y) ((MPLUS) ((MEXPT) $X 2) ((MEXPT) $Y 2) ((MTIMES) 2 $X $Y) ((%LOG) ((MQUOTIENT) $X $Y)))))
 (setf block-form '((MPROG SIMP) ((MLIST SIMP) $X $Y) ((MSETQ SIMP) $X 1) ((MSETQ SIMP) $Y 2) ((MPLUS SIMP) $X $Y)))
+(setf atan-form '((%ATAN SIMP) ((MTIMES SIMP) ((RAT SIMP) 1 4) $%PI)))
+(setf pi-form '$%PI)
