@@ -115,17 +115,14 @@
 (defun mlist-to-ir (form)
   `(STRUCT-LIST ,@(mapcar #'maxima-to-ir (cdr form))))
 
-;; the second element of the list
-;; should be a pairlist
-;; (defun lambda-to-ir (form)
-;;   `(function ,@(mlist-to-pairlist (cadr form)) ,@(mapcar #'maxima-to-ir (cddr form))))
-
 (defun lambda-to-ir (form)
-  `(funcall (string "function") ,@(mapcar #'maxima-to-ir (cdr form))))
+  `(LAMBDA (FUNC-ARGS ,@(mapcar #'maxima-to-ir (cdadr form)))
+     ,@(mapcar #'maxima-to-ir (cddr form))))
 
 (defun func-def-to-ir (form)
   `(func-def ,(maxima-to-ir (caaadr form)) 
-             ,(mlist-to-ir (cadr form)) 
+             (func-args ,@(mapcar (lambda (elm) (maxima-to-ir elm)) 
+                                 (cdadr form))) 
              ,@(mapcar #'maxima-to-ir (cddr form))))
 
 (defun matrix-to-ir (form)
@@ -148,6 +145,7 @@
     (setf (gethash 'string ht) 'string-to-r)
     (setf (gethash 'struct-list ht) 'struct-list-to-r)
     (setf (gethash 'func-def ht) 'func-def-to-r)
+    (setf (gethash 'lambda ht) 'lambda-to-r)
     (setf (gethash 'matrix ht) 'matrix-to-r)
     ht))
 
@@ -259,11 +257,16 @@
             (lambda (elm) (ir-to-r elm))
             (cdddr form))))
 
+(defun lambda-to-r (form)
+  (format nil "function(~a) { ~a }"
+        (func-args-to-r (cadr form))
+        (ir-to-r (caddr form))))
+
 (defun func-args-to-r (form)
   (format nil "~{~a~^, ~}"
           (mapcar
             (lambda (elm) (ir-to-r elm))
-            form)))
+            (cdr form))))
 
 (defun matrix-to-r (form)
   (format nil "matrix(data = c(~{~a~^, ~}), ncol = ~a, nrow = ~a)"
