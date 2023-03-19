@@ -13,7 +13,7 @@ test_that("maxima.apropos returns exact result", {
 
   expect_named(to, expected = c("wtl", "wol"))
   expect_named(to$wtl, expected = c("linear", "ascii", "latex", "inline", "mathml"))
-  expect_named(to$wol, expected = c("linear", "ascii", "latex", "inline", "mathml"))
+  expect_named(to$wol, expected = c("linear", "ascii", "latex", "inline", "mathml", "parsed"))
   
   expect_gt(length(to$wtl$linear), 10L)
   expect_gt(length(to$wtl$ascii), 10L)

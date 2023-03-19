@@ -225,7 +225,8 @@ Reply <- R6::R6Class("Reply",
 				 "ascii" = extract("two;>>|<<two;", wol),
 				 "latex" = extract("tex;>>|<<tex;", wol),
 				 "inline" = extract("tin;>>|<<tin;", wol),
-				 "mathml" = extract("htm;>>|<<htm;", wol))))
+				 "mathml" = extract("htm;>>|<<htm;", wol),
+				 "parsed" = extract("m2r;>>|<<m2r;", wol))))
       }
     })
 )

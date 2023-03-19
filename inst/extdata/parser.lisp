@@ -1,20 +1,20 @@
 ; imported just for testing purposes
-(defun maybe-invert-string-case (string)
-  (let ((all-upper t)
-	(all-lower t)
-	(length (length string)))
-    (dotimes (i length)
-      (let ((ch (char string i)))
-	(when (both-case-p ch)
-	  (if (upper-case-p ch)
-	      (setq all-lower nil)
-	      (setq all-upper nil)))))
-    (cond (all-upper
-	   (string-downcase string))
-	  (all-lower
-	   (string-upcase string))
-	  (t
-	   string))))
+; (defun maybe-invert-string-case (string)
+;   (let ((all-upper t)
+; 	(all-lower t)
+; 	(length (length string)))
+;     (dotimes (i length)
+;       (let ((ch (char string i)))
+; 	(when (both-case-p ch)
+; 	  (if (upper-case-p ch)
+; 	      (setq all-lower nil)
+; 	      (setq all-upper nil)))))
+;     (cond (all-upper
+; 	   (string-downcase string))
+; 	  (all-lower
+; 	   (string-upcase string))
+; 	  (t
+; 	   string))))
 
 (defparameter *maxima-direct-ir-map*
   (let ((ht (make-hash-table)))
@@ -192,14 +192,14 @@
   (format nil "~@?" "~~{~~#[~~;~~a~~:;~~a ~a ~~]~~}"
 	  op))
 
-; (defun mplus-to-r (form)
-;   (format nil (op-template "+") 
-; 	  (mapcar 
-; 	    (lambda (elm) (maxima-to-r elm)) 
-; 	    (cdr form))))
+(defun mplus-to-r (form)
+  (format nil (op-template "+") 
+	  (mapcar 
+	    (lambda (elm) (maxima-to-r elm)) 
+	    (cdr form))))
 
-; (defun mminus-to-r (form)
-;   (format nil "-~A" (cadr form)))
+(defun mminus-to-r (form)
+  (format nil "-~A" (cadr form)))
 
 (defun op-to-r (form)
   (format nil (op-template (cadr form))
@@ -277,8 +277,8 @@
           (length (cdr form))
           (- (length (cadr form)) 1)))
 
-(defun stripdollar (form) 
-  (string-left-trim "$" (symbol-name form)))
+; (defun stripdollar (form) 
+;   (string-left-trim "$" (symbol-name form)))
 
-(defun maxima-to-r (form)
+(defun maxima2r (form)
   (ir-to-r (maxima-to-ir form)))

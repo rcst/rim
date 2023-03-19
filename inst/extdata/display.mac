@@ -1,3 +1,4 @@
+load("parser.lisp")$
 load("mactex-utilities")$
 load("alt-display.mac")$
 
@@ -13,7 +14,7 @@ define_alt_display(tin_display(x),
 	printf(true,"~a~a~a","$",tex1(x),"$")))$
 define_alt_display(
 	mathml_display(x), 
-	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(x)));
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(x)))$
 
 define_alt_display(twod_display_noref(x),
         block([alt_display1d:false,alt_display2d:false,display2d:true],displa(?caddr(x))))$
@@ -27,7 +28,10 @@ define_alt_display(tin_display_noref(x),
 	printf(true,"~a~a~a","$",tex1(?caddr(x)),"$")))$
 define_alt_display(
 	mathml_display_noref(x), 
-	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))));
+	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))))$
+/* define_alt_display(m2r_display_out(x), */
+/*         block([alt_display1d:false,alt_display2d:false,display2d:false], */
+/* 	printf(true, "~a", maxima2r(?caddr(x)))))$ */
 
 /* overwrittes default setting from alt-display package */
 alt_display_text_prefix: "TEXT;>>";
@@ -53,6 +57,7 @@ define_alt_display(multi_display_for_rim(x),
     printf(true,"~&htm;>>~%")    ,mathml_display_noref(x) ,printf(true,"~&<<htm;~%"),
     printf(true,"~&lin;>>~%")     ,oned_display_noref(x)   ,printf(true,"~&<<lin;~%"),
     printf(true,"~&two;>>~%")     ,twod_display_noref(x)   ,printf(true,"~&<<two;~%"),
+    /* printf(true,"~&m2r;>>~%")     ,m2r_display_out(x)   ,printf(true,"~&<<m2r;~%"), */
     printf(true,"~&<<wol;"),
     printf(true,"~&<<out;")
     )));
