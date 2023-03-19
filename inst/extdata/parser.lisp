@@ -280,5 +280,5 @@
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))
 
-(defun maxima2r (form)
+(defun $maxima2r (form)
   (ir-to-r (maxima-to-ir form)))

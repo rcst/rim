@@ -365,6 +365,7 @@ RMaxima <- R6::R6Class("RMaxima",
 			 output.label = private$lastOutputLabel,
 			 command = command,
 			 suppressed = private$reply$suppressed,
+			 parsed = str2lang(private$reply$result$wol$parsed),
 			 class = "maxima"))
       }
 
@@ -381,6 +382,7 @@ RMaxima <- R6::R6Class("RMaxima",
 			 output.label = private$lastOutputLabel,
 			 command = command,
 			 suppressed = private$reply$suppressed,
+			 parsed = str2lang(private$reply$result$wol$parsed),
 			 class = "maxima"))
       }
 
