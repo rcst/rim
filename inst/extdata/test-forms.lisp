@@ -17,3 +17,5 @@
 (setf block-form '((MPROG SIMP) ((MLIST SIMP) $X $Y) ((MSETQ SIMP) $X 1) ((MSETQ SIMP) $Y 2) ((MPLUS SIMP) $X $Y)))
 (setf atan-form '((%ATAN SIMP) ((MTIMES SIMP) ((RAT SIMP) 1 4) $%PI)))
 (setf pi-form '$%PI)
+(setf compare-form '((MCOND SIMP) ((MGREATERP SIMP) $X $Y) $X T $Y))
+(setf longcompare-form '((MCOND SIMP) ((MGREATERP SIMP) $X $Y) $X ((MGREATERP SIMP) $Y $Z) $Z T $Y))

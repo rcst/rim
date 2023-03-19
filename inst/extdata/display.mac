@@ -31,7 +31,7 @@ define_alt_display(
 	block([display2d:true, alt_display1d:false, alt_display2d:false], mathml(?caddr(x))))$
 define_alt_display(m2r_display_out(x),
         block([alt_display1d:false,alt_display2d:false,display2d:false],
-	printf(true, "~a", maxima2r(?caddr(x)))))$
+	printf(true, "~a", ?maxima2r(?caddr(x)))))$
 
 /* overwrittes default setting from alt-display package */
 alt_display_text_prefix: "TEXT;>>";

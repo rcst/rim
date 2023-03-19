@@ -1,3 +1,21 @@
+;imported just for testing purposes
+(defun maybe-invert-string-case (string)
+  (let ((all-upper t)
+	(all-lower t)
+	(length (length string)))
+    (dotimes (i length)
+      (let ((ch (char string i)))
+	(when (both-case-p ch)
+	  (if (upper-case-p ch)
+	      (setq all-lower nil)
+	      (setq all-upper nil)))))
+    (cond (all-upper
+	   (string-downcase string))
+	  (all-lower
+	   (string-upcase string))
+	  (t
+	   string))))
+
 ; (load "maxima-to-ir.lisp")
 ; (load "ir-to-r.lisp")
 (load "parser.lisp")
@@ -19,6 +37,8 @@
 (maxima-to-ir lambda-form)
 (maxima-to-ir adv-form)
 (maxima-to-ir matrix-form)
+(maxima-to-ir pi-form)
+(maxima-to-ir atan-form)
 
 (maxima-to-r simple-form)
 (maxima-to-r func-form)
@@ -34,13 +54,16 @@
 (maxima-to-r matrix-form)
 (maxima-to-r matrix-compl)
 (maxima-to-r lambda-form)
-
-;;; TODO
-(maxima-to-ir pi-form)
-(maxima-to-ir atan-form)
-
 (maxima-to-r pi-form)
 (maxima-to-r atan-form)
+
+;;; TODO
+(maxima-to-ir compare-form)
+(maxima-to-ir longcompare-form)
+
+(maxima2r compare-form)
+(maxima2r longcompare-form)
+
 
 (;;;) NOTES
 ;;;

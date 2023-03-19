@@ -1,21 +1,3 @@
-; imported just for testing purposes
-; (defun maybe-invert-string-case (string)
-;   (let ((all-upper t)
-; 	(all-lower t)
-; 	(length (length string)))
-;     (dotimes (i length)
-;       (let ((ch (char string i)))
-; 	(when (both-case-p ch)
-; 	  (if (upper-case-p ch)
-; 	      (setq all-lower nil)
-; 	      (setq all-upper nil)))))
-;     (cond (all-upper
-; 	   (string-downcase string))
-; 	  (all-lower
-; 	   (string-upcase string))
-; 	  (t
-; 	   string))))
-
 (defparameter *maxima-direct-ir-map*
   (let ((ht (make-hash-table)))
     (setf (gethash 'mtimes ht) '(op *))
@@ -75,6 +57,7 @@
   (cond
     ((eq form 'nil) `(symbol "NULL"))
     ((eq form '$true) `(symbol "TRUE"))
+    ((eq form 'T) T)
     ((stringp form) `(string ,form))
     ((and (not (symbolp form)) (floatp form)) `(num ,form))
     ((and (not (symbolp form)) (integerp form)) `(int ,form))
@@ -115,6 +98,16 @@
 (defun mlist-to-ir (form)
   `(STRUCT-LIST ,@(mapcar #'maxima-to-ir (cdr form))))
 
+(defun mcond-to-ir (form)
+  `(COND ,@(let* ((n (- (length form) 1))
+                 (lst (cdddr form))
+                 (cur (list (cadr form) (caddr form))))
+             (do ((i 2 (+ i 2)))
+                 ((= i n) cur)
+                 (setf cur 
+                       (list cur (list (car lst) (cadr lst))))
+                 (setf lst (cddr lst))))))
+
 (defun lambda-to-ir (form)
   `(LAMBDA (FUNC-ARGS ,@(mapcar #'maxima-to-ir (cdadr form)))
      ,@(mapcar #'maxima-to-ir (cddr form))))
@@ -147,6 +140,7 @@
     (setf (gethash 'func-def ht) 'func-def-to-r)
     (setf (gethash 'lambda ht) 'lambda-to-r)
     (setf (gethash 'matrix ht) 'matrix-to-r)
+    (setf (gethash 'cond ht) 'cond-to-r)
     ht))
 
 (defun atom-to-r (form)
@@ -277,8 +271,14 @@
           (length (cdr form))
           (- (length (cadr form)) 1)))
 
+; Maxima doesn't have a LISP cond
+; Maxima implements all if ... then ... elseif ... else as LISP cons
+; if ... then ... -> FALSE if condition is NIL
+(defun cond-part-to-r (form index)
+  (format nil "~#[~;else { ~a ~}~:; else if(~a) { ~a } ~]"))
+
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))
 
-(defun $maxima2r (form)
+(defun maxima2r (form)
   (ir-to-r (maxima-to-ir form)))
