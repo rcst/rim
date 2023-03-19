@@ -79,7 +79,7 @@
     ((and (not (symbolp form)) (floatp form)) `(num ,form))
     ((and (not (symbolp form)) (integerp form)) `(int ,form))
     ((eq form '$%i) '(cplx 0 1)) ; iota complex number
-    ((eq form '$%pi) '(num (symbol "pi") 0)) ; Pi
+    ((eq form '$%pi) '(symbol "pi")) ; Pi
     ((eq form '$%e) '(funcall (symbol "exp"))) ; Euler's Constant
     ((eq form '$inf) '(symbol "Inf"))
     (t (symbol-to-ir form))))
