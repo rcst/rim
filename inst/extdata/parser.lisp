@@ -101,11 +101,11 @@
 (defun mcond-to-ir (form)
   `(COND ,@(let* ((n (- (length form) 1))
                  (lst (cdddr form))
-                 (cur (list (cadr form) (caddr form))))
+                 (cur (list (maxima-to-ir (cadr form)) (maxima-to-ir (caddr form)))))
              (do ((i 2 (+ i 2)))
                  ((= i n) cur)
                  (setf cur 
-                       (list cur (list (car lst) (cadr lst))))
+                       (list cur (list (maxima-to-ir (car lst)) (maxima-to-ir (cadr lst)))))
                  (setf lst (cddr lst))))))
 
 (defun lambda-to-ir (form)
@@ -273,9 +273,28 @@
 
 ; Maxima doesn't have a LISP cond
 ; Maxima implements all if ... then ... elseif ... else as LISP cons
+; idea
 ; if ... then ... -> FALSE if condition is NIL
-(defun cond-part-to-r (form index)
-  (format nil "~#[~;else { ~a ~}~:; else if(~a) { ~a } ~]"))
+; (defun cond-aux (lst)):
+; If there is
+; 1 conditional -> if(iA) { tB } -> (defun csgl (iA tB))
+; 2 conditionals and the second is T -> if(iA) { tB } else { tC } (defun cdbl (iA tB tC))
+; 3 or more gennui conditionals -> if (iA) {tB} else if(iC) {tD} -> (cdbl (iA tB (cond-aux (iC tD))))
+(defun cond-to-r (form index)
+  (format nil "~#[~;if (~a) { ~a ~} else ~:; else if(~a) { ~a } ~]"))
+
+(defun cond-aux (form)
+  (cond ((= (length (cdr form)) 1) (csgl (cadr form) (caddr form)))
+        ((= (length (cdr form)) 2) (cdbl (cadr form) (caddr form) (cadddr form)))
+        ((>= (length (cdr form)) 3) ((cdbl (car form) (cadr form) (cond-aux (cddr form)))))))
+
+(defun csgl (iA tB)
+  (format nil "if(~a) { ~a }" iA tB))
+
+(defun cdbl (iA tB tC)
+  (if (consp tC)
+      (format nil "if(~a) { ~a } else ~a")
+      (format nil "if(~a) { ~a } else { ~a }" iA tB tC)))
 
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))
