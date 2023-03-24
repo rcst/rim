@@ -99,14 +99,7 @@
   `(STRUCT-LIST ,@(mapcar #'maxima-to-ir (cdr form))))
 
 (defun mcond-to-ir (form)
-  `(COND ,@(let* ((n (- (length form) 1))
-                 (lst (cdddr form))
-                 (cur (list (maxima-to-ir (cadr form)) (maxima-to-ir (caddr form)))))
-             (do ((i 2 (+ i 2)))
-                 ((= i n) cur)
-                 (setf cur 
-                       (list cur (list (maxima-to-ir (car lst)) (maxima-to-ir (cadr lst)))))
-                 (setf lst (cddr lst))))))
+  `(COND ,@(mapcar #'maxima-to-ir (cdr form))))
 
 (defun lambda-to-ir (form)
   `(LAMBDA (FUNC-ARGS ,@(mapcar #'maxima-to-ir (cdadr form)))
@@ -131,6 +124,7 @@
     (setf (gethash 'symbol ht) 'symbol-to-r)
     (setf (gethash 'op ht) 'op-to-r)
     (setf (gethash 'op-no-bracket ht) 'op-no-bracket-to-r)
+    (setf (gethash 'comp-op ht) 'op-to-r)
     (setf (gethash 'unary-op ht) 'unary-op-to-r)
     (setf (gethash 'funcall ht) 'funcall-to-r)
     (setf (gethash 'int ht) 'int-to-r)
@@ -271,30 +265,23 @@
           (length (cdr form))
           (- (length (cadr form)) 1)))
 
-; Maxima doesn't have a LISP cond
-; Maxima implements all if ... then ... elseif ... else as LISP cons
-; idea
-; if ... then ... -> FALSE if condition is NIL
-; (defun cond-aux (lst)):
-; If there is
-; 1 conditional -> if(iA) { tB } -> (defun csgl (iA tB))
-; 2 conditionals and the second is T -> if(iA) { tB } else { tC } (defun cdbl (iA tB tC))
-; 3 or more gennui conditionals -> if (iA) {tB} else if(iC) {tD} -> (cdbl (iA tB (cond-aux (iC tD))))
-(defun cond-to-r (form index)
-  (format nil "~#[~;if (~a) { ~a ~} else ~:; else if(~a) { ~a } ~]"))
-
-(defun cond-aux (form)
-  (cond ((= (length (cdr form)) 1) (csgl (cadr form) (caddr form)))
-        ((= (length (cdr form)) 2) (cdbl (cadr form) (caddr form) (cadddr form)))
-        ((>= (length (cdr form)) 3) ((cdbl (car form) (cadr form) (cond-aux (cddr form)))))))
-
-(defun csgl (iA tB)
-  (format nil "if(~a) { ~a }" iA tB))
-
-(defun cdbl (iA tB tC)
-  (if (consp tC)
-      (format nil "if(~a) { ~a } else ~a")
-      (format nil "if(~a) { ~a } else { ~a }" iA tB tC)))
+; the last element in a COND form
+; is alsways the default case
+(defun cond-to-r (form)
+  (cond ((= (length (cdr form)) 2) 
+         (format nil "if(~a) { ~a }" 
+                 (ir-to-r (cadr form)) 
+                 (ir-to-r (caddr form))))
+        ((= (length (cdr form)) 4) 
+         (format nil "if(~a) { ~a } else { ~a }" 
+                 (ir-to-r (cadr form)) 
+                 (ir-to-r (caddr form))
+                 (ir-to-r (car (last form)))))
+        ((>= (length (cdr form)) 4)
+         (format nil "if(~a) { ~a } else ~a"
+                 (ir-to-r (cadr form))
+                 (ir-to-r (caddr form))
+                 (cond-to-r (cddr form))))))
 
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))
