@@ -19,3 +19,6 @@
 (setf pi-form '$%PI)
 (setf compare-form '((MCOND SIMP) ((MGREATERP SIMP) $X $Y) $X T $Y))
 (setf longcompare-form '((MCOND SIMP) ((MGREATERP SIMP) $X $Y) $X ((MGREATERP SIMP) $Y $Z) $Z T $Y))
+(setf create-array-form '(($ARRAY SIMP) $ARR 2 2))
+(setf set-array-form '((MSETQ SIMP) (($ARR SIMP ARRAY) 1 1) 1))
+(setf index-array-form '(($ARR SIMP ARRAY) 1 1))

@@ -39,6 +39,8 @@
 (maxima-to-ir matrix-form)
 (maxima-to-ir pi-form)
 (maxima-to-ir atan-form)
+(maxima-to-ir compare-form)
+(maxima-to-ir longcompare-form)
 
 (maxima-to-r simple-form)
 (maxima-to-r func-form)
@@ -56,14 +58,17 @@
 (maxima-to-r lambda-form)
 (maxima-to-r pi-form)
 (maxima-to-r atan-form)
-
-;;; TODO
-(maxima-to-ir compare-form)
-(maxima-to-ir longcompare-form)
-
 (maxima2r compare-form)
 (maxima2r longcompare-form)
 
+;;; TODO
+(maxima-to-ir create-array-form)
+(maxima-to-ir set-array-form)
+(maxima-to-ir index-array-form)
+
+(ir-to-r create-array-form)
+(ir-to-r set-array-form)
+(ir-to-r index-array-form)
 
 (;;;) NOTES
 ;;;
