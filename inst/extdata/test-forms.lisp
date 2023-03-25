@@ -22,3 +22,5 @@
 (setf create-array-form '(($ARRAY SIMP) $ARR 2 2))
 (setf set-array-form '((MSETQ SIMP) (($ARR SIMP ARRAY) 1 1) 1))
 (setf index-array-form '(($ARR SIMP ARRAY) 1 1))
+(setf determinant-form '(($DETERMINANT SIMP) $A))
+(setf matmult-form '((MNCTIMES SIMP) $A (($INVERT SIMP) $A)))
