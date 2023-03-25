@@ -1,6 +1,7 @@
 (defparameter *maxima-direct-ir-map*
   (let ((ht (make-hash-table)))
     (setf (gethash 'mtimes ht) '(op *))
+    (setf (gethash 'mnctimes ht) '(op %*%))
     (setf (gethash 'mplus ht) '(op +))
     (setf (gethash 'mexpt ht) '(op ^))
     (setf (gethash 'rat ht) '(op /))
@@ -25,6 +26,9 @@
     (setf (gethash '%gamma ht) '(funcall (symbol "gamma")))
     (setf (gethash 'mreturn ht) '(funcall (symbol "return")))
     (setf (gethash 'mabs ht) '(funcall (symbol "abs")))
+    (setf (gethash '$invert ht) '(funcall (symbol "solve")))
+    (setf (gethash '$determinant ht) '(funcall (symbol "det")))
+    (setf (gethash '$transpose ht) '(funcall (symbol "t")))
     ht))
 
 (defparameter *maxima-special-ir-map*

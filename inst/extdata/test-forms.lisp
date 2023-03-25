@@ -24,3 +24,6 @@
 (setf index-array-form '(($ARR SIMP ARRAY) 1 1))
 (setf determinant-form '(($DETERMINANT SIMP) $A))
 (setf matmult-form '((MNCTIMES SIMP) $A (($INVERT SIMP) $A)))
+(setf memoizing-form '((MDEFINE SIMP) (($A ARRAY) $X) (($FLOAT) (($SUM) ((%SIN) ((MTIMES) $X $T)) $T 1 10000))))
+(setf sum-form '(($SUM SIMP) $X $X 1 100))
+(setf mattp-form '(($TRANSPOSE SIMP) (($MATRIX SIMP) ((MLIST SIMP) 1 2) ((MLIST SIMP) 3 4))))
