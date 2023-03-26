@@ -35,7 +35,7 @@
   (let ((ht (make-hash-table)))
     (setf (gethash 'mdefine ht) 'func-def-to-ir)
     (setf (gethash '$MATRIX ht) 'matrix-to-ir)
-    ; (setf (gethash '%array ht) 'array-def-to-ir)
+    (setf (gethash '$array ht) 'array-def-to-ir)
     ; (setf (gethash 'mprog ht) 'mprog-to-ir)
     ; (setf (gethash 'mprogn ht) 'mprogn-to-ir)
     (setf (gethash 'mcond ht) 'mcond-to-ir)
@@ -121,6 +121,11 @@
           (lambda (elm) (maxima-to-ir elm))
           (cdr form))))
 
+(defun array-def-to-ir (form)
+  `(op-no-bracket = 
+                  ,(maxima-to-ir (cadr form))
+                  (ARRAY ,@(mapcar #'maxima-to-ir (cddr form)))))
+
 (defvar *maxima-special-r-map* ())
 
 (defparameter *ir-r-direct-templates* 
@@ -139,6 +144,7 @@
     (setf (gethash 'lambda ht) 'lambda-to-r)
     (setf (gethash 'matrix ht) 'matrix-to-r)
     (setf (gethash 'cond ht) 'cond-to-r)
+    (setf (gethash 'array ht) 'array-to-r)
     ht))
 
 (defun atom-to-r (form)
@@ -286,6 +292,12 @@
                  (ir-to-r (cadr form))
                  (ir-to-r (caddr form))
                  (cond-to-r (cddr form))))))
+
+(defun array-to-r (form)
+  (format nil "array(dim = c(~{~a~^, ~}))"
+          (mapcar 
+            (lambda (elm) (ir-to-r elm))
+            (cdr form))))
 
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))
