@@ -56,6 +56,10 @@
 (defun symbol-to-ir (form)
   `(symbol ,(maybe-invert-string-case (symbol-name-to-string form))))
 
+(defun int32p (x)
+  (and (integerp x)
+       (< (abs x) (expt 2 32))))
+
 ;;; Generates IR for atomic forms
 (defun atom-to-ir (form)
   (cond
@@ -64,7 +68,8 @@
     ((eq form 'T) T)
     ((stringp form) `(string ,form))
     ((and (not (symbolp form)) (floatp form)) `(num ,form))
-    ((and (not (symbolp form)) (integerp form)) `(int ,form))
+    ((and (not (symbolp form)) (int32p form)) `(int ,form))
+    ((and (not (symbolp form)) (integerp form)) `(num ,form))
     ((eq form '$%i) '(cplx 0 1)) ; iota complex number
     ((eq form '$%pi) '(symbol "pi")) ; Pi
     ((eq form '$%e) '(funcall (symbol "exp"))) ; Euler's Constant
@@ -144,6 +149,7 @@
     (setf (gethash 'unary-op ht) 'unary-op-to-r)
     (setf (gethash 'funcall ht) 'funcall-to-r)
     (setf (gethash 'int ht) 'int-to-r)
+    (setf (gethash 'num ht) 'num-to-r)
     (setf (gethash 'cplx ht) 'cplx-to-r)
     (setf (gethash 'string ht) 'string-to-r)
     (setf (gethash 'struct-list ht) 'struct-list-to-r)
@@ -235,13 +241,16 @@
 (defun int-to-r (form)
   (format nil "~aL" (cadr form)))
 
+(defun num-to-r (form)
+  (format nil "~a" (cadr form)))
+
 (defun cplx-to-r (form)
   (format nil "complex(1, ~a, ~a)"
           (cadr form)
           (caddr form)))
 
 (defun string-to-r (form)
-  (format nil "~a" (cadr form)))
+  (format nil "~c~a~c" #\" (cadr form) #\"))
 
 (defun struct-list-to-r (form)
   (format nil "list(~{~a~^, ~})" 

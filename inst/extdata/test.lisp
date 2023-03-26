@@ -74,6 +74,7 @@
 (maxima2r index-array-form)
 
 ;;; TODO
+(maxima-to-ir string-form)
 
 
 (;;;) NOTES

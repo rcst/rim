@@ -27,3 +27,4 @@
 (setf memoizing-form '((MDEFINE SIMP) (($A ARRAY) $X) (($FLOAT) (($SUM) ((%SIN) ((MTIMES) $X $T)) $T 1 10000))))
 (setf sum-form '(($SUM SIMP) $X $X 1 100))
 (setf mattp-form '(($TRANSPOSE SIMP) (($MATRIX SIMP) ((MLIST SIMP) 1 2) ((MLIST SIMP) 3 4))))
+(setf string-form '((MLIST SIMP) "/tmp/maxout4236.gnuplot" "./plot2d-95d531.png"))
