@@ -377,12 +377,20 @@ RMaxima <- R6::R6Class("RMaxima",
       # validate output and return if valid
       if(!is.na(private$reply$getOutputLabel())) {
 	private$lastOutputLabel <- private$reply$getOutputLabel()
+
+      if(grepl("no-convert", p <- private$reply$result$wol$parsed)) {
+	      warning("Couldn't parse non-suppressed Maxima output.",
+		      "\nIf you think it should be parsed, please submit an issue at",
+		      "\nhttps://github.com/rcst/rim/issues\n", p)
+	      p <- NA_character_
+      }
+
 	return(structure(private$reply$result,
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
 			 command = command,
 			 suppressed = private$reply$suppressed,
-			 parsed = str2lang(private$reply$result$wol$parsed),
+			 parsed =  str2lang(p),
 			 class = "maxima"))
       }
 
