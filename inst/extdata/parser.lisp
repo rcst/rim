@@ -79,6 +79,8 @@
 	     (type (append type (mapcar #'maxima-to-ir (cdr form))))
 	     ((setf type (gethash (caar form) *maxima-special-ir-map*))
 	      (funcall type form))
+             ((member 'ARRAY (car form) :test #'eq)
+              (array-index-to-ir form))
 	     (t 
 	      `(funcall 
 		 ,(symbol-to-ir (caar form)) 
@@ -126,6 +128,11 @@
                   ,(maxima-to-ir (cadr form))
                   (ARRAY ,@(mapcar #'maxima-to-ir (cddr form)))))
 
+(defun array-index-to-ir (form)
+  `(ARRAY-INDEX ,(maxima-to-ir (caar form))
+     ,@(mapcar (lambda (elm) (maxima-to-ir elm))
+               (cdr form))))
+
 (defvar *maxima-special-r-map* ())
 
 (defparameter *ir-r-direct-templates* 
@@ -145,6 +152,7 @@
     (setf (gethash 'matrix ht) 'matrix-to-r)
     (setf (gethash 'cond ht) 'cond-to-r)
     (setf (gethash 'array ht) 'array-to-r)
+    (setf (gethash 'array-index ht) 'array-index-to-r)
     ht))
 
 (defun atom-to-r (form)
@@ -298,6 +306,12 @@
           (mapcar 
             (lambda (elm) (ir-to-r elm))
             (cdr form))))
+
+(defun array-index-to-r (form)
+  (format nil "~a[~{~a~^,~}]"
+          (ir-to-r (cadr form))
+          (mapcar (lambda (elm) (ir-to-r elm))
+                  (cddr form))))
 
 ; (defun stripdollar (form) 
 ;   (string-left-trim "$" (symbol-name form)))

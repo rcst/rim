@@ -44,6 +44,9 @@
 (maxima-to-ir matmult-form)
 (maxima-to-ir determinant-form)
 (maxima-to-ir mattp-form)
+(maxima-to-ir create-array-form)
+(maxima-to-ir set-array-form)
+(maxima-to-ir index-array-form)
 
 (maxima2r simple-form)
 (maxima2r func-form)
@@ -66,15 +69,12 @@
 (maxima2r matmult-form)
 (maxima2r determinant-form)
 (maxima2r mattp-form)
-
-;;; TODO
-(maxima-to-ir create-array-form)
-(maxima-to-ir set-array-form)
-(maxima-to-ir index-array-form)
-
 (maxima2r create-array-form)
 (maxima2r set-array-form)
 (maxima2r index-array-form)
+
+;;; TODO
+
 
 (;;;) NOTES
 ;;;
