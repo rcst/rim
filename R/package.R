@@ -126,7 +126,7 @@ maxima.eval <- function(x, code = FALSE, envir = globalenv()) {
 	expr <- NA
 	if(is.character(x))
 		x <- maxima.get(x)
-	if(class(x) == "maxima")
+	if(is(x, "maxima"))
 		expr <- attr(x, "parsed")
 	r <- eval(expr, envir = envir)
 	if(code) 

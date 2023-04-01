@@ -13,6 +13,7 @@
 \alias{maxima.isInstalled}
 \alias{iprint}
 \alias{print.maxima}
+\alias{maxima.eval}
 \title{rim}
 \usage{
 maxima.start(restart = FALSE)
@@ -32,6 +33,8 @@ maxima.isInstalled()
 iprint(x)
 
 \method{print}{maxima}(x, ...)
+
+maxima.eval(x, code = FALSE, envir = globalenv())
 }
 \arguments{
 \item{restart}{if FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.}
@@ -42,14 +45,20 @@ iprint(x)
 
 \item{keystring}{character vector containing a search term.}
 
-\item{x}{S3 object of class "maxima"}
+\item{x}{Either a character vector of length 1L or an S3 object of class "maxima"}
 
 \item{...}{other arguments (ignored).}
+
+\item{code}{A logical vector of length 1L, whether to attach the original expression (TRUE) or not (FALSE, default)}
+
+\item{envir}{A environment object. \code{globalenv()} (default), is passed to eval().}
 }
 \value{
 invisibly returns NULL.
 
 Character vector of length 1 of the input command. Depending on whether option "label" is set to TRUE, the corresponding input reference label is printed preceding the input command.
+
+The evaluated R-object
 }
 \description{
 Provides an interface to Maxima, a computer algebra system.
@@ -80,6 +89,8 @@ To send a single command to Maxima and receive the corresponding output use \cod
 \item \code{iprint()}: Prints the input command of an maxima S3-object returned by \code{\link{maxima.get}()}
 
 \item \code{print(maxima)}: Prints the maxima output part of an S3 object returned by \code{\link{maxima.get}()}
+
+\item \code{maxima.eval()}: Evaluates the parsed and quoted R-expression which is part of an S3 object returned by \code{\link{maxima.get}()}
 
 }}
 \seealso{

@@ -3,6 +3,7 @@
 S3method(print,maxima)
 export(iprint)
 export(maxima.apropos)
+export(maxima.eval)
 export(maxima.get)
 export(maxima.inline)
 export(maxima.isInstalled)

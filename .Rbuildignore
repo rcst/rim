@@ -1,5 +1,5 @@
 ^R/rmaxima.R$
-^build_all.R$
+^index.R$
 ^[[:print:]]+\.sh$
 ^[[:print:]]+\.pdf$
 ^README\.html$

@@ -7,6 +7,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::document()
   devtools::load_all()
   devtools::test()
+  devtools::test_file("tests/testthat/test-parser.R")
   devtools::build()
   devtools::check()
 
