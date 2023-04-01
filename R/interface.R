@@ -226,7 +226,7 @@ Reply <- R6::R6Class("Reply",
 				 "latex" = extract("tex;>>|<<tex;", wol),
 				 "inline" = extract("tin;>>|<<tin;", wol),
 				 "mathml" = extract("htm;>>|<<htm;", wol),
-				 "parsed" = extract("m2r;>>|<<m2r;", wol))))
+				 "rstr" = extract("m2r;>>|<<m2r;", wol))))
       }
     })
 )
@@ -378,7 +378,7 @@ RMaxima <- R6::R6Class("RMaxima",
       if(!is.na(private$reply$getOutputLabel())) {
 	private$lastOutputLabel <- private$reply$getOutputLabel()
 
-      if(grepl("no-convert", p <- private$reply$result$wol$parsed)) {
+      if(grepl("no-convert", p <- private$reply$result$wol$rstr)) {
 	      warning("Couldn't parse non-suppressed Maxima output.",
 		      "\nIf you think it should be parsed, please submit an issue at",
 		      "\nhttps://github.com/rcst/rim/issues\n", p)

@@ -114,3 +114,22 @@ print.maxima <- function(x, ...) {
     )
   }
 }
+
+#' @describeIn rim-package Evaluates the parsed and quoted R-expression which is part of an S3 object returned by \code{\link{maxima.get}()}
+#' @param x S3 object of class "maxima"
+#' @param x Either a character vector of length 1L or an S3 object of class "maxima"
+#' @param code A logical vector of length 1L, whether to attach the original expression (TRUE) or not (FALSE, default)
+#' @param envir A environment object. \code{globalenv()} (default), is passed to eval().
+#' @return The evaluated R-object
+#' @export
+maxima.eval <- function(x, code = FALSE, envir = globalenv()) {
+	expr <- NA
+	if(is.character(x))
+		x <- maxima.get(x)
+	if(class(x) == "maxima")
+		expr <- attr(x, "parsed")
+	r <- eval(expr, envir = envir)
+	if(code) 
+		attr(r, "maxima") <- expr
+	return(r)
+}
