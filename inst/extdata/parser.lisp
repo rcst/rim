@@ -36,7 +36,7 @@
     (setf (gethash 'mdefine ht) 'func-def-to-ir)
     (setf (gethash '$MATRIX ht) 'matrix-to-ir)
     (setf (gethash '$array ht) 'array-def-to-ir)
-    ; (setf (gethash 'mprog ht) 'mprog-to-ir)
+    (setf (gethash 'mprog ht) 'no-convert)
     ; (setf (gethash 'mprogn ht) 'mprogn-to-ir)
     (setf (gethash 'mcond ht) 'mcond-to-ir)
     (setf (gethash 'lambda ht) 'lambda-to-ir)
