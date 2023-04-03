@@ -2,7 +2,7 @@ Package: rim
 Type: Package
 Title: R's Interface to Maxima, Bringing Symbolic Computation into R
 Version: 0.6.0
-Date: 2023-04-02
+Date: 2023-04-04
 Authors@R: c(
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")),
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
