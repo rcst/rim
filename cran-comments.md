@@ -1,5 +1,5 @@
 # Test environments
-* local debian 11 bullseye install, R 4.2.1
+* local debian 11 bullseye install, R 4.2.3
 * win-builder (devel, release and oldrel)
 * Fedora 36 Virtual Machine
 
@@ -8,8 +8,3 @@
 
 # Downstream dependencies
 There are currently no downstream dependencies for this package.
-
-## Resubmission
-This is a resubmission. In this version I have:
-
-* fixed the test failures under Fedora 36
