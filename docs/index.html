@@ -263,13 +263,15 @@ maxima.options()</code></pre>
 <li><code>output.var</code>: A character string for a variable that caputures the parsed output expression(s) (i.e., translated into R-code), see example below.</li>
 </ul>
 <p><strong>NOTE:</strong> The <code>results</code> chunk option is explicitly ignored from chunk header and implicitly controlled via <code>maxima.options(engine.format = ...)</code>.</p>
-<p>The above Maxima code chunk was set with option <code>output.var = &quot;foo&quot;</code></p>
+<div id="capturing-parsed-maxima-output" class="section level4">
+<h4>Capturing parsed Maxima output</h4>
+<p>One of the above Maxima code chunk was actually set with option <code>output.var = &quot;foo&quot;</code></p>
 <pre><code>
 ```{maxima, output.var = &quot;foo&quot;}
 integrate(1 / (1 + x^4), x);
 ```
 </code></pre>
-<p>which captured the parsed result(s) as R-code that can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame</p>
+<p>which captured the Maxima result(s) as parsed R-code (unevaluated expressions) into a named list. Those expressions can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame</p>
 <pre class="r"><code>df &lt;- data.frame(x = 1:10, y = letters[1:10])
 df$z &lt;- eval(foo[[&quot;o5&quot;]], envir = df)
 df</code></pre>
@@ -292,6 +294,7 @@ df</code></pre>
 ##     x) + (x^2L)))) + ((2L^(-5L/2L)) * log((1L + ((2L^(1L/2L)) * 
 ##     x) + (x^2L)))))</code></pre>
 <p>In this way, Maxima can assist us with symolic computations in our statistical modelling in R.</p>
+</div>
 </div>
 </div>
 </div>

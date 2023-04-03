@@ -135,7 +135,10 @@ The following chunk options are currently available:
 
 **NOTE:** The `results` chunk option is explicitly ignored from chunk header and implicitly controlled via `maxima.options(engine.format = ...)`. 
 
-The above Maxima code chunk was set with option `output.var = "foo"`
+
+#### Capturing parsed Maxima output
+
+One of the above Maxima code chunk was actually set with option `output.var = "foo"`
 
 ````
 
@@ -145,7 +148,7 @@ integrate(1 / (1 + x^4), x);
 
 ````
 
-which captured the parsed result(s) as R-code that can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
+which captured the Maxima result(s) as parsed R-code (unevaluated expressions) into a named list. Those expressions can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
 
 ```{r}
 df <- data.frame(x = 1:10, y = letters[1:10])

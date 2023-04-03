@@ -10,7 +10,7 @@ maxima.engine(options)
 maxima.inline(command)
 }
 \arguments{
-\item{options}{named \code{list} of \code{knitr} options. Currently there are no maxima specific chunk options. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.}
+\item{options}{named \code{list} of \code{knitr} options. Supported options are \code{echo}, \code{eval}, \code{include} and \code{output.var}. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.}
 
 \item{command}{character string containing the Maxima command to be executed.}
 }

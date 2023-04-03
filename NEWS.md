@@ -1,6 +1,6 @@
 #rim 0.6.0
 ## Minor
-- added new function `maxima.eval()` that can either take a character string or an S3 object of class "maxima" (as returned from `maxima.get()`). In either case, the output result from Maxima (if not suppressed) is parsed into a R-expression and gets evaluated by this function. Objects returned from `maxima.get()` carry an attributed named "parsed" that is the unevaluted R-expression of the returned S3 class object. Parsing works for 
+- added new function `maxima.eval()` that can either take a character string or an S3 object of class "maxima" (as returned from `maxima.get()`). In either case, the output result from Maxima (if not suppressed) is parsed into a R-expression and gets evaluated by this function. Objects returned from `maxima.get()` carry an attributed named "parsed" that is the unevaluted R-expression of the returned Maxima result. Parsing works for 
 	- unary and binary operators
 	- named function calls
 	- function definitions
@@ -10,6 +10,7 @@
 	- matrices: creation, multiplication, transposition, inversion, determinants
 	- lists
 	- conditionals
+- added engine option `output.var` that can name a variable to capture parsed Maxima ourput into a named list. The names of this list are the output labels.
 
 # rim 0.5.3
 ## Modification
