@@ -26,7 +26,5 @@ test_that("parsing and evaluation of parsed results works", {
 
   p4 <- maxima.eval("x^2+1;", code = FALSE, list(x = 3))
   expect_null(attr(p4, "maxima"))
-  
-
 })
 

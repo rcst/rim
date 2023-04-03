@@ -385,12 +385,22 @@ RMaxima <- R6::R6Class("RMaxima",
 	      p <- NA_character_
       }
 
+      tryCatch(
+	       error = function(cnd) {
+		       warning("Caught error while parsing\n",
+			       cnd$message, 
+			       "\nReturning NA.")
+		       p <- NA
+	       },
+	       p <- str2lang(p)
+      )
+
 	return(structure(private$reply$result,
 			 input.label = private$lastInputLabel,
 			 output.label = private$lastOutputLabel,
 			 command = command,
 			 suppressed = private$reply$suppressed,
-			 parsed =  str2lang(p),
+			 parsed =  p,
 			 class = "maxima"))
       }
 

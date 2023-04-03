@@ -7,4 +7,5 @@ test_that("warnings are forwarded", {
   maxima.get("float2bf: false$")
   maxima.get("x: float(%pi)$")
   expect_warning(maxima.get("bfloat(x);"))
+  expect_warning(maxima.eval("sum(1/x^2, x, 1, 10000);"))
 })
