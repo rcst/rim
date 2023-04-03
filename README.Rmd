@@ -33,7 +33,7 @@ remotes::install_github("rcst/rim")
 
 # Usage
 
-This section only demonstrate using the packages R-function directly accessible to the user. On how to use the package's `knitr` engine see [this page](https://rcst.github.io/rim/).
+This section only demonstrates the package's R-function directly accessible to the user. On how to use the package's `knitr` engine see [this page](https://rcst.github.io/rim/).
 
 ```{r, eval = FALSE}
 library(rim)
@@ -53,6 +53,7 @@ maxima.apropos("int")
 maxima.get("integrate(1 / (x^4 + 1), x);")
 maxima.get("jacobian( [alpha / (alpha + beta), 1 / sqrt(alpha + beta)], [alpha, beta] )")
 l <- maxima.get("%;")
+maxima.eval(l, code = TRUE, envir = list(alpha = 0.3, beta = 2.5))
 unclass(l)
 maxima.load("abs_integrate")
 maxima.stop()
