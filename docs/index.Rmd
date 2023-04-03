@@ -87,11 +87,12 @@ takes the right-hand side of the result of the equation from input label `%i3`, 
 
 Of course exercising on such simple computations is of little benefit. The real benefit comes from more complicated expression and the effort that we would need to put if we wanted to typeset the result, such as this
 
-```{maxima}
+```{maxima, output.var = "foo"}
 integrate(1 / (1 + x^4), x);
 ```
 
 `pandoc` automatically renders the LaTeX output format from Maxima by including MathJax JavaScript script. In general, `pandoc` takes care of how mathematical equations delimited by `$$` are rendered.
+
 
 However, we can also change Maxima's output format to MathML, which works if the output document is a HTML document. 
 
@@ -130,8 +131,30 @@ The following chunk options are currently available:
 - `echo`: Should the code chunk be printed (default is `TRUE`). If `eval=FALSE`, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation
 - `eval`: Should the code chunk be evaluated by Maxima (default is `TRUE`)
 - `include`:  whether code chunk and results should be printed (default is `TRUE`). If `FALSE`, code is still evaluated
+- `output.var`: A character string for a variable that caputures the parsed output expression(s) (i.e., translated into R-code), see example below.
 
 **NOTE:** The `results` chunk option is explicitly ignored from chunk header and implicitly controlled via `maxima.options(engine.format = ...)`. 
+
+The above Maxima code chunk was set with option `output.var = "foo"`
+
+````
+
+```{maxima, output.var = "foo"}`r ''`
+integrate(1 / (1 + x^4), x);
+```
+
+````
+
+which captured the parsed result(s) as R-code that can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
+
+```{r}
+df <- data.frame(x = 1:10, y = letters[1:10])
+df$z <- eval(foo[["o5"]], envir = df)
+df
+foo
+```
+
+In this way, Maxima can assist us with symolic computations in our statistical modelling in R.
 
 # Demos
 

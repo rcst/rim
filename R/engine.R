@@ -7,7 +7,7 @@ utils::globalVariables(c("engine", "mx", "plots"))
 #'
 #' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the \code{RMarkdown} file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
-#' @param options named \code{list} of \code{knitr} options. Currently there are no maxima specific chunk options. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
+#' @param options named \code{list} of \code{knitr} options. Supported options are \code{echo}, \code{eval}, \code{include} and \code{output.var}. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
 #' 
 #' @import knitr
 #' @importFrom utils tail
@@ -16,6 +16,8 @@ utils::globalVariables(c("engine", "mx", "plots"))
 maxima.engine <- function(options) { 
   maxima.engine.start()
   code <- options$code
+  ov <- !is.null(varname <- options$output.var)
+  output.data <- list()
   code <- code[nchar(code) > 0]
   cmds <- gather(code)
   ll <- list()
@@ -29,8 +31,8 @@ maxima.engine <- function(options) {
       }
       tt <- maxima.env$mx$get(pc)
       ccode <- append(ccode, iprint(tt))
-
       if(!attr(tt, "suppressed")) {
+	if(ov) output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
 	if(options$echo)
 	  ll <- append(ll, list(structure(list(src = ccode), class = "source")))
 	if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
@@ -48,12 +50,15 @@ maxima.engine <- function(options) {
       }
     }
 
-    if(length(ccode))
-      if(options$echo)
-	ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+  if(ov) 
+    assign(varname, output.data, envir = knit_global())
+
+  if(length(ccode))
+    if(options$echo)
+      ll <- append(ll, list(structure(list(src = ccode), class = "source")))
   } else {
     if(options$echo)
-	ll <- append(ll, list(structure(list(src = code), class = "source")))
+      ll <- append(ll, list(structure(list(src = code), class = "source")))
   }
 
   if (last_label(options$label)) { 

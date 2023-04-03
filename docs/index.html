@@ -104,8 +104,8 @@ pre code {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -113,16 +113,9 @@ pre code {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -267,8 +260,38 @@ maxima.options()</code></pre>
 <li><code>echo</code>: Should the code chunk be printed (default is <code>TRUE</code>). If <code>eval=FALSE</code>, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation</li>
 <li><code>eval</code>: Should the code chunk be evaluated by Maxima (default is <code>TRUE</code>)</li>
 <li><code>include</code>: whether code chunk and results should be printed (default is <code>TRUE</code>). If <code>FALSE</code>, code is still evaluated</li>
+<li><code>output.var</code>: A character string for a variable that caputures the parsed output expression(s) (i.e., translated into R-code), see example below.</li>
 </ul>
 <p><strong>NOTE:</strong> The <code>results</code> chunk option is explicitly ignored from chunk header and implicitly controlled via <code>maxima.options(engine.format = ...)</code>.</p>
+<p>The above Maxima code chunk was set with option <code>output.var = &quot;foo&quot;</code></p>
+<pre><code>
+```{maxima, output.var = &quot;foo&quot;}
+integrate(1 / (1 + x^4), x);
+```
+</code></pre>
+<p>which captured the parsed result(s) as R-code that can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame</p>
+<pre class="r"><code>df &lt;- data.frame(x = 1:10, y = letters[1:10])
+df$z &lt;- eval(foo[[&quot;o5&quot;]], envir = df)
+df</code></pre>
+<pre><code>##     x y        z
+## 1   1 a 0.866973
+## 2   2 b 1.070128
+## 3   3 c 1.098440
+## 4   4 d 1.105521
+## 5   5 e 1.108056
+## 6   6 f 1.109178
+## 7   7 g 1.109749
+## 8   8 h 1.110070
+## 9   9 i 1.110264
+## 10 10 j 1.110387</code></pre>
+<pre class="r"><code>foo</code></pre>
+<pre><code>## $o5
+## (((2L^(-3L/2L)) * atan(((2L^(-1L/2L)) * ((-1L * (2L^(1L/2L))) + 
+##     (2L * x))))) + ((2L^(-3L/2L)) * atan(((2L^(-1L/2L)) * ((2L^(1L/2L)) + 
+##     (2L * x))))) + (-1L * (2L^(-5L/2L)) * log((1L + (-1L * (2L^(1L/2L)) * 
+##     x) + (x^2L)))) + ((2L^(-5L/2L)) * log((1L + ((2L^(1L/2L)) * 
+##     x) + (x^2L)))))</code></pre>
+<p>In this way, Maxima can assist us with symolic computations in our statistical modelling in R.</p>
 </div>
 </div>
 </div>

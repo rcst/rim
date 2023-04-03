@@ -33,6 +33,10 @@ This is an inline test: $L=\sqrt{1-\frac{1}{R^2}}$
 (%i11) log(%o1);$$\mathtt{(\textit{\%o}_{11})}\quad \frac{\log \left(1-\frac{1}{R^2}\right)}{2}$$
 
 
+moo## $o11
+## ((1L/2L) * log((1L + (-1L * (R^-2L)))))
+eval(moo[[1]], list(R = 12))## [1] -0.003484335
+
 
 # Plots
 

@@ -29,7 +29,7 @@ This is an inline test: `r maxima.inline("'L = L;")`.
 sqrt(3/4);
 ```
 
-```{maxima}
+```{maxima, output.var = "moo"}
 f(x) := e^(x^2)$
 diff(f(x), x);
 ```
@@ -38,10 +38,14 @@ diff(f(x), x);
 %;
 ```
 
-```{maxima}
+```{maxima, output.var = "moo"}
 log(%o1);
 ```
 
+```{r}
+moo
+eval(moo[[1]], list(R = 12))
+```
 
 # Plots
 
