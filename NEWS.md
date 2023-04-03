@@ -5,12 +5,12 @@
 	- named function calls
 	- function definitions
 	- lambda function calls
-	- memoizing array function defintion (those are currently simply parsed into "normal" functions)
+	- memoizing array function definition (those are currently simply parsed into "normal" functions)
 	- arrays: creating and setting
 	- matrices: creation, multiplication, transposition, inversion, determinants
 	- lists
 	- conditionals
-- added engine option `output.var` that can name a variable to capture parsed Maxima ourput into a named list. The names of this list are the output labels.
+- added engine option `output.var` that can name a variable to capture parsed Maxima output into a named list. The names of this list are the output labels.
 
 # rim 0.5.3
 ## Modification
@@ -71,7 +71,7 @@
 - implement `knitr`-engine for maxima using this interface
 - Implement stop function to end maxima child process for debugging purposes
 - Handles `asksign` and similar feedback interruptions
-- Added interface to maxima's apropos()-function
+- Added interface to Maxima's apropos()-function
 - Fixed: If command terminates with `\$` then this causes a segmentation fault, which kills the R process. The cause being that maxima returns immediately with the next input prompt
 - added `roxygen2` documentation
 - fixed `system.file` call inside constructor to work with `devtools::load_all()`
