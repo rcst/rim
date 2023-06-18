@@ -1,7 +1,7 @@
 # Test environments
-* local debian 11 bullseye install, R 4.2.3
+* local debian 12 bookworm install, R 4.3.1
 * win-builder (devel, release and oldrel)
-* Fedora 36 Virtual Machine
+* Fedora 36 (devel + clang)
 
 # R CMD check results
 * There are no ERRORs or WARNINGs.

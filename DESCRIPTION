@@ -1,8 +1,8 @@
 Package: rim
 Type: Package
 Title: R's Interface to Maxima, Bringing Symbolic Computation into R
-Version: 0.6.0
-Date: 2023-04-04
+Version: 0.6.1
+Date: 2023-06-19
 Authors@R: c(
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")),
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
@@ -16,7 +16,7 @@ Description: An interface to the powerful and fairly complete computer algebra s
     to be written in 'RMarkdown' documents.
 URL: https://rcst.github.io/rim/
 BugReports: https://github.com/rcst/rim/issues
-SystemRequirements: Maxima (https://sourceforge.net/projects/maxima/, tested with versions 5.42.0 - 5.45.1), needs to be on PATH
+SystemRequirements: Maxima (https://sourceforge.net/projects/maxima/, tested with versions 5.42.0 - 5.46.0), needs to be on PATH
 License: GPL (>= 3)
 Imports: 
     methods,
