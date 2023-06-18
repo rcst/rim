@@ -7,20 +7,10 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::document()
   devtools::load_all()
   devtools::test()
-  devtools::test_file("tests/testthat/test-parser.R")
+  devtools::test_active_file("tests/testthat/test-parser.R")
+  devtools::test_active_file("tests/testthat/test-engine.R")
   devtools::build()
   devtools::check()
-
-  knit(input = "inst/extdata/test.Rmd", 
-       output = "inst/extdata/result.md", 
-       quiet = TRUE)
-  readLines("inst/extdata/test.Rmd") |>
-  knit(text = _,
-       quiet = TRUE) |>
-  strsplit("\n") |>
-  unlist() |>
-  writeLines(con = "inst/extdata/result.md")
-  
 
 rmarkdown::render(input="inst/extdata/test.Rmd", 
                   output_dir = "inst/extdata/", 

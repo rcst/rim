@@ -1,6 +1,7 @@
 load("parser.lisp")$
 load("mactex-utilities")$
 load("alt-display.mac")$
+load("operatingsystem")$
 
 define_alt_display(twod_display(x),
         block([alt_display1d:false,alt_display2d:false,display2d:true],displa(x)))$
