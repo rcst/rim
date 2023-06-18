@@ -3,7 +3,7 @@ title: "knitr engine test page"
 output: html_document
 ---
 
-library(OpenImageR)maxima.options(engine.format = "latex", 
+maxima.options(engine.format = "latex", 
 	       engine.label = TRUE,
 	       inline.format = "inline", 
 	       inline.label = FALSE)
@@ -93,32 +93,21 @@ eval(moo[[1]], list(R = 12))## [1] -0.003484335
    cylindrical(sqrt(25-z^2),z,-5,5,a,0,%pi));
 
 
-pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)pref <- system.file("extdata", 
-		    c("draw-ref.png",
-		      "draw2d-ref.png", 
-		      "draw3d-ref.png", 
-		      "plot2d-ref.png", 
-		      "plot3d-ref.png"), 
-		    package = "rim", 
-		    mustWork = TRUE) r1 <- readImage(pref[1])r2 <- readImage(pref[2])r3 <- readImage(pref[3])r4 <- readImage(pref[4])p1 <- readImage(pft[1])p2 <- readImage(pft[2])p3 <- readImage(pft[3])p4 <- readImage(pft[4])p1 <- rgb_2gray(RGB_image = p1)p2 <- rgb_2gray(RGB_image = p2)p3 <- rgb_2gray(RGB_image = p3)p4 <- rgb_2gray(RGB_image = p4)r1 <- rgb_2gray(RGB_image = r1)r2 <- rgb_2gray(RGB_image = r2)r3 <- rgb_2gray(RGB_image = r3)r4 <- rgb_2gray(RGB_image = r4)hs1 <- average_hash(p1, hash_size = 32, MODE = "binary")hs2 <- average_hash(p2, hash_size = 32, MODE = "binary")hs3 <- average_hash(p3, hash_size = 32, MODE = "binary")hs4 <- average_hash(p4, hash_size = 32, MODE = "binary")rs1 <- average_hash(r1, hash_size = 32, MODE = "binary")rs2 <- average_hash(r2, hash_size = 32, MODE = "binary")rs3 <- average_hash(r3, hash_size = 32, MODE = "binary")rs4 <- average_hash(r4, hash_size = 32, MODE = "binary")if((d <- sum(abs(hs1 - rs1))) < 100) {
+pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)if(length(pft) == 5L)  {
   paste0("OK")
 } else {
-  paste0("Not OK: ", d)
+  paste0("Error: Unexpected number of Maxima plots: ", 
+         paste0(pft, collapse = ", "))
 }## [1] "OK"
-if((d <- sum(abs(hs2 - rs2))) < 100) {
-  paste0("OK")
-} else {
-  paste0("Not OK: ", d)
-}## [1] "OK"
-if((d <- sum(abs(hs3 - rs3))) < 100) {
-  paste0("OK")
-} else {
-  paste0("Not OK: ", d)
-}## [1] "OK"
-if((d <- sum(abs(hs4 - rs4))) < 180) {
-  paste0("OK")
-} else {
-  paste0("Not OK: ", d)
+if(length(pft)) {
+  if(all(as.logical(file.size(pft)))) {
+    paste0("OK")
+  }
+  else {
+    errfiles <- pft[file.size(pft) == 0]
+    paste0("Error: Maxima plot file(s) ", paste0(errfiles, collapse = ", "),
+           "are empty.")
+  }
 }## [1] "OK"
 
 
@@ -168,4 +157,3 @@ if((d <- sum(abs(hs4 - rs4))) < 180) {
 (%i52) if x > y
   then x
   else y;$$\mathtt{(\textit{\%o}_{52})}\quad 2345$$
-

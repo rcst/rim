@@ -98,10 +98,16 @@ engine_print <- function(x){
   pp <- switch(maxima.options$engine.label + 1,
 	 paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
 	 paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n"))
-  if(knitr::is_html_output()) {
-    pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
+  if(is_html_output()) {
+     pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
   }
   pp
+}
+
+is_html_output <- function() {
+  if(is.null(p <- knitr::opts_knit$get("rmarkdown.pandoc.to")))
+    return(FALSE)
+  knitr::is_html_output() & p == "html"
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.

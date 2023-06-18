@@ -14,14 +14,21 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   knit(input = "inst/extdata/test.Rmd", 
        output = "inst/extdata/result.md", 
        quiet = TRUE)
+  readLines("inst/extdata/test.Rmd") |>
+  knit(text = _,
+       quiet = TRUE) |>
+  strsplit("\n") |>
+  unlist() |>
+  writeLines(con = "inst/extdata/result.md")
+  
 
-  rmarkdown::render(input="inst/extdata/test.Rmd", 
-		    output_dir = "inst/extdata/", 
-		    output_file = "result.html")
+rmarkdown::render(input="inst/extdata/test.Rmd", 
+                  output_dir = "inst/extdata/", 
+                  output_file = "result.html")
   
   rmarkdown::render(input="inst/extdata/test.Rmd", 
-		    output_dir = "inst/extdata/", 
-		    output_file = "test.html")
+                    output_dir = "inst/extdata/", 
+                    output_file = "test.html")
 
   devtools::check_win_release()
   devtools::check_win_oldrelease()
