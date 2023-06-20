@@ -1,6 +1,6 @@
 Package: rim
 Type: Package
-Title: R's Interface to Maxima, Bringing Symbolic Computation into R
+Title: Interface to 'Maxima', Enabling Symbolic Computation
 Version: 0.6.1
 Date: 2023-06-19
 Authors@R: c(
