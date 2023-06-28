@@ -18,3 +18,4 @@
 ^rim-logo\.svg$
 ^inst/extdata/binary
 ^CRAN-SUBMISSION$
+^run-in-docker.sh$
