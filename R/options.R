@@ -22,12 +22,12 @@
 #'
 #' @import GlobalOptions
 #' @export
-#' @examplesIf maxima.isInstalled()
+#' @examples
 #' maxima.options(format = "latex")
-#' maxima.options(labels = FALSE)
-#' maxima.options(labels = TRUE, format = "ascii")
+#' maxima.options(label = FALSE)
+#' maxima.options(label = TRUE, format = "ascii")
 #' # reset to default
-#' maxima.options(labels = TRUE, format = "linear")
+#' maxima.options(label = TRUE, format = "linear")
 maxima.options = function(..., RESET = FALSE, READ.ONLY = NULL, LOCAL = FALSE, ADD = FALSE) {}
 maxima.options = set_opt(
   format = list(.value = "linear",

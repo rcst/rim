@@ -25,8 +25,7 @@ maxima.env <- new.env()
 #' @param restart if FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
 #' @examplesIf maxima.isInstalled()
-#' maxima.start()
-#' maxima.start(restart = TRUE) # if maxima is running already
+#' maxima.start(restart = TRUE)
 maxima.start <- function(restart = FALSE) { 
   maxima.env$maxima$start(restart) 
   maxima.options(format = "linear")
@@ -34,11 +33,18 @@ maxima.start <- function(restart = FALSE) {
 }
 
 #' @describeIn rim-package Quits Maxima.
+#' @param engine if FALSE (default), quits the (running) maxima instance and closes the connection, otherwise quits and closes the (running) maxima instance used for the knitr engine.
 #' @export
 #' @examples
+#' maxima.start(restart = TRUE)
 #' maxima.stop()
-maxima.stop <- function() {
-  maxima.env$maxima$stop()
+maxima.stop <- function(engine = FALSE) {
+  if(!engine)
+    maxima.env$maxima$stop()
+  else {
+    if(exists("mx", envir = maxima.env))
+      maxima.env$mx$stop()
+  }
 }
 
 #' @describeIn rim-package Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
@@ -144,13 +150,14 @@ print.maxima <- function(x, ...) {
 #' @return The evaluated R-object
 #' @export
 #' @examplesIf maxima.isInstalled()
-#' a <- maxima.get("integrate(x, x);")
+#' a <- maxima.get("2+2;")
 #' maxima.eval(a)
 #' # same
 #' maxima.eval("2+2;")
-#' evaluate with data
+#' # evaluate with data.frame
 #' df <- data.frame(x = seq(0, 1, by = 0.1))
 #' maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
+#' maxima.stop()
 maxima.eval <- function(x, code = FALSE, envir = globalenv()) {
 	expr <- NA
 	if(is.character(x))

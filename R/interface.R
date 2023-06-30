@@ -234,174 +234,174 @@ Reply <- R6::R6Class("Reply",
 RMaxima <- R6::R6Class("RMaxima",
   public = list(
     initialize = function(maximaPath = "maxima", 
-			  workDir, 
-			  utilsDir, 
-			  display = "display", 
-			  preload,
-			  port = 27182) {
+                          workDir, 
+                          utilsDir, 
+                          display = "display", 
+                          preload,
+                          port = 27182) {
 
       if(missing(maximaPath)) {
         if(is.na(private$maximaPath <- Sys.getenv("RIM_MAXIMA_PATH", unset = NA)))
-	  private$maximaPath <- Sys.which("maxima")
+          private$maximaPath <- Sys.which("maxima")
       }
       else
         private$maximaPath <- maximaPath
 
-      if(missing(workDir))
-	private$workDir = getwd()
-      else
-	private$workDir
+        if(missing(workDir))
+          private$workDir = getwd()
+        else
+          private$workDir
 
-      if(!missing(preload))
-	private$preload <- paste0("-p ", preload, ".lisp")
-      else
-	private$preload <- ""
+        if(!missing(preload))
+          private$preload <- paste0("-p ", preload, ".lisp")
+        else
+          private$preload <- ""
 
-      if(missing(utilsDir)) {
-	private$utilsDir <- dirname(system.file("extdata", 
-						      paste0(display, ".mac"), 
-						      package = "rim", 
-						      mustWork = TRUE))
-	# for virtual machine package testing
-	private$utilsDir <- gsub(pattern = "\\\\vboxsrv", 
-				 replacement = "Z:", 
-				 x = private$utilsDir, 
-				 ignore.case = TRUE)
+        if(missing(utilsDir)) {
+          private$utilsDir <- dirname(system.file("extdata", 
+                                                  paste0(display, ".mac"), 
+                                                  package = "rim", 
+                                                  mustWork = TRUE))
+          # for virtual machine package testing
+          private$utilsDir <- gsub(pattern = "\\\\vboxsrv", 
+                                   replacement = "Z:", 
+                                   x = private$utilsDir, 
+                                   ignore.case = TRUE)
 
-	if(.Platform$OS.type == "windows")
-		private$utilsDir <- paste0("\"", private$utilsDir, "\"")
-      }
-      else
-	private$utilsDir <- utilsDir
+          if(.Platform$OS.type == "windows")
+            private$utilsDir <- paste0("\"", private$utilsDir, "\"")
+        }
+        else
+          private$utilsDir <- utilsDir
 
-      if(!missing(preload))
-	private$preload <- paste0("-p ", private$utilsDir, "/", preload, ".lisp")
-      else
-	private$preload <- ""
+          if(!missing(preload))
+            private$preload <- paste0("-p ", private$utilsDir, "/", preload, ".lisp")
+          else
+            private$preload <- ""
 
-      private$display <- display
-      private$port <- port
+          private$display <- display
+          private$port <- port
     },
     finalize = function() {
       # in here no more method calls are possible
       # suppressMessages(self$stop())
       if(private$running) { 
-	private$sendCommand("quit();")
-	close(private$maximaSocket)
+        private$sendCommand("quit();")
+        close(private$maximaSocket)
       }
     },
     isInstalled = function() {
       if(!nchar(private$maximaPath) || 
-	 length(grep(pattern = "maxima", 
-		     x = private$maximaPath, 
-		     ignore.case = TRUE)) == 0L)
-	return(FALSE)
+         length(grep(pattern = "maxima", 
+                     x = private$maximaPath, 
+                     ignore.case = TRUE)) == 0L)
+        return(FALSE)
       else
-	return(TRUE)
+        return(TRUE)
     },
     start = function(restart = FALSE) {
       if(!self$isInstalled())
-	stop("Could not find maxima executable, please install first")
+        stop("Could not find maxima executable, please install first")
       else {
-	if(private$running) {
-	  if(restart) {
-	    self$stop()
-	    private$run()
-	  }
-	  else
-	    message("Maxima is already running.")
-	}
-	else {
-	  private$run()
-	}
+        if(private$running) {
+          if(restart) {
+            self$stop()
+            private$run()
+          }
+          else
+            message("Maxima is already running.")
+        }
+        else {
+          private$run()
+        }
       }
     },
     stop = function() {
       if(private$running) {
-	private$sendCommand("quit();")
-	private$running <- FALSE
-	close(private$maximaSocket)
+        private$sendCommand("quit();")
+        private$running <- FALSE
+        close(private$maximaSocket)
       }
       else
-	message("Maxima is not running.")
+        message("Maxima is not running.")
     },
-    get = function(command){
+    get = function(command) {
       if(!private$running)
-	self$start()
+        self$start()
 
       if(!is.na(private$reply$getInputLabel()))
-	private$lastInputLabel <- private$reply$getInputLabel()
+        private$lastInputLabel <- private$reply$getInputLabel()
 
       private$crudeExecute(command)
 
       if(private$reply$hasWarning())
-	warning(private$reply$getBetweens())
-      
+        warning(private$reply$getBetweens())
+
       if(private$reply$is.empty()) {
-	if(private$reply$requireUser()) {
-	  return(regex(text = private$reply$getPrompt(), 
-		       pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
-	}
+        if(private$reply$requireUser()) {
+          return(regex(text = private$reply$getPrompt(), 
+                       pattern = "TEXT;>>(.*)<<TEXT;")[2]) 
+        }
 
-	if(!private$reply$checkPrompt()) {
-	  stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
-					  replacement = "", 
-					  x = private$reply$getBetweens())))
-	}
+        if(!private$reply$checkPrompt()) {
+          stop(paste("Unsupported.", gsub(pattern = "TEXT;>>|<<TEXT;", 
+                                          replacement = "", 
+                                          x = private$reply$getBetweens())))
+        }
 
-	if(private$reply$isInterrupted()) {
-	  stop("Command execution was interrupted.")
-	}
-        
-	# logic: it's an error, if it's not definitely a warning
-	if(nchar(err <- private$reply$getBetweens()) && 
-	   !private$reply$hasWarning()) {
-	     stop(err) 
-	 }
+        if(private$reply$isInterrupted()) {
+          stop("Command execution was interrupted.")
+        }
 
-	# conclusion: output must have been suppressed
-	return(structure(private$reply$result,
-			 input.label = private$lastInputLabel,
-			 output.label = private$lastOutputLabel,
-			 command = command,
-			 suppressed = private$reply$suppressed,
-			 parsed = NA,
-			 class = "maxima"))
+        # logic: it's an error, if it's not definitely a warning
+        if(nchar(err <- private$reply$getBetweens()) && 
+           !private$reply$hasWarning()) {
+          stop(err) 
+        }
+
+        # conclusion: output must have been suppressed
+        return(structure(private$reply$result,
+                         input.label = private$lastInputLabel,
+                         output.label = private$lastOutputLabel,
+                         command = command,
+                         suppressed = private$reply$suppressed,
+                         parsed = NA,
+                         class = "maxima"))
       }
 
       # forward any messages if no warning has been detected already
       if(nchar(private$reply$getBetweens()) && 
-	 !private$reply$hasWarning())
-	message(private$reply$getBetweens())
+         !private$reply$hasWarning())
+        message(private$reply$getBetweens())
 
       # validate output and return if valid
       if(!is.na(private$reply$getOutputLabel())) {
-	private$lastOutputLabel <- private$reply$getOutputLabel()
+        private$lastOutputLabel <- private$reply$getOutputLabel()
 
-      if(grepl("no-convert", p <- private$reply$result$wol$rstr)) {
-	      warning("Couldn't parse non-suppressed Maxima output.",
-		      "\nIf you think it should be parsed, please submit an issue at",
-		      "\nhttps://github.com/rcst/rim/issues\n", p)
-	      p <- NA_character_
-      }
+        if(grepl("no-convert", p <- private$reply$result$wol$rstr)) {
+          warning("Couldn't parse non-suppressed Maxima output.",
+                  "\nIf you think it should be parsed, please submit an issue at",
+                  "\nhttps://github.com/rcst/rim/issues\n", p)
+          p <- NA_character_
+        }
 
-      tryCatch(
-	       error = function(cnd) {
-		       warning("Caught error while parsing\n",
-			       cnd$message, 
-			       "\nReturning NA.")
-		       p <- NA
-	       },
-	       p <- str2lang(p)
-      )
+        tryCatch(
+                 error = function(cnd) {
+                   warning("Caught error while parsing\n",
+                           cnd$message, 
+                           "\nReturning NA.")
+                   p <- NA
+                 },
+                 p <- str2lang(p)
+        )
 
-	return(structure(private$reply$result,
-			 input.label = private$lastInputLabel,
-			 output.label = private$lastOutputLabel,
-			 command = command,
-			 suppressed = private$reply$suppressed,
-			 parsed =  p,
-			 class = "maxima"))
+        return(structure(private$reply$result,
+                         input.label = private$lastInputLabel,
+                         output.label = private$lastOutputLabel,
+                         command = command,
+                         suppressed = private$reply$suppressed,
+                         parsed =  p,
+                         class = "maxima"))
       }
 
       # private$crudeExecute(";") 
@@ -418,137 +418,137 @@ RMaxima <- R6::R6Class("RMaxima",
     },
     loadModule = function(module) {
       if(length(module) > 0 && nchar(module))
-	self$get(paste0("load(\"", module, "\")$")) 
+        self$get(paste0("load(\"", module, "\")$")) 
     },
     get_stuck = function(command) {
       # executes command without advancing reference labels
       if(length(command) && nchar(command))
-	self$get(paste0("(", command, ", linenum:linenum-1, %)$"))
+        self$get(paste0("(", command, ", linenum:linenum-1, %)$"))
     },
     getPort = function() {
       if(private$running) 
-	return(private$port)
+        return(private$port)
       else
-	return(NA_integer_)
+        return(NA_integer_)
     },
     getVersion = function() {
       if(private$running) {
-	return(private$version)
+        return(private$version)
       }
       else {
-	message("Version number undetermined. Maxima needs to be running.")
-	return(NULL)
+        message("Version number undetermined. Maxima needs to be running.")
+        return(NULL)
       }
     }
     ),
-  private = list(
-    maximaSocket = NULL,
-    port = NULL,
-    pid = NULL,
-    version = NULL,
-    workDir = character(),
-    utilsDir = character(),
-    maximaPath = NA_character_,
-    display = character(),
-    preload = character(),
-    reply = NULL,
-    running = FALSE,
-    lastPromptID = integer(),
-    lastInputLabel = character(),
-    lastOutputLabel = character(),
-    run = function() {
-      # try until free port is found
-      # starting from given port
-      for(port in private$port:65536) { 
-	try(scon <- serverSocket(port), silent = TRUE)
-	if(exists("scon")) 
-	  if(isOpen(con = scon)) {
-	    private$port <- port
-	    break
-	  }
+    private = list(
+      maximaSocket = NULL,
+      port = NULL,
+      pid = NULL,
+      version = NULL,
+      workDir = character(),
+      utilsDir = character(),
+      maximaPath = NA_character_,
+      display = character(),
+      preload = character(),
+      reply = NULL,
+      running = FALSE,
+      lastPromptID = integer(),
+      lastInputLabel = character(),
+      lastOutputLabel = character(),
+      run = function() {
+        # try until free port is found
+        # starting from given port
+        for(port in private$port:65536) { 
+          try(scon <- serverSocket(port), silent = TRUE)
+          if(exists("scon")) 
+            if(isOpen(con = scon)) {
+              private$port <- port
+              break
+            }
+        }
+        if(!exists("scon"))
+          stop("Couldn't find available port")
+
+        system2(private$maximaPath, 
+                c(# "-q", 
+                  paste0("-s ", private$port), 
+                  paste0("--userdir=", private$utilsDir), 
+                  paste0("--init=", private$display),
+                  paste0(private$preload)), 
+                wait = FALSE, 
+                stdout = FALSE, 
+                stderr = stdout())
+
+        private$maximaSocket <- socketAccept(socket = scon, 
+                                             blocking = FALSE, 
+                                             open = "r+b")
+        close(scon)
+
+        private$parseStartUp()
+        private$reply <- Reply$new(private$maximaSocket)
+        private$lastInputLabel <- private$reply$getInputLabel
+        private$running <- TRUE
+
+      },
+      sendCommand = function(command){
+        if(missing(command))
+          stop("Missing command.")
+
+        command <- trim(command)
+        command <- checkCommand(command)
+
+        writeLines(text = command, con = private$maximaSocket)
+
+        return(command)
+      }, 
+      crudeExecute = function(command) {
+        command <- private$sendCommand(command)
+        private$reply = Reply$new(private$maximaSocket)
+        if(grepl("\\$$", command))
+          private$reply$suppressed <- TRUE
+      },
+      parseStartUp = function(nmax = as.integer(1e6)) {
+        # pid
+        pidExpr <- "pid=(\\d+)"
+        rdr <- MReader$new(private$maximaSocket)
+        repeat {
+          # z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+          z <- rdr$read
+          if(length(z)) {
+            if(grepl(pattern = pidExpr, x = z)) { 
+              private$pid <- as.integer(regex(text = z, pattern = pidExpr)[2])
+              break
+            }
+          }
+          if(rdr$trials > nmax)
+            stop("Failed to read process ID - couldn't start Maxima.")
+        }
+
+        # version
+        rdr$trials <- 0L
+        verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
+        repeat {
+          # z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
+          z <- rdr$read
+          if(length(z)) {
+            if(grepl(pattern = verExpr, x = z)) { 
+              private$version <- numeric_version(regex(text = z, pattern = verExpr)[2])
+              break
+            }
+          }
+          if(rdr$trials > nmax) {
+            stop("Failed to read version number - Maxima seems stuck.\n", 
+                 "Has read: ", z, "\n", 
+                 "Maxima call: ", paste0(private$maximaPath, 
+                                         " -s ", private$port, 
+                                         " --userdir=", private$utilsDir, 
+                                         " --init=", private$display, 
+                                         " ",  private$preload))
+          }
+        }
       }
-      if(!exists("scon"))
-        stop("Couldn't find available port")
-
-      system2(private$maximaPath, 
-	      c(# "-q", 
-		paste0("-s ", private$port), 
-		paste0("--userdir=", private$utilsDir), 
-		paste0("--init=", private$display),
-		paste0(private$preload)), 
-	      wait = FALSE, 
-	      stdout = FALSE, 
-	      stderr = stdout())
-      
-      private$maximaSocket <- socketAccept(socket = scon, 
-					   blocking = FALSE, 
-					   open = "r+b")
-      close(scon)
-
-      private$parseStartUp()
-      private$reply <- Reply$new(private$maximaSocket)
-      private$lastInputLabel <- private$reply$getInputLabel
-      private$running <- TRUE
-
-    },
-    sendCommand = function(command){
-      if(missing(command))
-	stop("Missing command.")
-
-      command <- trim(command)
-      command <- checkCommand(command)
-
-      writeLines(text = command, con = private$maximaSocket)
-
-      return(command)
-    }, 
-    crudeExecute = function(command) {
-      command <- private$sendCommand(command)
-      private$reply = Reply$new(private$maximaSocket)
-      if(grepl("\\$$", command))
-	private$reply$suppressed <- TRUE
-    },
-    parseStartUp = function(nmax = as.integer(1e6)) {
-      # pid
-      pidExpr <- "pid=(\\d+)"
-      rdr <- MReader$new(private$maximaSocket)
-      repeat {
-	# z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
-	z <- rdr$read
-	if(length(z)) {
-	  if(grepl(pattern = pidExpr, x = z)) { 
-	    private$pid <- as.integer(regex(text = z, pattern = pidExpr)[2])
-	    break
-	  }
-	}
-	if(rdr$trials > nmax)
-	  stop("Failed to read process ID - couldn't start Maxima.")
-      }
-
-      # version
-      rdr$trials <- 0L
-      verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
-      repeat {
-	# z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
-	z <- rdr$read
-	if(length(z)) {
-	  if(grepl(pattern = verExpr, x = z)) { 
-	    private$version <- numeric_version(regex(text = z, pattern = verExpr)[2])
-	    break
-	  }
-	}
-	if(rdr$trials > nmax) {
-		stop("Failed to read version number - Maxima seems stuck.\n", 
-		     "Has read: ", z, "\n", 
-		     "Maxima call: ", paste0(private$maximaPath, 
-					     " -s ", private$port, 
-					     " --userdir=", private$utilsDir, 
-					     " --init=", private$display, 
-					     " ",  private$preload))
-	}
-      }
-    }
-  )
+    )
 )
 
 #' Extract substring by regular expression
@@ -561,8 +561,8 @@ regex <- function(text, pattern) {
   starts <- unlist(r)
   starts[starts == -1] <- NA
   stops <- starts + unlist(lapply(X = r, 
-				  FUN = attr, 
-				  which = "match.length")) - 1L
+                                  FUN = attr, 
+                                  which = "match.length")) - 1L
   substring(text, starts, stops)
 }
 
@@ -588,7 +588,7 @@ vseq <- function(from, to, unique = TRUE) {
 pvseq <- function(x) {
   if(length(x) >= 2 && length(x) %% 2 == 0) {
     vseq(from = x[odd(1:length(x))],
-	 to = x[!odd(1:length(x))])
+         to = x[!odd(1:length(x))])
   }
   else
     x
@@ -608,26 +608,26 @@ extract <- function(delimiters, from, inform = FALSE, without = TRUE) {
     warning("Length of 'delimiters > 2, only the first two will be used.")
   if(length(delimiters) == 1L)
     delimiters <- c(delimiters, delimiters)
-   if(missing(from))
-     stop("Parameter 'from' not provided")
+  if(missing(from))
+    stop("Parameter 'from' not provided")
 
-   i <- c(grep(pattern = delimiters[1], from), grep(pattern = delimiters[2], from))
-   if(length(i) %% 2 != 0)
-     stop(paste("Could not fetch delimiter pair:", 
-		paste0(from, collapse = "\n")))
-   ii <- pvseq(i)
-   ee <- ii[!(ii %in% i)]
-   if(without)
-     r <- from[ee]
-   else 
-     r <- from[ii]
+  i <- c(grep(pattern = delimiters[1], from), grep(pattern = delimiters[2], from))
+  if(length(i) %% 2 != 0)
+    stop(paste("Could not fetch delimiter pair:", 
+               paste0(from, collapse = "\n")))
+  ii <- pvseq(i)
+  ee <- ii[!(ii %in% i)]
+  if(without)
+    r <- from[ee]
+  else 
+    r <- from[ii]
 
-   if(inform) {
-     attr(r, "all") <- ii
-     attr(r, "elements") <- ee 
-     attr(r, "delimiters") <- i
-     attr(r, "without") <- without
-   }
+  if(inform) {
+    attr(r, "all") <- ii
+    attr(r, "elements") <- ee 
+    attr(r, "delimiters") <- i
+    attr(r, "without") <- without
+  }
 
-   return(r)
+  return(r)
 }

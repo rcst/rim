@@ -18,7 +18,7 @@
 \usage{
 maxima.start(restart = FALSE)
 
-maxima.stop()
+maxima.stop(engine = FALSE)
 
 maxima.get(command)
 
@@ -38,6 +38,8 @@ maxima.eval(x, code = FALSE, envir = globalenv())
 }
 \arguments{
 \item{restart}{if FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.}
+
+\item{engine}{if FALSE (default), quits the (running) maxima instance and closes the connection, otherwise quits and closes the (running) maxima instance used for the knitr engine.}
 
 \item{command}{character string containing the Maxima command.}
 
@@ -93,6 +95,42 @@ To send a single command to Maxima and receive the corresponding output use \cod
 \item \code{maxima.eval()}: Evaluates the parsed and quoted R-expression which is part of an S3 object returned by \code{\link{maxima.get}()}
 
 }}
+\examples{
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+maxima.start(restart = TRUE)
+\dontshow{\}) # examplesIf}
+maxima.start(restart = TRUE)
+maxima.stop()
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+maxima.get("2+2;")
+\dontshow{\}) # examplesIf}
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+maxima.load("abs_integrate")
+\dontshow{\}) # examplesIf}
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+maxima.apropos("integrate")
+\dontshow{\}) # examplesIf}
+maxima.version()
+maxima.isInstalled()
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+a <- maxima.get("2+2;")
+iprint(a)
+\dontshow{\}) # examplesIf}
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+a <- maxima.get("2+2;")
+print(a)
+\dontshow{\}) # examplesIf}
+\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+a <- maxima.get("2+2;")
+maxima.eval(a)
+# same
+maxima.eval("2+2;")
+# evaluate with data.frame
+df <- data.frame(x = seq(0, 1, by = 0.1))
+maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
+maxima.stop()
+\dontshow{\}) # examplesIf}
+}
 \seealso{
 Useful links:
 \itemize{

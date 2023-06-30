@@ -10,6 +10,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::test_active_file("tests/testthat/test-parser.R")
   devtools::test_active_file("tests/testthat/test-engine.R")
   devtools::build()
+  devtools::run_examples()
   devtools::check()
 
 rmarkdown::render(input="inst/extdata/test.Rmd", 

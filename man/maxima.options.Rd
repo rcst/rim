@@ -36,3 +36,10 @@ Function for globally setting and retrieving options.
   \item{\code{inline.label}: }{same as \code{label}, but for inline outputs in \code{RMarkdown} documents.}
 }
 }
+\examples{
+maxima.options(format = "latex")
+maxima.options(label = FALSE)
+maxima.options(label = TRUE, format = "ascii")
+# reset to default
+maxima.options(label = TRUE, format = "linear")
+}

@@ -124,9 +124,9 @@ is_html_output <- function() {
 #' @return character string containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #' @export
 #' @examplesIf maxima.isInstalled()
-#' # run this inside of a RMarkdown document
-#' # in an inline R code chunk i.e., `r maxima.inline("2+2;")`
+#' maxima.stop()
 #' maxima.inline("2+2;")
+#' maxima.stop(engine = TRUE)
 maxima.inline <- function(command) {
   maxima.engine.start()
   x <- maxima.env$mx$get(command)

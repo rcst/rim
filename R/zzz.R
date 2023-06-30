@@ -9,6 +9,7 @@
       packageStartupMessage(paste("Installed Maxima version ", maxima.version(), 
 				  "is untested. Consider updating.")) 
     }
+    maxima.stop()
   }
   else {
     packageStartupMessage(paste("Could not find Maxima executable, please download from\n", 
@@ -29,9 +30,9 @@
 
 .onUnload <- function (libpath) { 
   library.dynam.unload("rim", libpath)
-  rm("maxima", envir = maxima.env)
+  rm(c("maxima", "mx"), envir = maxima.env)
 }
 
 .onDetach <- function(libpath) {
-  maxima.env$maxima.stop()
+  maxima.env$maxima$stop()
 }
