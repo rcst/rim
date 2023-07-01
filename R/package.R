@@ -35,7 +35,7 @@ maxima.start <- function(restart = FALSE) {
 #' @describeIn rim-package Quits Maxima.
 #' @param engine if FALSE (default), quits the (running) maxima instance and closes the connection, otherwise quits and closes the (running) maxima instance used for the knitr engine.
 #' @export
-#' @examples
+#' @examplesIf maxima.isInstalled()
 #' maxima.start(restart = TRUE)
 #' maxima.stop()
 maxima.stop <- function(engine = FALSE) {

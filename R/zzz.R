@@ -30,7 +30,9 @@
 
 .onUnload <- function (libpath) { 
   library.dynam.unload("rim", libpath)
-  rm(c("maxima", "mx"), envir = maxima.env)
+  rm(list = "maxima", envir = maxima.env)
+  if(exists(x = "mx", envir = maxima.env))
+    rm(list = "mx", envir = maxima.env)
 }
 
 .onDetach <- function(libpath) {
