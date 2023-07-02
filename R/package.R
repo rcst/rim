@@ -24,8 +24,8 @@ maxima.env <- new.env()
 #' @describeIn rim-package (re-)starts Maxima.
 #' @param restart if FALSE (default), then Maxima is started provided it is not running already. If TRUE starts or restarts Maxima.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.start(restart = TRUE)
+#' @examples
+#' if(maxima.isInstalled()) maxima.start(restart = TRUE)
 maxima.start <- function(restart = FALSE) { 
   maxima.env$maxima$start(restart) 
   maxima.options(format = "linear")
@@ -35,9 +35,11 @@ maxima.start <- function(restart = FALSE) {
 #' @describeIn rim-package Quits Maxima.
 #' @param engine if FALSE (default), quits the (running) maxima instance and closes the connection, otherwise quits and closes the (running) maxima instance used for the knitr engine.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.start(restart = TRUE)
-#' maxima.stop()
+#' @examples
+#' if(maxima.isInstalled()) {
+#'   maxima.start(restart = TRUE)
+#'   maxima.stop()
+#' }
 maxima.stop <- function(engine = FALSE) {
   if(!engine)
     maxima.env$maxima$stop()
@@ -51,8 +53,8 @@ maxima.stop <- function(engine = FALSE) {
 #' @param command character string containing the Maxima command.
 #' @seealso \code{\link{maxima.engine}}, \code{\link{maxima.options}}
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.get("2+2;")
+#' @examples
+#' if(maxima.isInstalled()) maxima.get("2+2;")
 maxima.get <- function(command) {
   return(maxima.env$maxima$get(command))
 }
@@ -61,8 +63,8 @@ maxima.get <- function(command) {
 #' @param module character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.
 #' @return invisibly returns NULL.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.load("abs_integrate")
+#' @examples
+#' if(maxima.isInstalled()) maxima.load("abs_integrate")
 maxima.load <- function(module) {
   maxima.env$maxima$loadModule(module) 
 }
@@ -70,8 +72,8 @@ maxima.load <- function(module) {
 #' @describeIn rim-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 #' @param keystring character vector containing a search term.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.apropos("integrate")
+#' @examples
+#' if(maxima.isInstalled()) maxima.apropos("integrate")
 maxima.apropos <- function(keystring) {
   return(maxima.env$maxima$get(paste0("apropos(\"", keystring, "\");")))
 }
@@ -97,9 +99,11 @@ maxima.isInstalled <- function() {
 #' @param x S3-Object of class "maxima", the returned type of object from \code{maxima.get()}.
 #' @return Character vector of length 1 of the input command. Depending on whether option "label" is set to TRUE, the corresponding input reference label is printed preceding the input command.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' a <- maxima.get("2+2;")
-#' iprint(a)
+#' @examples
+#' if(maxima.isInstalled()) {
+#'   a <- maxima.get("2+2;")
+#'   iprint(a)
+#' }
 iprint <- function(x) {
   stopifnot(isa(x, what = "maxima"))
   # cll <- deparse(sys.call())
@@ -124,9 +128,11 @@ iprint <- function(x) {
 #' @param ... other arguments (ignored).
 #' @method print maxima
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' a <- maxima.get("2+2;")
-#' print(a)
+#' @examples
+#' if(maxima.isInstalled()) {
+#'   a <- maxima.get("2+2;")
+#'   print(a)
+#' }
 print.maxima <- function(x, ...) {
   if(!attr(x, "suppressed")) {
     switch(maxima.options$label + 1,
@@ -149,15 +155,17 @@ print.maxima <- function(x, ...) {
 #' @param envir A environment object. \code{globalenv()} (default), is passed to eval().
 #' @return The evaluated R-object
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' a <- maxima.get("2+2;")
-#' maxima.eval(a)
-#' # same
-#' maxima.eval("2+2;")
-#' # evaluate with data.frame
-#' df <- data.frame(x = seq(0, 1, by = 0.1))
-#' maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
-#' maxima.stop()
+#' @examples
+#' if(maxima.isInstalled()) {
+#'   a <- maxima.get("2+2;")
+#'   maxima.eval(a)
+#'   # same
+#'   maxima.eval("2+2;")
+#'   # evaluate with data.frame
+#'   df <- data.frame(x = seq(0, 1, by = 0.1))
+#'   maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
+#'   maxima.stop()
+#' }
 maxima.eval <- function(x, code = FALSE, envir = globalenv()) {
 	expr <- NA
 	if(is.character(x))

@@ -96,40 +96,34 @@ To send a single command to Maxima and receive the corresponding output use \cod
 
 }}
 \examples{
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-maxima.start(restart = TRUE)
-\dontshow{\}) # examplesIf}
-maxima.start(restart = TRUE)
-maxima.stop()
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-maxima.get("2+2;")
-\dontshow{\}) # examplesIf}
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-maxima.load("abs_integrate")
-\dontshow{\}) # examplesIf}
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-maxima.apropos("integrate")
-\dontshow{\}) # examplesIf}
+if(maxima.isInstalled()) maxima.start(restart = TRUE)
+if(maxima.isInstalled()) {
+  maxima.start(restart = TRUE)
+  maxima.stop()
+}
+if(maxima.isInstalled()) maxima.get("2+2;")
+if(maxima.isInstalled()) maxima.load("abs_integrate")
+if(maxima.isInstalled()) maxima.apropos("integrate")
 maxima.version()
 maxima.isInstalled()
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-a <- maxima.get("2+2;")
-iprint(a)
-\dontshow{\}) # examplesIf}
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-a <- maxima.get("2+2;")
-print(a)
-\dontshow{\}) # examplesIf}
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-a <- maxima.get("2+2;")
-maxima.eval(a)
-# same
-maxima.eval("2+2;")
-# evaluate with data.frame
-df <- data.frame(x = seq(0, 1, by = 0.1))
-maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
-maxima.stop()
-\dontshow{\}) # examplesIf}
+if(maxima.isInstalled()) {
+  a <- maxima.get("2+2;")
+  iprint(a)
+}
+if(maxima.isInstalled()) {
+  a <- maxima.get("2+2;")
+  print(a)
+}
+if(maxima.isInstalled()) {
+  a <- maxima.get("2+2;")
+  maxima.eval(a)
+  # same
+  maxima.eval("2+2;")
+  # evaluate with data.frame
+  df <- data.frame(x = seq(0, 1, by = 0.1))
+  maxima.eval("integrate(1 / (1 + x^4), x);", code = TRUE, envir = df)
+  maxima.stop()
+}
 }
 \seealso{
 Useful links:

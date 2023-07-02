@@ -33,9 +33,8 @@ The purpose of \code{maxima.inline} is to insert Maxima results as inline text, 
 
 }}
 \examples{
-\dontshow{if (maxima.isInstalled()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-maxima.stop()
-maxima.inline("2+2;")
-maxima.stop(engine = TRUE)
-\dontshow{\}) # examplesIf}
+if(maxima.isInstalled()) {
+  maxima.inline("2+2;")
+  maxima.stop(engine = TRUE)
+}
 }

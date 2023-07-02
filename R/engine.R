@@ -37,8 +37,6 @@ maxima.engine <- function(options) {
 	  ll <- append(ll, list(structure(list(src = ccode), class = "source")))
 	if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
 	  tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
-	  # pm <- regexec(pattern = "^\\[[[:print:]]+, ([[:print:]]+-[[:print:]]+\\.(?:png|pdf))\\]", text = tt$wol$ascii)
-	  # pm <- regexec(pattern = "(\\.\\/(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
 	  pm <- regexec(pattern = "\\[?([[:graph:]]*/(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
 	  pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
 	  pm <- normalizePath(pm)
@@ -74,8 +72,6 @@ maxima.engine <- function(options) {
     maxima.engine.stop()
   }
 
-  # engine_output(options, options$code, out)
-  # engine_output(options, out = ll)
   engine_output(opts_current$merge(list(results = maxima.options$engine.results)), out = ll)
 }
 
@@ -89,7 +85,6 @@ maxima.engine.start <- function() {
 
 maxima.engine.stop <- function() { 
   maxima.env$mx$stop()
-  n <- function.frame("(render|knit)")[1]
   e <- sys.frame(which = 1)
   do.call("on.exit", list(quote(if(exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
   do.call("on.exit", list(quote(if(exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
@@ -123,10 +118,11 @@ is_html_output <- function() {
 #' @param command character string containing the Maxima command to be executed.
 #' @return character string containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #' @export
-#' @examplesIf maxima.isInstalled()
-#' maxima.stop()
-#' maxima.inline("2+2;")
-#' maxima.stop(engine = TRUE)
+#' @examples
+#' if(maxima.isInstalled()) {
+#'   maxima.inline("2+2;")
+#'   maxima.stop(engine = TRUE)
+#' }
 maxima.inline <- function(command) {
   maxima.engine.start()
   x <- maxima.env$mx$get(command)
