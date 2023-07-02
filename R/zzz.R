@@ -22,19 +22,24 @@
 
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
-    setup_hooks()
     packageStartupMessage("Maxima successfully registered as knitr engine!")
   } else
     packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
 }
 
 .onUnload <- function (libpath) { 
-  library.dynam.unload("rim", libpath)
-  rm(list = "maxima", envir = maxima.env)
-  if(exists(x = "mx", envir = maxima.env))
-    rm(list = "mx", envir = maxima.env)
+  suppressMessages({
+    library.dynam.unload("rim", libpath)
+    rm(list = "maxima", envir = maxima.env)
+    if(exists(x = "mx", envir = maxima.env))
+      rm(list = "mx", envir = maxima.env)
+  })
 }
 
 .onDetach <- function(libpath) {
-  maxima.env$maxima$stop()
+  suppressMessages({
+    maxima.env$maxima$stop()
+    if(exists(x = "mx", envir = maxima.env))
+      maxima.env$mx$stop()
+  })
 }
