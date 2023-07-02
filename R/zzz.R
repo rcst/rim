@@ -22,6 +22,7 @@
 
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
+    setup_hooks()
     packageStartupMessage("Maxima successfully registered as knitr engine!")
   } else
     packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")
