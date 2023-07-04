@@ -16,4 +16,4 @@ There are currently no downstream dependencies for this package.
   the failure was due to an incorrect detection of html output when using the
   knir engine to render the test document into plain markdown under Fedora 36,
   this has been corrected by a more robust detection.
-* added small executable (provided 'Maxima' is installed) examples for each exported function.
+* added small executable examples for each exported function - provided 'Maxima' is installed.

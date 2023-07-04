@@ -24,6 +24,7 @@ rmarkdown::render(input="inst/extdata/test.Rmd",
   devtools::check_win_release()
   devtools::check_win_oldrelease()
   devtools::check_win_devel()
+  devtools::check_rhub()
 
   devtools::submit_cran()
   devtools::release()
