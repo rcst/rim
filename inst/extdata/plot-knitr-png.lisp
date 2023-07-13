@@ -25,8 +25,8 @@
     (apply *builtin-plot2d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "plot2d" ($simplode args))) 1 7))
-       ;; (png-file ($sconcat $plot_output_folder "/plot2d-" nnn ".png"))
-       (png-file ($sconcat (os-getcurrentdirectory) "plot2d-" nnn ".png"))
+       (png-file ($sconcat $plot_output_folder "/plot2d-" nnn ".png"))
+       ;; (png-file ($sconcat (os-getcurrentdirectory) "plot2d-" nnn ".png"))
        (args-new (append args (list `((mlist) $png_file ,png-file)))))
       (apply *builtin-plot2d* args-new))))
 
@@ -39,8 +39,8 @@
     (apply *builtin-plot3d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "plot3d" ($simplode args))) 1 7))
-       ;; (png-file ($sconcat $plot_output_folder "/plot3d-" nnn ".png"))
-       (png-file ($sconcat (os-getcurrentdirectory) "plot3d-" nnn ".png"))
+       (png-file ($sconcat $plot_output_folder "/plot3d-" nnn ".png"))
+       ;; (png-file ($sconcat (os-getcurrentdirectory) "plot3d-" nnn ".png"))
        (args-new (append args (list `((mlist) $png_file ,png-file)))))
       (apply *builtin-plot3d* args-new))))
 
@@ -63,8 +63,8 @@
     (apply *builtin-draw* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw" ($simplode args))) 1 7))
-       ;;(file_name ($sconcat $plot_output_folder "/draw-" nnn))
-       (file_name ($sconcat (os-getcurrentdirectory) "draw-" nnn))
+       (file_name ($sconcat $plot_output_folder "/draw-" nnn))
+       ;; (file_name ($sconcat (os-getcurrentdirectory) "draw-" nnn))
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $png)))))
       (apply *builtin-draw* args-new)
@@ -81,8 +81,8 @@
     (apply *builtin-draw2d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw2d" ($simplode args))) 1 7))
-       ;; (file_name ($sconcat $plot_output_folder "/draw2d-" nnn))
-       (file_name ($sconcat (os-getcurrentdirectory) "draw2d-" nnn))
+       (file_name ($sconcat $plot_output_folder "/draw2d-" nnn))
+       ;; (file_name ($sconcat (os-getcurrentdirectory) "draw2d-" nnn))
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $png)))))
       (apply *builtin-draw2d* args-new)
@@ -99,8 +99,8 @@
     (apply *builtin-draw3d* args)
     (let*
       ((nnn ($substring ($sha256sum ($sconcat "draw3d" ($simplode args))) 1 7))
-       ;;(file_name ($sconcat $plot_output_folder "/draw3d-" nnn))
-       (file_name ($sconcat (os-getcurrentdirectory) "draw3d-" nnn))
+       (file_name ($sconcat $plot_output_folder "/draw3d-" nnn))
+       ;; (file_name ($sconcat (os-getcurrentdirectory) "draw3d-" nnn))
        (args-new (append args (list `((mequal) $file_name ,file_name))))
        (args-new (append args-new (list `((mequal) $terminal $png)))))
       (apply *builtin-draw3d* args-new)

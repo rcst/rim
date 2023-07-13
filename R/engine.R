@@ -39,17 +39,9 @@ maxima.engine <- function(options) {
 	  tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
 	  pm <- regexec(pattern = "\\[?([[:graph:]]*/(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
 	  pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
-	  pm <- normalizePath(pm)
-
-    # this may fail as the file could not have been written yet
-    pm_tries <- 0
-    while(!file.exists(pm) & pm_tries < 100) {
-      Sys.sleep(1)
-      pm_tries <- pm_tries + 1
-    }
-      
-	  ll <- append(ll, list(knitr::include_graphics(pm, rel_path = FALSE)))
-	  maxima.env$plots <- append(maxima.env$plots, normalizePath(pm))
+    # it's possible the image has not yet been written to disk
+	  ll <- append(ll, list(knitr::include_graphics(pm, error = FALSE)))
+	  maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
 	}
 	else 
 	  ll <- append(ll, engine_print(tt))
