@@ -1,8 +1,8 @@
 test_that("maxima knitr engine works", {
   if(!maxima.env$maxima$isInstalled()) 
     skip("Maxima not installed")
-  if(.Platform$OS.type == "windows")
-    skip("Engine test takes too long under windows")
+  # if(.Platform$OS.type == "windows")
+  #   skip("Engine test takes too long under windows")
 
   fr <- system.file("extdata", c("test.Rmd", "result.md"),
 		    package = "rim", mustWork = TRUE)
