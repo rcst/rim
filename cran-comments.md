@@ -2,6 +2,7 @@
 * local debian 12 bookworm install, R 4.3.1
 * win-builder (devel, release and oldrel)
 * Fedora 36 (devel + clang)
+* Fedora 38 (devel)
 
 # R CMD check results
 * There are no ERRORs or WARNINGs.
@@ -10,10 +11,10 @@
 There are currently no downstream dependencies for this package.
 
 # previous issues
-* changed unit test (tests/testthat/test-engine.R) of comparing two digests to
-  comparing two character vectors.
+* removed path normalization, disabled throwing an error when including Maxima 
+  image file paths and reverted to relative file paths for the same when running 
+  Maxima code chunks in a RMarkdown document.
 * the above test had failed for flavors r-devel-linux-x86_64-fedora-clang/gcc,
-  the failure was due to an incorrect detection of html output when using the
-  knir engine to render the test document into plain markdown under Fedora 36,
-  this has been corrected by a more robust detection.
-* added small executable examples for each exported function - provided 'Maxima' is installed.
+  the failure was due to Maxima returning a file path to an image that isn't
+  guaranteed to exist at the same time the path is returned (and for the test 
+  case under the above flavor doesn't).

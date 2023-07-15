@@ -1,5 +1,15 @@
-# rm 0.6.1
-## Minor
+# rim 0.6.3
+## Modification 
+- fixed error under Fedora 36+ caused by Maxima image inclusion, when the image
+  file isn't guaranteed to exist when it's file path is returned from Maxima
+
+# rim 0.6.2
+## Modification
+- added more reliable detection for output document - Maxima knitr engine
+  (fixes previous CRAN test failure for Fedora 36+).
+
+# rim 0.6.1
+## Modification
 - fixed bug from CRAN check failure on Fedora and R-devel
 
 # rim 0.6.0
