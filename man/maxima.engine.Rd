@@ -33,7 +33,7 @@ The purpose of \code{maxima.inline} is to insert Maxima results as inline text, 
 
 }}
 \examples{
-if(maxima.isInstalled()) {
+if (maxima.isInstalled()) {
   maxima.inline("2+2;")
   maxima.stop(engine = TRUE)
 }

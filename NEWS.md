@@ -1,3 +1,8 @@
+# rim 0.6.4
+## Modification
+- new options `max.attempts` and `sleep.seconds` to control repeated testing for finished rendering of images
+- fixed issue #37
+
 # rim 0.6.3
 ## Modification 
 - fixed error under Fedora 36+ caused by Maxima image inclusion, when the image

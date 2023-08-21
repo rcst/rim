@@ -8,12 +8,12 @@ utils::globalVariables(c("engine", "mx", "plots"))
 #' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the \code{RMarkdown} file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
 #' @param options named \code{list} of \code{knitr} options. Supported options are \code{echo}, \code{eval}, \code{include} and \code{output.var}. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
-#' 
+#'
 #' @import knitr
 #' @importFrom utils tail
 #'
-#' @return This functions prints the resulting output from maxima together with it's code 
-maxima.engine <- function(options) { 
+#' @return This functions prints the resulting output from maxima together with it's code
+maxima.engine <- function(options) {
   maxima.engine.start()
   code <- options$code
   ov <- !is.null(varname <- options$output.var)
@@ -22,45 +22,53 @@ maxima.engine <- function(options) {
   cmds <- gather(code)
   ll <- list()
   ccode <- character()
-  if(options$eval) {
-    for(i in 1:length(cmds)) {
+  if (options$eval) {
+    for (i in 1:length(cmds)) {
       pc <- paste0(code[cmds[[i]]], collapse = "\n")
       # if plotting command, then it needs to end with ";"
-      if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*\\$$", x = pc)) {
-	pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
+      if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*\\$$", x = pc)) {
+        pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
       }
       tt <- maxima.env$mx$get(pc)
       ccode <- append(ccode, iprint(tt))
-      if(!attr(tt, "suppressed")) {
-	if(ov) output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
-	if(options$echo)
-	  ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-	if(grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
-	  tt$wol$ascii <- paste0(tt$wol$ascii, collapse="")
-	  pm <- regexec(pattern = "\\[?([[:graph:]]*/(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
-	  pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
-    # it's possible the image has not yet been written to disk
-	  ll <- append(ll, list(knitr::include_graphics(pm, error = FALSE)))
-	  maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
-	}
-	else 
-	  ll <- append(ll, engine_print(tt))
-	ccode <- character()
+      if (!attr(tt, "suppressed")) {
+        if (ov) output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
+        if (options$echo) {
+          ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+        }
+
+        if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
+          tt$wol$ascii <- paste0(tt$wol$ascii, collapse = "")
+          pm <- regexec(pattern = "\\[?([[:graph:]]*/?\\.?(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
+          pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
+
+          # it's possible the image has not yet been written to disk
+          pm <- retry_include_graphics(pm)
+          ll <- append(ll, list(pm))
+          maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
+        } else {
+          ll <- append(ll, engine_print(tt))
+        }
+        ccode <- character()
       }
     }
 
-  if(ov) 
-    assign(varname, output.data, envir = knit_global())
+    if (ov) {
+      assign(varname, output.data, envir = knit_global())
+    }
 
-  if(length(ccode))
-    if(options$echo)
-      ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+    if (length(ccode)) {
+      if (options$echo) {
+        ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+      }
+    }
   } else {
-    if(options$echo)
+    if (options$echo) {
       ll <- append(ll, list(structure(list(src = code), class = "source")))
+    }
   }
 
-  if (last_label(options$label)) { 
+  if (last_label(options$label)) {
     maxima.engine.stop()
   }
 
@@ -68,41 +76,47 @@ maxima.engine <- function(options) {
 }
 
 maxima.engine.start <- function() {
-  if(!exists("mx", envir = maxima.env)) { 
-    maxima.env$mx <- RMaxima$new(display = maxima.options$display, 
-				 preload = maxima.options$preload[knitr::is_latex_output()+1])
+  if (!exists("mx", envir = maxima.env)) {
+    maxima.env$mx <- RMaxima$new(
+      display = maxima.options$display,
+      preload = maxima.options$preload[knitr::is_latex_output() + 1]
+    )
     maxima.env$plots <- character()
   }
 }
 
-maxima.engine.stop <- function() { 
+maxima.engine.stop <- function() {
   maxima.env$mx$stop()
   e <- sys.frame(which = 1)
-  do.call("on.exit", list(quote(if(exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
-  do.call("on.exit", list(quote(if(exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
-  rm(mx, envir = maxima.env) 
+  do.call("on.exit", list(quote(if (exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
+  do.call("on.exit", list(quote(if (exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
+  rm(mx, envir = maxima.env)
 }
 
-last_label <- function(label = knitr::opts_current$get('label')) {
+last_label <- function(label = knitr::opts_current$get("label")) {
   # if (knitr:::child_mode()) return(FALSE)
-  if(knitr::opts_knit$get('child')) return(FALSE)
-  labels <- knitr::all_labels(engine == 'maxima')
+  if (knitr::opts_knit$get("child")) {
+    return(FALSE)
+  }
+  labels <- knitr::all_labels(engine == "maxima")
   tail(labels, 1) == label
 }
 
-engine_print <- function(x){
+engine_print <- function(x) {
   pp <- switch(maxima.options$engine.label + 1,
-	 paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
-	 paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n"))
-  if(is_html_output()) {
-     pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
+    paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
+    paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n")
+  )
+  if (is_html_output()) {
+    pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
   }
   pp
 }
 
 is_html_output <- function() {
-  if(is.null(p <- knitr::opts_knit$get("rmarkdown.pandoc.to")))
+  if (is.null(p <- knitr::opts_knit$get("rmarkdown.pandoc.to"))) {
     return(FALSE)
+  }
   knitr::is_html_output() & p == "html"
 }
 
@@ -111,7 +125,7 @@ is_html_output <- function() {
 #' @return character string containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #' @export
 #' @examples
-#' if(maxima.isInstalled()) {
+#' if (maxima.isInstalled()) {
 #'   maxima.inline("2+2;")
 #'   maxima.stop(engine = TRUE)
 #' }
@@ -120,6 +134,8 @@ maxima.inline <- function(command) {
   x <- maxima.env$mx$get(command)
 
   switch(maxima.options$inline.label + 1,
-	 paste0(c(x[["wol"]][[maxima.options$inline.format]], ""), collapse = "\n"),
-	 paste0(c(x[["wtl"]][[maxima.options$inline.format]], ""), collapse = "\n"))
+    paste0(c(x[["wol"]][[maxima.options$inline.format]], ""), collapse = "\n"),
+    paste0(c(x[["wtl"]][[maxima.options$inline.format]], ""), collapse = "\n")
+  )
 }
+
