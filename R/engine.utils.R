@@ -64,7 +64,7 @@ is.png <- function(path) {
 #' @return TRUE if \code{path} is a PNG file and complete, FALSE otherwise.
 #' @noRd
 is.complete.png <- function(path) {
-  is.png(path, error = TRUE)
+  is.png(path)
 
   # ending chunk
   sig <- c(
@@ -100,11 +100,12 @@ is.complete.pdf <- function(path) {
     grepl(pattern = "\\%\\%EOF$", x = _)
 }
 
-#' A wrapper that includes check-and-wait for the image to finish rendering.
+#' A wrapper for \code{knitr::include_graphics()} that includes check-and-wait.
 #' @param path Character vector of length 1, specifing a filepath.
 #' @param max.attempts Maximum number of times \code{expr} will be evaluated, defaults to 3.
 #' @param sleep.seconds Number of seconds to wait after each attempt, defaults to 0.1.
-#' @return Either the same return value of \code{knitr::include_graphics(path)} or 
+#' @param ... additional arguments for \code{knitr::include_graphics()}.
+#' @return Either the same return value of \code{knitr::include_graphics(path)} or
 #' @noRd
 retry_include_graphics <- function(path,
                                    max.attempts = maxima.options$max.attempts,
@@ -129,3 +130,4 @@ retry_include_graphics <- function(path,
 
   knitr::include_graphics(path, ...)
 }
+
