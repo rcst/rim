@@ -55,7 +55,9 @@ is.png <- function(path) {
     "0d", "0a", "1a", "0a"
   )
 
-  data <- readBin(con = path, what = "raw", n = length(sig))
+  data <- readBin(con = path, 
+                  what = "raw", 
+                  n = length(sig))
   all(data == sig)
 }
 
@@ -73,9 +75,10 @@ is.complete.png <- function(path) {
     "ae", "42", "60", "82"
   )
 
-  data <- file.size(path) |>
-    readBin(con = path, what = "raw", n = _) |>
-    tail(n = length(sig))
+  data <- tail(x = readBin(con = path, 
+                           what = "raw", 
+                           n = file.size(path)), 
+               n = length(sig))
   all(data == sig)
 }
 
@@ -85,8 +88,8 @@ is.complete.png <- function(path) {
 #' @noRd
 is.pdf <- function(path) {
   stopifnot(is.character(path))
-  readLines(con = path, n = 1) |>
-    grepl(pattern = "^\\%PDF", x = _)
+  grepl(pattern = "^\\%PDF", 
+        x = readLines(con = path, n = 1))
 }
 
 #' Check whether PDF is completely rendered
@@ -95,9 +98,9 @@ is.pdf <- function(path) {
 #' @noRd
 is.complete.pdf <- function(path) {
   stopifnot(is.pdf(path))
-  f <- readLines(con = path) |>
-    tail(n = 1L) |>
-    grepl(pattern = "\\%\\%EOF$", x = _)
+  grepl(pattern = "\\%\\%EOF$", 
+        x = tail(x = readLines(con = path), 
+                 n = 1L))
 }
 
 #' A wrapper for \code{knitr::include_graphics()} that includes check-and-wait.
