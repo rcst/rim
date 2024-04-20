@@ -99,6 +99,7 @@ last_label <- function(label = knitr::opts_current$get("label")) {
     return(FALSE)
   }
   labels <- knitr::all_labels(engine == "maxima")
+  if (length(labels) == 0L) return(FALSE)
   tail(labels, 1) == label
 }
 
