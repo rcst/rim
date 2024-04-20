@@ -13,9 +13,10 @@ Development version of CRAN package. `rim` provides an interface to the powerful
 This repository is a fork from RMaxima, the original version created by Kseniia Shumelchyk and Hans W. Borcher [shumelchyk/rmaxima](https://github.com/shumelchyk/rmaxima), which is currently not maintained.
 
 I have forked this project because I was not able to make the original one work, my objectives are brief but perhaps useful for future navigators, they are as follows:
-*Fix bugs that didn't let me use this project in conditions.
-*To create new functions to be able to use R together with Maxima in a simpler way (to be able to pass values from R to Maxima in a comfortable way, for example).
-*Eliminate all the instances of S6 and modify them by S3, since I think that it is not an OOP system that really contributes of great measure, complicating the debugability of the project.
+
+* Fix bugs that didn't let me use this project in conditions.
+* To create new functions to be able to use R together with Maxima in a simpler way (to be able to pass values from R to Maxima in a comfortable way, for example).
+* Eliminate all the instances of S6 and modify them by base R.
 
 In short, my goal is to make a project that works for me, making public my modifications in case they are useful to others.
 
