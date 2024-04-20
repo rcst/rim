@@ -1,0 +1,29 @@
+---
+title: "Algebra matricial"
+output: html_notebook
+---
+
+Algebra matricial
+
+1.  Matriz fila:
+
+Matriz con una única fila:
+
+```{maxima echo=FALSE, results='asis'}
+test:genmatrix(A, 1, 3);
+tex(test);
+```
+
+Matrix identidad:
+```{maxima echo=FALSE, results='asis'}
+powerdisp:true;
+formulae: exp(B0 + B1*X1 + B2*X2 + B3*X3 * err);
+tex(formulae);
+tex( exponentialize(expand(formulae)));
+```
+
+$$\textit{gcfac}\left(e^{B_{0}+B_{1}\,X_{1}+B_{2}\,X_{2}+B_{3}\,X_{3}
+ \,\textit{err}}\right)$$
+ 
+$$\begin{pmatrix}5 & 30 \\ 10 & 35 \\ 15 & 40 \\ 20 & 45 \\ 25 & 50
+  \\ \end{pmatrix}$$
