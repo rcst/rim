@@ -98,6 +98,10 @@ last_label <- function(label = knitr::opts_current$get("label")) {
   if (knitr::opts_knit$get("child")) {
     return(FALSE)
   }
+
+  if(!missing(label) & length(label) == 0L)
+    label <- knitr::opts_current$get("label")
+
   labels <- knitr::all_labels(engine == "maxima")
   tail(labels, 1) == label
 }
