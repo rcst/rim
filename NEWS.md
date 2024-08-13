@@ -1,3 +1,7 @@
+# rim 0.6.5
+## Modification
+- fixes faulty parsing of matrices
+
 # rim 0.6.4
 ## Modification
 - new options `max.attempts` and `sleep.seconds` to control repeated testing for finished rendering of images

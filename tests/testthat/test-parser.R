@@ -26,5 +26,12 @@ test_that("parsing and evaluation of parsed results works", {
 
   p4 <- maxima.eval("x^2+1;", code = FALSE, list(x = 3))
   expect_null(attr(p4, "maxima"))
+
+  p5 <- maxima.eval("matrix([1, 2, 3, b], [4, a, a+a^2, c*b], [5, 6, 7, b^2]);", 
+                    envir = list(a = 10, b = 2, c = 3))
+  expect_true(is.matrix(p5))
+
+  p6 <- maxima.eval("1+%i*2;")
+  expect_type(p6, "complex")
 })
 

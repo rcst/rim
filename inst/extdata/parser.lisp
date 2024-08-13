@@ -285,10 +285,14 @@
 
 (defun matrix-to-r (form)
   (format nil "matrix(data = c(~{~a~^, ~}), ncol = ~a, nrow = ~a)"
-          (mapcan (lambda (r c) 
-                    (list (ir-to-r r) (ir-to-r c)))
-                  (cdadr form)
-                  (cdaddr form))
+          (let
+            ((ll NIL)) 
+            (dolist 
+              (i (cdr form) ll)
+              (setf ll (append ll (mapcar 
+                                    (lambda (d) 
+                                      (ir-to-r d)) 
+                                    (cdr i))))))
           (length (cdr form))
           (- (length (cadr form)) 1)))
 
@@ -327,3 +331,20 @@
 
 (defun maxima2r (form)
   (ir-to-r (maxima-to-ir form)))
+
+; (defun maybe-invert-string-case (string)
+;   (let ((all-upper t)
+; 	(all-lower t)
+; 	(length (length string)))
+;     (dotimes (i length)
+;       (let ((ch (char string i)))
+; 	(when (both-case-p ch)
+; 	  (if (upper-case-p ch)
+; 	      (setq all-lower nil)
+; 	      (setq all-upper nil)))))
+;     (cond (all-upper
+; 	   (string-downcase string))
+; 	  (all-lower
+; 	   (string-upcase string))
+; 	  (t
+; 	   string))))

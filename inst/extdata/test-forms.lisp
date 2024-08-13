@@ -11,6 +11,7 @@
 (setf lambda-form '((LAMBDA SIMP) ((MLIST) $I) ((MPLUS) $I 1)))
 (setf adv-form '((MPLUS) ((MQUOTIENT) ((%LOG SIMP) ((MPLUS SIMP) 1 $X)) 2) ((MMINUS) ((MQUOTIENT) ((%LOG SIMP) ((MPLUS SIMP) -1 $X)) 2))))
 (setf matrix-form '(($MATRIX SIMP) ((MLIST SIMP) 1 2) ((MLIST SIMP) 2 3)))
+(setf matrix-form-2 '(($MATRIX SIMP) ((MLIST SIMP) 1 0 0) ((MLIST SIMP) 0 1 0) ((MLIST SIMP) 0 0 1)))
 (setf array-function '((MDEFINE SIMP) (($C ARRAY) $X $Y) ((MQUOTIENT) $Y $X)))
 (setf matrix-compl '(($MATRIX SIMP) ((MLIST SIMP) ((MPLUS SIMP) ((MTIMES SIMP) -1 $ALPHA ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -2)) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -1)) ((MTIMES SIMP) -1 $ALPHA ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) -2))) ((MLIST SIMP) ((MTIMES SIMP) ((RAT SIMP) -1 2) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) ((RAT SIMP) -3 2))) ((MTIMES SIMP) ((RAT SIMP) -1 2) ((MEXPT SIMP) ((MPLUS SIMP) $ALPHA $BETA) ((RAT SIMP) -3 2))))))
 (setf jfunc-form '((MDEFINE SIMP) (($F) $X $Y) ((MPLUS) ((MEXPT) $X 2) ((MEXPT) $Y 2) ((MTIMES) 2 $X $Y) ((%LOG) ((MQUOTIENT) $X $Y)))))
