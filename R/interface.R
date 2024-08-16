@@ -122,14 +122,14 @@ Reply <- R6::R6Class("Reply",
 			   pattern = "\\((%i(\\d+))\\)")
 
       if(length(promptMatch)) {
-	private$validPrompt <- TRUE
-	private$inputLabel <- promptMatch[2]
-	private$promptID <- as.integer(promptMatch[3])
+        private$validPrompt <- TRUE
+        private$inputLabel <- promptMatch[2]
+        private$promptID <- as.integer(promptMatch[3])
       }
       else {
-	private$validPrompt <- FALSE
-	private$inputLabel <- NA_character_
-	private$promptID <- NA_integer_
+        private$validPrompt <- FALSE
+        private$inputLabel <- NA_character_
+        private$promptID <- NA_integer_
       }
 
       private$dollar <- FALSE
