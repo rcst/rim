@@ -16,11 +16,11 @@ MReader <- R6::R6Class("MReader",
       if(missing(value)) 
         private$Nnon
       else 
-	private$Nnon <- value
+        private$Nnon <- value
     },
     read = function(value) {
       if(!missing(value))
-	message("Input value ignored.")
+        message("Input value ignored.")
       private$complete <- TRUE 
       suppressWarnings(withCallingHandlers(
       {
@@ -28,15 +28,15 @@ MReader <- R6::R6Class("MReader",
         z <- paste0(private$stash, x)
       },
       warning = function(cnd) {
-	private$complete <- FALSE 
+        private$complete <- FALSE 
       }))
-      if(private$complete && length(x)) {
-	private$stash <- ""
+      if(private$complete & length(z)) {
+        private$stash <- ""
         private$Nnon <- 0L
       } else {
-	private$stash <- z
-	private$complete <- FALSE
-	private$Nnon <- private$Nnon + 1L
+        private$stash <- z
+        private$complete <- FALSE
+        private$Nnon <- private$Nnon + 1L
       }
 
       return(z)
@@ -54,10 +54,10 @@ Reply <- R6::R6Class("Reply",
   public = list(
     initialize = function(con) {
       if(missing(con)) 
-	stop("Please provide a connection object to initialize.") 
+        stop("Please provide a connection object to initialize.") 
 
       if(!(isOpen(con, rw = "read") && isOpen(con, rw = "write"))) 
-	stop("Connection without read/write access")
+        stop("Connection without read/write access")
       
       # read socket until including prompt 
       promptExpr <- "<<prompt;"
@@ -65,21 +65,21 @@ Reply <- R6::R6Class("Reply",
       promptHit <- FALSE
       rdr <- MReader$new(con)
       repeat { 
-	repeat {
-	  z <- rdr$read
-	  if(grepl(pattern = promptExpr, x = z)) {
-	    promptHit <- TRUE
-	    break
-	  } else if(grepl(pattern = promptDefault, x = z))
-		  stop("Detected default prompt - failed to initialize Maxima.")
-	  if(rdr$wasComplete())
-	    break
-	}
-	if(nchar(z)) {
-	  private$reply <- c(private$reply, z)
-	  if(promptHit) 
-	    break
-	}
+        repeat {
+          z <- rdr$read
+          if(grepl(pattern = promptExpr, x = z)) {
+            promptHit <- TRUE
+            break
+          } else if(grepl(pattern = promptDefault, x = z))
+            stop("Detected default prompt - failed to initialize Maxima.")
+          if(rdr$wasComplete())
+            break
+        }
+        if(nchar(z)) {
+          private$reply <- c(private$reply, z)
+          if(promptHit) 
+            break
+        }
       }
 
       # extract prompt, outs and betweens
@@ -332,7 +332,16 @@ RMaxima <- R6::R6Class("RMaxima",
       if(!is.na(private$reply$getInputLabel()))
         private$lastInputLabel <- private$reply$getInputLabel()
 
-      private$crudeExecute(command)
+      if((cmd <- trim(checkCommand(command))) == ';')
+        return(structure(list(),
+                         input.label = private$lastInputLabel,
+                         output.label = NA,
+                         command = command,
+                         suppressed = TRUE,
+                         parsed =  NA,
+                         class = "maxima"))
+
+      private$crudeExecute(cmd)
 
       if(private$reply$hasWarning())
         warning(private$reply$getBetweens())
@@ -494,17 +503,12 @@ RMaxima <- R6::R6Class("RMaxima",
       sendCommand = function(command){
         if(missing(command))
           stop("Missing command.")
-
-        command <- trim(command)
-        command <- checkCommand(command)
-
         writeLines(text = command, con = private$maximaSocket)
-
         return(command)
       }, 
       crudeExecute = function(command) {
         command <- private$sendCommand(command)
-        private$reply = Reply$new(private$maximaSocket)
+        private$reply <- Reply$new(private$maximaSocket)
         if(grepl("\\$$", command))
           private$reply$suppressed <- TRUE
       },

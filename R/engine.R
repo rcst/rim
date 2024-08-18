@@ -8,11 +8,11 @@ utils::globalVariables(c("engine", "mx", "plots"))
 #' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the \code{RMarkdown} file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
 #' @param options named \code{list} of \code{knitr} options. Supported options are \code{echo}, \code{eval}, \code{include} and \code{output.var}. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
-#'
-#' @import knitr
-#' @importFrom utils tail
-#'
-#' @return This functions prints the resulting output from maxima together with it's code
+#
+#' @import knit
+#' @importFrom utils tai
+#
+#' @return This functions prints the resulting output from maxima together with it's cod
 maxima.engine <- function(options) {
   maxima.engine.start()
   code <- options$code
@@ -142,4 +142,3 @@ maxima.inline <- function(command) {
     paste0(c(x[["wtl"]][[maxima.options$inline.format]], ""), collapse = "\n")
   )
 }
-

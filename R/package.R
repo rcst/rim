@@ -108,6 +108,9 @@ iprint <- function(x) {
   stopifnot(isa(x, what = "maxima"))
   # cll <- deparse(sys.call())
   # cll <- deparse(sys.calls()[[sys.parent()]])
+
+  browser()
+
   if(exists("mx", maxima.env)) {
   # if(grepl("^engine\\(options\\)$", cll)) {
     if(maxima.options$engine.label) 
