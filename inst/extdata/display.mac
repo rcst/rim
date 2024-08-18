@@ -45,21 +45,21 @@ define_alt_display(multi_display_for_rim(x),
     printf(true,"~&out;>>"),
     printf(true,"~&lab;>>~%~a~%<<lab;", first(x)),
     printf(true,"~&wtl;>>"),
-    printf(true,"~&tex;>>;~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&tin;>>;~%")    ,tin_display(x)    ,printf(true,"~&<<tin;~%"),
+    printf(true,"~&tex;>>~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
+    printf(true,"~&tin;>>~%")    ,tin_display(x)    ,printf(true,"~&<<tin;~%"),
     printf(true,"~&htm;>>~%")    ,mathml_display(x) ,printf(true,"~&<<htm;~%"),
     printf(true,"~&lin;>>~%")     ,oned_display(x)   ,printf(true,"~&<<lin;~%"),
     printf(true,"~&two;>>~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
     printf(true,"~&<<wtl;"),
     printf(true,"~&wol;>>"),
-    printf(true,"~&tex;>>;~%")    ,tex_display_noref(x)    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&tin;>>;~%")    ,tin_display_noref(x)    ,printf(true,"~&<<tin;~%"),
+    printf(true,"~&tex;>>~%")    ,tex_display_noref(x)    ,printf(true,"~&<<tex;~%"),
+    printf(true,"~&tin;>>~%")    ,tin_display_noref(x)    ,printf(true,"~&<<tin;~%"),
     printf(true,"~&htm;>>~%")    ,mathml_display_noref(x) ,printf(true,"~&<<htm;~%"),
     printf(true,"~&lin;>>~%")     ,oned_display_noref(x)   ,printf(true,"~&<<lin;~%"),
     printf(true,"~&two;>>~%")     ,twod_display_noref(x)   ,printf(true,"~&<<two;~%"),
     printf(true,"~&m2r;>>~%")     ,m2r_display_out(x)   ,printf(true,"~&<<m2r;~%"),
     printf(true,"~&<<wol;"),
-    printf(true,"~&<<out;")
+    printf(true,"~&<<out;~%")
     )));
 
 set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;")$
