@@ -47,7 +47,8 @@ maxima.engine <- function(options) {
           ll <- append(ll, list(pm))
           maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
         } else {
-          ll <- append(ll, engine_print(tt))
+          # ll <- append(ll, engine_print(tt))
+          ll <- append(ll, print(tt))
         }
         ccode <- character()
       }
@@ -104,24 +105,6 @@ last_label <- function(label = knitr::opts_current$get("label")) {
 
   labels <- knitr::all_labels(engine == "maxima")
   tail(labels, 1) == label
-}
-
-engine_print <- function(x) {
-  pp <- switch(maxima.options$engine.label + 1,
-    paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
-    paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n")
-  )
-  if (is_html_output()) {
-    pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
-  }
-  pp
-}
-
-is_html_output <- function() {
-  if (is.null(p <- knitr::opts_knit$get("rmarkdown.pandoc.to"))) {
-    return(FALSE)
-  }
-  knitr::is_html_output() & p == "html"
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.

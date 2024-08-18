@@ -1,6 +1,8 @@
 # rim 0.6.5
 ## Modification
 - fixes faulty parsing of matrices
+- re-factored printing method `maxima.print` and `iprint`, which now reliably detected whether called from interactive mode or from knitr engine, thus removed internal function `engine_print()`
+- comment handling now works (both interactive and engine), fixed an infinite loop occurrence when sent command ended with a comment, comment-only lines of code inside code-chunks are now properly printed
 
 # rim 0.6.4
 ## Modification

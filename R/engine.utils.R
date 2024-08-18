@@ -134,3 +134,8 @@ retry_include_graphics <- function(path,
   knitr::include_graphics(path, ...)
 }
 
+called_from_fn <- function(pattern) {
+  call_st <- lapply(sys.calls(), `[[`, 1)
+  any(unlist(lapply(call_st, function(x) grepl(pattern, deparse(x)))))
+}
+
