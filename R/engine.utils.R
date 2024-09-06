@@ -4,6 +4,8 @@
 #' @noRd
 gather <- function(code) {
   hits <- grepl(pattern = ";|\\$", x = code)
+  comments <- grepl(pattern = "^[[:space:]]*/\\*.*?\\*/[[:space:]]*$", x = code)
+  hits <- hits | comments
   marks <- rev(cumsum(rev(hits)))
   marks[code == ""] <- NA
   sapply(
@@ -139,3 +141,18 @@ called_from_fn <- function(pattern) {
   any(unlist(lapply(call_st, function(x) grepl(pattern, deparse(x)))))
 }
 
+engine_print <- function(x){
+  pp <- switch(maxima.options$engine.label + 1,
+	 x[["wol"]][[maxima.options$engine.format]],
+	 x[["wtl"]][[maxima.options$engine.format]])
+  if(is_html_output()) {
+     pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
+  }
+  pp
+}
+
+is_html_output <- function() {
+  if(is.null(p <- knitr::opts_knit$get("rmarkdown.pandoc.to")))
+    return(FALSE)
+  knitr::is_html_output() & p == "html"
+}

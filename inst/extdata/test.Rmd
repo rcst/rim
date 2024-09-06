@@ -3,20 +3,20 @@ title: "knitr engine test page"
 output: html_document
 ---
 
-```{r}
+```{r options-init}
 maxima.options(engine.format = "latex", 
 	       engine.label = TRUE,
 	       inline.format = "inline", 
 	       inline.label = FALSE)
 ```
 
-```{maxima}
+```{maxima first-example}
 L: sqrt(1 - 1/R^2);
 assume(R > 0);
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 
-```{maxima}
+```{maxima second-example}
 'L = L;
 'integrate(x, x, 0, 'L) = integrate(x, x, 0, L);
 ```
@@ -24,43 +24,43 @@ assume(R > 0);
 This is an inline test: `r maxima.inline("'L = L;")`.
 
 
-```{maxima}
+```{maxima square-root}
 sqrt(3/4);
 ```
 
-```{maxima, output.var = "moo"}
+```{maxima output-var, output.var = "moo"}
 f(x) := e^(x^2)$
 diff(f(x), x);
 ```
 
-```{maxima}
+```{maxima repeat}
 %;
 ```
 
-```{maxima, output.var = "moo"}
+```{maxima output-reference-label, output.var = "moo"}
 log(%o1);
 ```
 
-```{r}
+```{r using-output-var}
 moo
 eval(moo[[1]], list(R = 12))
 ```
 
 # Plots
 
-```{maxima, fig.cap = "plot2d()", fig.align="center", fig.show='hide'}
+```{maxima plot2d, fig.cap = "plot2d()", fig.align="center", fig.show='hide'}
 r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
 plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
 ```
 
-```{maxima, fig.cap = "plot3d()", fig.align="center", fig.show='hide'}
+```{maxima plot3d, fig.cap = "plot3d()", fig.align="center", fig.show='hide'}
 plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [palette, [gradient, red, orange, yellow, green]],
        color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
        [color_bar_tics, 4]);
 ```
 
-```{maxima, fig.cap = "draw()", fig.align="center", fig.show='hide'}
+```{maxima draw, fig.cap = "draw()", fig.align="center", fig.show='hide'}
 example1:
   gr3d (title          = "Controlling color range",
         enhanced3d     = true,
@@ -90,7 +90,7 @@ draw(
   example1, example2, example3)$
 ```
 
-```{maxima, fig.cap = "draw2d()", fig.align="center", fig.show='hide'}
+```{maxima draw2d, fig.cap = "draw2d()", fig.align="center", fig.show='hide'}
 draw2d(
   dimensions = [1000, 1000],
   proportional_axes = xy,
@@ -100,7 +100,7 @@ draw2d(
   ellipse(7,6,2,3,0,360))$
 ``` 
 
-```{maxima, fig.cap = "draw3d()", fig.align="center", fig.show='hide'}
+```{maxima draw3d, fig.cap = "draw3d()", fig.align="center", fig.show='hide'}
 draw3d(
    dimensions = [1000, 1000],
    surface_hide      = true,
@@ -118,7 +118,7 @@ draw3d(
 ```
 
 
-```{r, warning=FALSE, results="markup"}
+```{r image-count, warning=FALSE, results="markup"}
 pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)
 
 if(length(pft) == 5L)  {
@@ -142,7 +142,7 @@ if(length(pft)) {
 
 # Normal Distribution
 
-```{maxima}
+```{maxima summary-functions}
 area(dist) := integrate(dist, x, minf, inf)$
 mean(dist) := area(dist*x)$
 EX2(dist) := area(dist*x^2)$
@@ -150,7 +150,7 @@ variance(dist) := EX2(dist) - mean(dist)^2$
 mgf(dist) := area(dist*%e^(x*t))$
 ```
 
-```{maxima}
+```{maxima normal}
 normal(x) := 
       (2*%pi*sigma^2)^(-1/2) * 
       exp(-(x-mu)^2/(2*sigma^2));
@@ -165,7 +165,7 @@ mgf(normal(x));
 
 # Laplace Distribution
 
-```{maxima}
+```{maxima laplace}
 laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
 
 load("abs_integrate")$
@@ -179,7 +179,7 @@ variance(laplace(x))$
 
 # Exponential Distribution
 
-```{maxima}
+```{maxima exponential}
 expo(x) := unit_step(x) * lambda * exp(-lambda * x);
 
 assume(lambda > 0)$
@@ -191,7 +191,7 @@ variance(expo(x));
 
 # Matrices
 
-```{maxima}
+```{maxima matrices}
 m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);
 transpose(m);
 determinant(m);
@@ -203,12 +203,12 @@ factor(%);
 
 # If-then-else
 
-```{maxima}
+```{maxima x-y}
 x: 1234;
 y: 2345;
 ```
 
-```{maxima}
+```{maxima if-then-else}
 if x > y
   then x
   else y;

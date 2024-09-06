@@ -107,18 +107,17 @@ maxima.isInstalled <- function() {
 iprint <- function(x) {
   stopifnot(isa(x, what = "maxima"))
 
-  if(called_from_fn(pattern = "(knit)|(engine)")) {
+  # TODO: Determin calling function to distinguish return value
+  label <- character(0)
+  if(exists("mx", maxima.env)) {
     if(maxima.options$engine.label) 
-      paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
-    else
-      paste0(attr(x, "command"))
+      label <- paste0("(", attr(x, "input.label"), ") ")
+  } else {
+    if(maxima.options$label)
+      label <- paste0("(", attr(x, "input.label"), ") ")
   }
-  else {
-    if(maxima.options$label) 
-      paste0("(", attr(x, "input.label"), ") ", attr(x, "command"))
-    else
-      paste0(attr(x, "command"))
-  }
+
+  paste0(label, attr(x, "command"))
 }
 
 #' @describeIn rim-package Prints the maxima output part of an S3 object returned by \code{\link{maxima.get}()} 
@@ -133,27 +132,16 @@ iprint <- function(x) {
 #' }
 print.maxima <- function(x, ...) {
   if(!attr(x, "suppressed")) {
-    if(called_from_fn(pattern = "(knit)|(engine)")) {
-      pp <- switch(maxima.options$engine.label + 1,
-                   paste0(c(x[["wol"]][[maxima.options$engine.format]], ""), collapse = "\n"),
-                   paste0(c(x[["wtl"]][[maxima.options$engine.format]], ""), collapse = "\n")
-      )
-      if (is_html_output()) {
-        pp <- gsub(pattern = "\\\\%", replacement = "%", x = pp)
-      }
-      pp
-    } else {
-      switch(maxima.options$label + 1,
-             {
-               cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-               invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-             },
-             {
-               cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
-               invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-             }
-      )
-    }
+    switch(maxima.options$label + 1,
+	   {
+	     cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	   },
+	   {
+	     cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
+	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
+	   }
+    )
   }
 }
 

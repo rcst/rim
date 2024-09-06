@@ -20,7 +20,9 @@ maxima.engine <- function(options) {
   output.data <- list()
   code <- code[nchar(code) > 0]
   cmds <- gather(code)
-  ll <- list()
+  # ll <- list()
+  out_code <- character(0)
+  out_res <- character(0)
   ccode <- character()
   if (options$eval) {
     for (i in 1:length(cmds)) {
@@ -34,21 +36,25 @@ maxima.engine <- function(options) {
       if (!attr(tt, "suppressed")) {
         if (ov) output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
         if (options$echo) {
-          ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+          # ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+          out_code <- c(out_code, ccode)
         }
 
-        if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc)) {
+        if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc) &
+            !is.null(knitr::all_labels(engine == "maxima"))) {
           tt$wol$ascii <- paste0(tt$wol$ascii, collapse = "")
           pm <- regexec(pattern = "\\[?([[:graph:]]*/?\\.?(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
           pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
 
           # it's possible the image has not yet been written to disk
           pm <- retry_include_graphics(pm)
-          ll <- append(ll, list(pm))
+          # ll <- append(ll, list(pm))
+          out_res <- c(out_res, pm)
           maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
         } else {
           # ll <- append(ll, engine_print(tt))
-          ll <- append(ll, print(tt))
+          # ll <- append(ll, print(tt))
+          out_res <- c(out_res, engine_print(tt))
         }
         ccode <- character()
       }
@@ -60,48 +66,67 @@ maxima.engine <- function(options) {
 
     if (length(ccode)) {
       if (options$echo) {
-        ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+        # ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+        out_code <- c(out_code, ccode)
       }
     }
   } else {
     if (options$echo) {
-      ll <- append(ll, list(structure(list(src = code), class = "source")))
+      # ll <- append(ll, list(structure(list(src = code), class = "source")))
+        out_code <- c(out_code, ccode)
     }
   }
 
-  if (last_label(options$label)) {
+  if (last_label(options$label) & called_from_fn("knit")) {
     maxima.engine.stop()
   }
 
-  engine_output(opts_current$merge(list(results = maxima.options$engine.results)), out = ll)
+  # requires special handling for RStudio
+  # when code chunk is ran interactively
+  # 
+  # RStudio Interactive: options != opts_current$get()
+  #   especially for options: echo, 
+  #   which causes engine_output to ask for its code parameter
+  #   maybe there is a way to make it work with the code argument at all times - the non-expert mode :)
+  #   seems to be part of this issue: https://github.com/rstudio/rstudio/issues/11995
+  engine_output(
+    opts_current$merge(
+      list(engine = 'maxima',
+           lang = 'maxima',
+           results = maxima.options$engine.results)), 
+    code = out_code, 
+    out = out_res)
 }
 
 maxima.engine.start <- function() {
-  if (!exists("mx", envir = maxima.env)) {
-    maxima.env$mx <- RMaxima$new(
-      display = maxima.options$display,
-      preload = maxima.options$preload[knitr::is_latex_output() + 1]
-    )
-    maxima.env$plots <- character()
+  if(is.null(knitr::all_labels(engine == "maxima"))) {
+    maxima.env$mx <- maxima.env$maxima
+  } else {
+    if (!exists("mx", envir = maxima.env)) {
+      maxima.env$mx <- RMaxima$new(
+                                   display = maxima.options$display,
+                                   preload = maxima.options$preload[knitr::is_latex_output() + 1]
+      )
+      maxima.env$plots <- character()
+    }
   }
 }
 
 maxima.engine.stop <- function() {
-  maxima.env$mx$stop()
-  e <- sys.frame(which = 1)
-  do.call("on.exit", list(quote(if (exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
-  do.call("on.exit", list(quote(if (exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
-  rm(mx, envir = maxima.env)
+  if(!is.null(knitr::all_labels(engine == "maxima"))) {
+    maxima.env$mx$stop()
+    e <- sys.frame(which = 1)
+    do.call("on.exit", list(quote(if (exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
+    do.call("on.exit", list(quote(if (exists("maxima.env")) rm(plots, envir = maxima.env)), add = TRUE), envir = e)
+    rm(mx, envir = maxima.env)
+  }
 }
 
 last_label <- function(label = knitr::opts_current$get("label")) {
   # if (knitr:::child_mode()) return(FALSE)
-  if (knitr::opts_knit$get("child")) {
+  if(knitr::opts_knit$get("child") | is.null(knitr::all_labels(engine == "maxima"))) {
     return(FALSE)
   }
-
-  if(!missing(label) & length(label) == 0L)
-    label <- knitr::opts_current$get("label")
 
   labels <- knitr::all_labels(engine == "maxima")
   tail(labels, 1) == label

@@ -1,6 +1,8 @@
 ---
 title: "rim - R's interface to Maxima"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -71,7 +73,7 @@ assume(R > 0)$
 
 In the above code chunk we define a variable `L` (that depends on another variable `R`). We tell Maximas database to assume `R` being larger than zero and suppress any output resulting from this command. The last line prints an unevaluated integral on the left-hand side of the equal sign and on the right-hand side evaluates that same definit integral. The tick quotation mark tells Maxima not to evaluate the suceeding expression. This, when rendered into a document will be printed as 
 
-```{maxima}
+```{maxima first-example}
 L: sqrt(1 - 1/R^2);
 assume(R > 0)$
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
@@ -79,7 +81,7 @@ assume(R > 0)$
 
 The resulting output (if not suppressed) is printed after each line of code, and thus apprears as several. Input and output reference labels that are assign by Maxima are printed into he code chunk. Those can be used to refer to previous commands in other code chunks. For example
 
-```{maxima}
+```{maxima rhs}
 sqrt(rhs(%o3));
 ```
 
@@ -87,7 +89,7 @@ takes the right-hand side of the result of the equation from input label `%i3`, 
 
 Of course exercising on such simple computations is of little benefit. The real benefit comes from more complicated expression and the effort that we would need to put if we wanted to typeset the result, such as this
 
-```{maxima, output.var = "foo"}
+```{maxima integration, output.var = "foo"}
 integrate(1 / (1 + x^4), x);
 ```
 
@@ -96,21 +98,21 @@ integrate(1 / (1 + x^4), x);
 
 However, we can also change Maxima's output format to MathML, which works if the output document is a HTML document. 
 
-```{r}
+```{r changing-options}
 maxima.options(engine.format = "mathml")
 maxima.options()
 ```
 
-```{maxima}
+```{maxima simple-mathml}
 sqrt(3/4);
 ```
 
-```{maxima}
+```{maxima differentiate}
 f(x) := e^(x^2)$
 diff(f(x), x);
 ```
 
-```{maxima}
+```{maxima repeat}
 %;
 ```
 
@@ -120,9 +122,20 @@ You can also replay other previous expressions by referring to their output labe
 
 `rim` also supports printing Maxima output as inline. This works by putting an `r` inline code chunk and using `maxima.inline()`. Example: `` `r '\x60r maxima.inline("log(%o1);")\x60'` `` results in `r maxima.inline("log(%o1);")`. 
 
-```{r}
+```{r changing-options-back}
 maxima.options(engine.format = "latex")
 ```
+
+Comments can be added to Maxima code as text between `/*` and `*/` (example taken from the [Maxima manual](https://maxima.sourceforge.io/docs/manual/maxima_73.html)).
+
+```{maxima comments}
+/* aa is a variable of interest */  aa : 1234;
+bb : aa^2; /* Value of bb depends on aa */ 
+/* User-defined infix operator */  infix ("Q");
+/* Parses same as a b c, not abc */  a/* foo */Q/* bar */c;
+/* Comments /* can be nested /* to any depth */ */ */  1 + xyz;
+```
+
 
 ### Chunk Options
 
@@ -142,7 +155,7 @@ One of the above Maxima code chunk was actually set with option `output.var = "f
 
 ````
 
-```{maxima, output.var = "foo"}`r ''`
+```{maxima output-var, output.var = "foo"}`r ''`
 integrate(1 / (1 + x^4), x);
 ```
 
@@ -150,7 +163,7 @@ integrate(1 / (1 + x^4), x);
 
 which captured the Maxima result(s) as parsed R-code (unevaluated expressions) into a named list. Those expressions can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
 
-```{r}
+```{r using-output-var}
 df <- data.frame(x = 1:10, y = letters[1:10])
 df$z <- eval(foo[["o5"]], envir = df)
 df
@@ -163,19 +176,19 @@ In this way, Maxima can assist us with symolic computations in our statistical m
 
 ## Plots
 
-```{maxima, fig.cap = "plot2d()", fig.align="center"}
+```{maxima plot2d, fig.cap = "plot2d()", fig.align="center"}
 r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
 plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
 ```
 
-```{maxima, fig.cap = "plot3d()", fig.align="center"}
+```{maxima plot3d, fig.cap = "plot3d()", fig.align="center"}
 plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [palette, [gradient, red, orange, yellow, green]],
        color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
        [color_bar_tics, 4]);
 ```
 
-```{maxima, fig.cap = "draw()", fig.align="center"}
+```{maxima draw, fig.cap = "draw()", fig.align="center"}
 example1:
   gr3d (title          = "Controlling color range",
         enhanced3d     = true,
@@ -205,7 +218,7 @@ draw(
   example1, example2, example3)$
 ```
 
-```{maxima, fig.cap = "draw2d()", fig.align="center"}
+```{maxima draw2d, fig.cap = "draw2d()", fig.align="center"}
 draw2d(
   dimensions = [1000, 1000],
   proportional_axes = xy,
@@ -215,7 +228,7 @@ draw2d(
   ellipse(7,6,2,3,0,360))$
 ``` 
 
-```{maxima, fig.cap = "draw3d()", fig.align="center"}
+```{maxima draw3d, fig.cap = "draw3d()", fig.align="center"}
 draw3d(
    dimensions = [1000, 1000],
    surface_hide      = true,
@@ -238,7 +251,7 @@ This is basically a reproduced demo for `Sympy` from [Bryan Zhang's Blog](https:
 
 First we define some helper functions:
 
-```{maxima}
+```{maxima dist-functions}
 area(dist) := integrate(dist, x, minf, inf)$
 mean(dist) := area(dist*x)$
 EX2(dist) := area(dist*x^2)$
@@ -248,7 +261,7 @@ mgf(dist) := area(dist*%e^(x*t))$
 
 ### Normal Distribution
 
-```{maxima}
+```{maxima normal}
 normal(x) := 
       (2*%pi*sigma^2)^(-1/2) * 
       exp(-(x-mu)^2/(2*sigma^2));
@@ -261,9 +274,18 @@ variance(normal(x));
 mgf(normal(x));
 ```
 
+### Pareto Distribution
+
+```{maxima pareto}
+pareto(x) := (alpha * (x[m])^alpha) / x^(alpha+1);
+assume(x[m] > 0)$ 
+assume(alpha > 0)$
+```
+
+
 ### Laplace Distribution
 
-```{maxima}
+```{maxima laplace}
 laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
 
 load("abs_integrate")$
@@ -277,7 +299,7 @@ variance(laplace(x));
 
 ### Exponential Distribution
 
-```{maxima}
+```{maxima exponential}
 expo(x) := unit_step(x) * lambda * exp(-lambda * x);
 
 assume(lambda > 0)$
@@ -289,7 +311,7 @@ variance(expo(x));
 
 ## Matrices
 
-```{maxima}
+```{maxima matrices}
 m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);
 transpose(m);
 determinant(m);
@@ -301,12 +323,12 @@ factor(%);
 
 ## If-then-else
 
-```{maxima}
+```{maxima x-y}
 x: 1234;
 y: 2345;
 ```
 
-```{maxima}
+```{maxima if-then-else}
 if x > y
   then x
   else y;
