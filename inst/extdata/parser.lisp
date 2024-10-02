@@ -1,3 +1,26 @@
+; (defun arglist (fn) 
+;   ; unfortunately function-lambda-expression
+;   ; is not implemented in all Lisp implementation
+;   ; it's not present in GCL
+;   (cadr (function-lambda-expression fn)))
+; 
+; (defun keyarglist (fn) 
+;   (cdr (member '&key (arglist fn))))
+; 
+; (defun member-keyarglist (x fn) 
+;   ; x - item to be searched
+;   ; fn - function
+;   ; seaches for x in fn's keyword argument list
+;   ; returns the tail of the keyword argument list if found
+;   ; otherwise NIL
+;   (let ((fun (cond
+;                ((symbolp fn) (symbol-function fn))
+;                ((functionp fn) fn)
+;                (T (return-from member-keyarglist NIL)))))
+;     (member x (keyarglist fun) :test #'eq :key #'car)))
+
+(defparameter *with-r-list* T)
+
 (defparameter *maxima-direct-ir-map*
   (let ((ht (make-hash-table)))
     (setf (gethash 'mtimes ht) '(op *))
@@ -8,9 +31,9 @@
     (setf (gethash 'mquotient ht) '(op /))
     (setf (gethash 'msetq ht) '(op-no-bracket =))
     (setf (gethash 'mlist ht) '(struct-list))
-    (setf (gethash 'mand ht) '(boolop (symbol "and")))
-    (setf (gethash 'mor ht) '(boolop (symbol "or")))
-    (setf (gethash 'mnot ht) '(funcall (symbol "not")))
+    (setf (gethash 'mand ht) '(boolop &))
+    (setf (gethash 'mor ht) '(boolop \|))
+    (setf (gethash 'mnot ht) '(unary-op !))
     (setf (gethash 'mminus ht) '(unary-op -))
     (setf (gethash 'mgreaterp ht) '(comp-op >))
     (setf (gethash 'mequal ht) '(comp-op ==))
@@ -29,6 +52,7 @@
     (setf (gethash '$invert ht) '(funcall (symbol "solve")))
     (setf (gethash '$determinant ht) '(funcall (symbol "det")))
     (setf (gethash '$transpose ht) '(funcall (symbol "t")))
+    (setf (gethash 'mfactorial ht) '(funcall (symbol "factorial")))
     ht))
 
 (defparameter *maxima-special-ir-map*
@@ -47,7 +71,7 @@
     ; (setf (gethash '$plot3d ht) 'plot-to-ir)
     ; (setf (gethash '$plot2d ht) 'plot-to-ir)
     ; (setf (gethash 'mexpt ht) 'mexpt-to-ir)
-    (setf (gethash 'mfactorial ht) 'mfactorial-to-ir)
+    ;(setf (gethash 'mfactorial ht) 'mfactorial-to-ir)
     ht))
 
 (defun symbol-name-to-string (form)
@@ -100,8 +124,8 @@
 	 (cons-to-ir form))
 	(t (cons 'no-convert form))))
 
-(defun mfactorial-to-ir (form)
-  `(funcall (string "factorial") ,@(mapcar #'maxima-to-ir (cdr form))))
+; (defun mfactorial-to-ir (form)
+;   `(funcall 'factorial ,@(mapcar #'maxima-to-ir (cdr form))))
 
 ; (defun mexpt-to-ir (form)
 ;   `(funcall (string "exp") ,@(mapcar #'maxima-to-ir (cdr form))))
@@ -144,6 +168,7 @@
   (let ((ht (make-hash-table)))
     (setf (gethash 'symbol ht) 'symbol-to-r)
     (setf (gethash 'op ht) 'op-to-r)
+    (setf (gethash 'boolop ht) 'boolop-to-r)
     (setf (gethash 'op-no-bracket ht) 'op-no-bracket-to-r)
     (setf (gethash 'comp-op ht) 'op-to-r)
     (setf (gethash 'unary-op ht) 'unary-op-to-r)
@@ -175,14 +200,6 @@
 		 ;;((setf type (gethash (caar form *maxima-r-map*))) (funcall type form))
 		 (t 'no-convert))))))
 
-; (defun ir-to-r (form)
-;   (cond ((atom form) 
-; 	 (atom-to-r form))
-; 	((and (consp form) (consp (car form))) 
-; 	 (cons-to-r form))
-; 	(t 
-; 	 (cons 'no-convert form))))
-
 (defun ir-to-r (form)
   (typecase form
     (cons               
@@ -204,20 +221,18 @@
   (format nil "~@?" "~~{~~#[~~;~~a~~:;~~a ~a ~~]~~}"
 	  op))
 
-(defun mplus-to-r (form)
-  (format nil (op-template "+") 
-	  (mapcar 
-	    (lambda (elm) (maxima-to-r elm)) 
-	    (cdr form))))
-
-(defun mminus-to-r (form)
-  (format nil "-~A" (cadr form)))
-
 (defun op-to-r (form)
   (format nil (op-template (cadr form))
           (mapcar
             (lambda (elm) (ir-to-r elm))
             (cddr form))))
+
+(defun boolop-to-r (form)
+  (let ((*with-r-list* NIL))
+   (format nil (op-template (cadr form))
+           (mapcar
+             (lambda (elm) (ir-to-r elm))
+             (cddr form)))))
 
 (defun op-no-bracket-to-r (form)
   (format nil (op-no-bracket-template (cadr form))
@@ -253,10 +268,12 @@
   (format nil "~c~a~c" #\" (cadr form) #\"))
 
 (defun struct-list-to-r (form)
-  (format nil "list(~{~a~^, ~})" 
-          (mapcar
-            (lambda (elm) (ir-to-r elm))
-            (cdr form))))
+  (format nil "~:[(~{~a~^, ~})~;list(~{~a~^, ~})~]" 
+          *with-r-list*
+          (let ((*with-r-list* T))
+            (mapcar
+             (lambda (elm) (ir-to-r elm))
+             (cdr form)))))
 
 (defun func-args-to-r (form)
   (format nil "~{~a~^, ~}"
@@ -332,19 +349,19 @@
 (defun maxima2r (form)
   (ir-to-r (maxima-to-ir form)))
 
-; (defun maybe-invert-string-case (string)
-;   (let ((all-upper t)
-; 	(all-lower t)
-; 	(length (length string)))
-;     (dotimes (i length)
-;       (let ((ch (char string i)))
-; 	(when (both-case-p ch)
-; 	  (if (upper-case-p ch)
-; 	      (setq all-lower nil)
-; 	      (setq all-upper nil)))))
-;     (cond (all-upper
-; 	   (string-downcase string))
-; 	  (all-lower
-; 	   (string-upcase string))
-; 	  (t
-; 	   string))))
+(defun maybe-invert-string-case (string)
+  (let ((all-upper t)
+	(all-lower t)
+	(length (length string)))
+    (dotimes (i length)
+      (let ((ch (char string i)))
+	(when (both-case-p ch)
+	  (if (upper-case-p ch)
+	      (setq all-lower nil)
+	      (setq all-upper nil)))))
+    (cond (all-upper
+	   (string-downcase string))
+	  (all-lower
+	   (string-upcase string))
+	  (t
+	   string))))
