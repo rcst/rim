@@ -46,6 +46,14 @@ moo
 eval(moo[[1]], list(R = 12))
 ```
 
+```{maxima comments}
+/* aa is a variable of interest */  aa : 1234;
+bb : aa^2; /* Value of bb depends on aa */ 
+/* User-defined infix operator */  infix ("Q");
+/* Parses same as a b c, not abc */  a/* foo */Q/* bar */c;
+/* Comments /* can be nested /* to any depth */ */ */  1 + xyz;
+```
+
 # Plots
 
 ```{maxima plot2d, fig.cap = "plot2d()", fig.align="center", fig.show='hide'}
@@ -161,32 +169,6 @@ area(normal(x));
 mean(normal(x));
 variance(normal(x));
 mgf(normal(x));
-```
-
-# Laplace Distribution
-
-```{maxima laplace}
-laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
-
-load("abs_integrate")$
-
-assume(b > 0)$
-
-area(laplace(x))$
-mean(laplace(x))$
-variance(laplace(x))$
-```
-
-# Exponential Distribution
-
-```{maxima exponential}
-expo(x) := unit_step(x) * lambda * exp(-lambda * x);
-
-assume(lambda > 0)$
-
-area(expo(x));
-mean(expo(x));
-variance(expo(x));
 ```
 
 # Matrices

@@ -2,6 +2,8 @@
 #include<string>
 #include<vector>
 
+using namespace Rcpp;
+
 std::string ltrim(std::string s) {
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
@@ -193,6 +195,10 @@ std::string checkCommand(std::string command) {
     }
   }
 
+  if(csp.size() != cep.size()) {
+    stop("Bad expression: Found Non-ending comment");
+  }
+
   for (int i = csp.size() - 1;  i >= 0; --i) {
     command.erase(csp.at(i), cep.at(i) - csp.at(i) + 1);
   }
@@ -202,4 +208,51 @@ std::string checkCommand(std::string command) {
   }
 
   return command;
+}
+
+// [[Rcpp::export]]
+Rcpp::List dissect_chunk(std::vector<std::string> code) {
+  int state = 0; 
+  int comment_count = 0;
+  bool terminated = false;
+  std::vector<size_t> csp, cep;
+  List L =List::create();
+  IntegerVector temp = IntegerVector::create();
+
+  for (size_t i = 0; i < code.size(); ++i) {
+    code[i] = trim(code[i]);
+    // code(i) = trim(code[i]);
+    for (size_t j = 0; j < code[i].size(); ++j) {
+      state = checkInput(code[i][j], state, comment_count);
+
+      if (state == IN_COMMENT_START) {
+        if (comment_count == 0)
+          csp.push_back(i-1);
+
+        comment_count++;
+      }
+      else if (state == IN_COMMENT_END) {
+        comment_count--;
+        if(comment_count == 0)
+          cep.push_back(i);
+      }
+
+      if(state == STATE_END) {
+        terminated = true;
+      }
+    }
+    
+    // skip empty lines
+    if(code[i].size() > 0) {
+      temp.push_back(i+1);
+      if(terminated == true) {
+        terminated = false;
+        L.push_back(temp);
+        temp.erase(0, temp.size());
+      }
+    }
+
+  }
+
+  return L;
 }

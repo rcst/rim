@@ -32,10 +32,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// dissect_chunk
+Rcpp::List dissect_chunk(std::vector<std::string> code);
+RcppExport SEXP _rim_dissect_chunk(SEXP codeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type code(codeSEXP);
+    rcpp_result_gen = Rcpp::wrap(dissect_chunk(code));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rim_trim", (DL_FUNC) &_rim_trim, 1},
     {"_rim_checkCommand", (DL_FUNC) &_rim_checkCommand, 1},
+    {"_rim_dissect_chunk", (DL_FUNC) &_rim_dissect_chunk, 1},
     {NULL, NULL, 0}
 };
 

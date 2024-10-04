@@ -9,3 +9,7 @@ checkCommand <- function(command) {
     .Call(`_rim_checkCommand`, command)
 }
 
+dissect_chunk <- function(code) {
+    .Call(`_rim_dissect_chunk`, code)
+}
+

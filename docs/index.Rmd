@@ -75,7 +75,9 @@ In the above code chunk we define a variable `L` (that depends on another variab
 
 ```{maxima first-example}
 L: sqrt(1 - 1/R^2);
+
 assume(R > 0)$
+
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 

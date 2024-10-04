@@ -8,38 +8,37 @@ utils::globalVariables(c("engine", "mx", "plots"))
 #' The purpose of \code{maxima.inline} is to insert Maxima results as inline text, i.e. on the same line of the preceding text, if it is actually written on the same line of the \code{RMarkdown} file. It uses the same running Maxima process as \code{maxima.engine}. The output format for inline results can be configured separately from the settings of \code{maxima.engine}, i.e. \code{maxima.options(inline.format = ..., inline.label = ...)}.
 #'
 #' @param options named \code{list} of \code{knitr} options. Supported options are \code{echo}, \code{eval}, \code{include} and \code{output.var}. To change the output format of the Maxima engine set the option \code{maxima.options(engine.format)} to either \code{"linear"} (default), \code{"ascii"}, \code{"latex"} or \code{"mathml"}.
-#
-#' @import knit
-#' @importFrom utils tai
-#
+#'
 #' @return This functions prints the resulting output from maxima together with it's cod
 maxima.engine <- function(options) {
   maxima.engine.start()
-  code <- options$code
-  ov <- !is.null(varname <- options$output.var)
+
+  out_code <- options$code
+  ccode <- character(0)
   output.data <- list()
-  code <- code[nchar(code) > 0]
-  cmds <- gather(code)
-  # ll <- list()
-  out_code <- character(0)
   out_res <- character(0)
-  ccode <- character()
+  ll <- list()
+
+  ov <- !is.null(varname <- options$output.var)
+  cmds <- dissect_chunk(out_code)
+
   if (options$eval) {
     for (i in 1:length(cmds)) {
-      pc <- paste0(code[cmds[[i]]], collapse = "\n")
+      pc <- paste0(out_code[cmds[[i]]], collapse = "\n")
       # if plotting command, then it needs to end with ";"
       if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*\\$$", x = pc)) {
         pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
       }
       tt <- maxima.env$mx$get(pc)
-      ccode <- append(ccode, iprint(tt))
+      out_code[cmds[[i]]] <- unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE))
+      ccode <- append(ccode, unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE)))
+      out_code <- c(out_code, ccode)
       if (!attr(tt, "suppressed")) {
-        if (ov) output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
-        if (options$echo) {
-          # ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-          out_code <- c(out_code, ccode)
-        }
+        ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+        if (ov) 
+          output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
 
+        # +++ FIGURE OUTPUT +++
         if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc) &
             !is.null(knitr::all_labels(engine == "maxima"))) {
           tt$wol$ascii <- paste0(tt$wol$ascii, collapse = "")
@@ -48,33 +47,34 @@ maxima.engine <- function(options) {
 
           # it's possible the image has not yet been written to disk
           pm <- retry_include_graphics(pm)
-          # ll <- append(ll, list(pm))
-          out_res <- c(out_res, pm)
+          ll <- append(ll, list(pm))
+          out_res <- c(out_res, list(pm))
           maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
         } else {
-          # ll <- append(ll, engine_print(tt))
+        # +++ TEXT OUTPUT +++
           # ll <- append(ll, print(tt))
+          ll <- append(ll, engine_print(tt))
           out_res <- c(out_res, engine_print(tt))
         }
-        ccode <- character()
+        ccode <- character(0)
       }
     }
 
     if (ov) {
-      assign(varname, output.data, envir = knit_global())
+      assign(varname, output.data, envir = knitr::knit_global())
     }
 
-    if (length(ccode)) {
-      if (options$echo) {
-        # ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-        out_code <- c(out_code, ccode)
-      }
-    }
-  } else {
-    if (options$echo) {
-      # ll <- append(ll, list(structure(list(src = code), class = "source")))
-        out_code <- c(out_code, ccode)
-    }
+    # if (length(ccode)) {
+    #   if (options$echo) {
+    #     ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+    #     out_code <- c(out_code, ccode)
+    #   }
+    # } else {
+    #   if (options$echo) {
+    #     ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+    #     out_code <- c(out_code, ccode)
+    #   }
+    # }
   }
 
   if (last_label(options$label) & called_from_fn("knit")) {
@@ -89,13 +89,15 @@ maxima.engine <- function(options) {
   #   which causes engine_output to ask for its code parameter
   #   maybe there is a way to make it work with the code argument at all times - the non-expert mode :)
   #   seems to be part of this issue: https://github.com/rstudio/rstudio/issues/11995
-  engine_output(
-    opts_current$merge(
-      list(engine = 'maxima',
-           lang = 'maxima',
-           results = maxima.options$engine.results)), 
-    code = out_code, 
-    out = out_res)
+  # knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
+  #                                                     lang = 'maxima',
+  #                                                     results = maxima.options$engine.results)), 
+  #                      code = out_code, 
+  #                      out = out_res)
+  knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
+                                                      lang = 'maxima',
+                                                      results = maxima.options$engine.results)), 
+                       out = ll)
 }
 
 maxima.engine.start <- function() {
@@ -129,7 +131,7 @@ last_label <- function(label = knitr::opts_current$get("label")) {
   }
 
   labels <- knitr::all_labels(engine == "maxima")
-  tail(labels, 1) == label
+  utils::tail(labels, 1) == label
 }
 
 #' @describeIn maxima.engine This function can be used to insert maxima outputs as inline.
