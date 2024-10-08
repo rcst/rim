@@ -4,6 +4,7 @@ output: html_document
 ---
 
 ```{r options-init}
+options(width = 80)
 maxima.options(engine.format = "latex", 
 	       engine.label = TRUE,
 	       inline.format = "inline", 
@@ -53,6 +54,18 @@ bb : aa^2; /* Value of bb depends on aa */
 /* Parses same as a b c, not abc */  a/* foo */Q/* bar */c;
 /* Comments /* can be nested /* to any depth */ */ */  1 + xyz;
 ```
+
+```{maxima logical-list-parsing, output.var = "boollist"}
+load(fourier_elim)$
+fourier_elim([x^2-1>0], [x]);
+```
+
+```{r, eval = TRUE}
+# from previous chunk: output.var = "boollist"
+boollist
+eval(boollist[["o18"]], list(x = seq(-10, 10, 0.5)))
+```
+
 
 # Plots
 

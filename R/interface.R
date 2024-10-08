@@ -375,6 +375,7 @@ RMaxima <- R6::R6Class("RMaxima",
                          command = command,
                          suppressed = private$reply$suppressed,
                          parsed = NA,
+                         from_engine = FALSE,
                          class = "maxima"))
       }
 
@@ -410,6 +411,7 @@ RMaxima <- R6::R6Class("RMaxima",
                          command = command,
                          suppressed = private$reply$suppressed,
                          parsed =  p,
+                         from_engine = FALSE,
                          class = "maxima"))
       }
 

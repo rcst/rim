@@ -13,6 +13,7 @@
 #' @import methods
 ## usethis namespace: start
 #' @importFrom Rcpp sourceCpp
+#' @importFrom utils tail
 #' @useDynLib rim, .registration = TRUE
 ## usethis namespace: start
 #'
@@ -132,16 +133,25 @@ iprint <- function(x) {
 #' }
 print.maxima <- function(x, ...) {
   if(!attr(x, "suppressed")) {
-    switch(maxima.options$label + 1,
-	   {
-	     cat(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	   },
-	   {
-	     cat(paste0(c(x[["wtl"]][[maxima.options$format]], ""), collapse = "\n"))
-	     invisible(paste0(c(x[["wol"]][[maxima.options$format]], ""), collapse = "\n"))
-	   }
-    )
+    if(attr(x, "from_engine") & !is_interactive()) {
+      label_opt <- maxima.options$engine.label
+      format_opt <- maxima.options$engine.format
+    } else {
+      label_opt <- maxima.options$label
+      format_opt <- maxima.options$format
+    }
+
+    label_opt <- ifelse(label_opt, "wtl", "wol")
+
+    txt <- x[[label_opt]][[format_opt]]
+
+    if(is_html_output()) {
+      txt <- gsub(pattern = "\\\\%", replacement = "%", x = txt)
+    }
+
+    if(!(attr(x, "from_engine") | is_interactive())) 
+      cat(txt)
+    invisible(txt)
   }
 }
 

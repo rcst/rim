@@ -1,8 +1,11 @@
-# rim 0.6.5
+# rim 0.7.0
 ## Modification
 - fixes faulty parsing of matrices
-- re-factored printing method `maxima.print` and `iprint`, which now reliably detected whether called from interactive mode or from knitr engine, thus removed internal function `engine_print()`
+- re-factored printing method `maxima.print` and `iprint`, which now reliably detected whether called from interactive mode or from knitr engine, thus removed internal function `engine_print()` (Maxima S3 object now gained `from_engine` flag)
+- running code chunks interactively (from RStudio) now works as expected using the "interactive" Maxima connection object it's options accordingly
 - comment handling now works (both interactive and engine), fixed an infinite loop occurrence when sent command ended with a comment, comment-only lines of code inside code-chunks are now properly printed
+- empty lines in code chunks are now preserved as inputted
+- fixed engine test failure caused by different output code width settings and unneccessarily inserted linebreaks between code input and output
 
 # rim 0.6.4
 ## Modification

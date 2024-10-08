@@ -5,9 +5,10 @@ test_that("maxima knitr engine works", {
   fr <- system.file("extdata", c("test.Rmd", "result.md"),
 		    package = "rim", mustWork = TRUE)
   # fo <- paste0(dirname(fr[1]), "/test.md")
+  fo <- tempfile(fileext = ".md")
 
   result <- readLines(con = fr[2])
-  suppressWarnings(knitr::knit(input = fr[1], output = (fo <- tempfile()), quiet = TRUE))
+  suppressWarnings(knitr::knit(input = fr[1], output = fo, quiet = TRUE))
   test <- readLines(con = fo)
 
   # expect_match(digest::digest(readLines(fo), "sha256"), hash)

@@ -30,9 +30,11 @@ maxima.engine <- function(options) {
         pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
       }
       tt <- maxima.env$mx$get(pc)
+
+      attr(tt, "from_engine") <- TRUE
+
       out_code[cmds[[i]]] <- unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE))
       ccode <- append(ccode, unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE)))
-      out_code <- c(out_code, ccode)
       if (!attr(tt, "suppressed")) {
         ll <- append(ll, list(structure(list(src = ccode), class = "source")))
         if (ov) 
@@ -45,16 +47,15 @@ maxima.engine <- function(options) {
           pm <- regexec(pattern = "\\[?([[:graph:]]*/?\\.?(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
           pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
 
-          # it's possible the image has not yet been written to disk
+          # possibly image not yet written to disk
           pm <- retry_include_graphics(pm)
           ll <- append(ll, list(pm))
           out_res <- c(out_res, list(pm))
           maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
         } else {
         # +++ TEXT OUTPUT +++
-          # ll <- append(ll, print(tt))
-          ll <- append(ll, engine_print(tt))
-          out_res <- c(out_res, engine_print(tt))
+          ll <- append(ll, ttt <- print(tt))
+          out_res <- c(out_res, ttt)
         }
         ccode <- character(0)
       }
@@ -63,41 +64,26 @@ maxima.engine <- function(options) {
     if (ov) {
       assign(varname, output.data, envir = knitr::knit_global())
     }
-
-    # if (length(ccode)) {
-    #   if (options$echo) {
-    #     ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-    #     out_code <- c(out_code, ccode)
-    #   }
-    # } else {
-    #   if (options$echo) {
-    #     ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-    #     out_code <- c(out_code, ccode)
-    #   }
-    # }
   }
 
+  # called_from_fn("knit") not needed since engine is ALWAYS called from knit
   if (last_label(options$label) & called_from_fn("knit")) {
     maxima.engine.stop()
   }
 
-  # requires special handling for RStudio
-  # when code chunk is ran interactively
-  # 
-  # RStudio Interactive: options != opts_current$get()
-  #   especially for options: echo, 
-  #   which causes engine_output to ask for its code parameter
-  #   maybe there is a way to make it work with the code argument at all times - the non-expert mode :)
-  #   seems to be part of this issue: https://github.com/rstudio/rstudio/issues/11995
-  # knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
-  #                                                     lang = 'maxima',
-  #                                                     results = maxima.options$engine.results)), 
-  #                      code = out_code, 
-  #                      out = out_res)
-  knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
-                                                      lang = 'maxima',
-                                                      results = maxima.options$engine.results)), 
-                       out = ll)
+  # special handling for RStudio
+  if(is_interactive()) {
+    knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
+                                                        lang = 'maxima',
+                                                        results = 'markup')),
+                         code = NULL,
+                         out = out_res)
+  } else {
+    knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
+                                                        lang = 'maxima',
+                                                        results = maxima.options$engine.results)), 
+                         out = ll)
+  }
 }
 
 maxima.engine.start <- function() {
@@ -126,8 +112,12 @@ maxima.engine.stop <- function() {
 
 last_label <- function(label = knitr::opts_current$get("label")) {
   # if (knitr:::child_mode()) return(FALSE)
-  if(knitr::opts_knit$get("child") | is.null(knitr::all_labels(engine == "maxima"))) {
+  if(knitr::opts_knit$get("child")) {
     return(FALSE)
+  }
+
+  if(is_interactive()) {
+    return(TRUE)
   }
 
   labels <- knitr::all_labels(engine == "maxima")

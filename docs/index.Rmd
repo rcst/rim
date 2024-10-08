@@ -44,7 +44,8 @@ Note that you can set the output format, e.g. `maxima.options(engine.format = "l
 When attaching the package and Maxima is installed already, then it will be set up and started in the background automatically, when a command is send. In addition, if you have installed the R-package `knitr` (which get's installed by default with this package as well), it will register maxima as a `knitr` engine. If this worked, maxima code can be used and rendered in RMarkdown documents.
 
 ```{r}
-library(rim)
+# library(rim)
+devtools::load_all()
 maxima.options(engine.format = "latex", 
 	       engine.label = TRUE,
 	       inline.format = "latex", 
@@ -75,9 +76,7 @@ In the above code chunk we define a variable `L` (that depends on another variab
 
 ```{maxima first-example}
 L: sqrt(1 - 1/R^2);
-
 assume(R > 0)$
-
 'integrate(x, x, 0, L) = integrate(x, x, 0, L);
 ```
 

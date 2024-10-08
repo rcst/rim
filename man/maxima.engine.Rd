@@ -15,7 +15,7 @@ maxima.inline(command)
 \item{command}{character string containing the Maxima command to be executed.}
 }
 \value{
-This functions prints the resulting output from maxima together with it's code
+This functions prints the resulting output from maxima together with it's cod
 
 character string containing the maxima result printed according options set by \code{maxima.options(inline.format = ..., inline.label = ...)}.
 }
