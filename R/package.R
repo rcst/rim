@@ -65,7 +65,7 @@ maxima.get <- function(command) {
 #' @return invisibly returns NULL.
 #' @export
 #' @examples
-#' if(maxima.isInstalled()) maxima.load("abs_integrate")
+#' if(maxima.isInstalled()) maxima.load("ratpow")
 maxima.load <- function(module) {
   maxima.env$maxima$loadModule(module) 
 }
