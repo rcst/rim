@@ -102,7 +102,7 @@ if(maxima.isInstalled()) {
   maxima.stop()
 }
 if(maxima.isInstalled()) maxima.get("2+2;")
-if(maxima.isInstalled()) maxima.load("abs_integrate")
+if(maxima.isInstalled()) maxima.load("ratpow")
 if(maxima.isInstalled()) maxima.apropos("integrate")
 maxima.version()
 maxima.isInstalled()
