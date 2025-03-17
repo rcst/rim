@@ -1,3 +1,7 @@
+# rim 0.7.1
+## Modifications
+- R6 class finalize() now private, as required by package
+
 # rim 0.7.0
 ## Modification
 - fixes faulty parsing of matrices

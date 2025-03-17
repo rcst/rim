@@ -282,14 +282,6 @@ RMaxima <- R6::R6Class("RMaxima",
           private$display <- display
           private$port <- port
     },
-    finalize = function() {
-      # in here no more method calls are possible
-      # suppressMessages(self$stop())
-      if(private$running) { 
-        private$sendCommand("quit();")
-        close(private$maximaSocket)
-      }
-    },
     isInstalled = function() {
       if(!nchar(private$maximaPath) || 
          length(grep(pattern = "maxima", 
@@ -429,7 +421,7 @@ RMaxima <- R6::R6Class("RMaxima",
     },
     loadModule = function(module) {
       if(length(module) > 0 && nchar(module))
-        self$get(paste0("load(\"", module, "\")$")) 
+        self$get(paste0("load(", module, ")$")) 
     },
     get_stuck = function(command) {
       # executes command without advancing reference labels
@@ -552,6 +544,14 @@ RMaxima <- R6::R6Class("RMaxima",
                                          " --init=", private$display, 
                                          " ",  private$preload))
           }
+        }
+      },
+      finalize = function() {
+        # in here no more method calls are possible
+        # suppressMessages(self$stop())
+        if(private$running) { 
+          private$sendCommand("quit();")
+          close(private$maximaSocket)
         }
       }
     )
