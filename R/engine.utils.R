@@ -150,3 +150,18 @@ is_html_output <- function() {
 is_interactive <- function() {
   is.null(knitr::all_labels(engine == "maxima"))
 }
+
+#' rim_global
+#' 
+#' Returns knitr::knit_global() unless this returs the GlobalEnv() in which case it returns maxima.env, rim's internal environment.
+#' Main purpose is to prevent `knitr::knit_global()` from returning `globalenv()`.
+#'
+#' @return An environment, either the result of knitr::knit_global or maxima.env
+#' @export
+rim_global <- function() {
+  kg <- knitr::knit_global()
+  if(identical(globalenv(), kg))
+     maxima.env
+  else
+    kg
+}

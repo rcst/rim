@@ -62,7 +62,7 @@ maxima.engine <- function(options) {
     }
 
     if (ov) {
-      assign(varname, output.data, envir = knitr::knit_global())
+      assign(varname, output.data, envir = rim_global())
     }
   }
 
