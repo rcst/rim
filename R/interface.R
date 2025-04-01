@@ -413,6 +413,9 @@ RMaxima <- R6::R6Class("RMaxima",
     getLastPromptID = function() {
       private$lastPromptID
     },
+    getCurrentInputLabel = function() {
+      private$reply$getInputLabel()
+    },
     getLastInputLabel = function() {
       private$lastInputLabel
     },
@@ -490,7 +493,7 @@ RMaxima <- R6::R6Class("RMaxima",
 
         private$parseStartUp()
         private$reply <- Reply$new(private$maximaSocket)
-        private$lastInputLabel <- private$reply$getInputLabel
+        private$lastInputLabel <- private$reply$getInputLabel()
         private$running <- TRUE
 
       },

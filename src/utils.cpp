@@ -216,7 +216,7 @@ Rcpp::List dissect_chunk(std::vector<std::string> code) {
   int comment_count = 0;
   bool terminated = false;
   std::vector<size_t> csp, cep;
-  List L =List::create();
+  List L = List::create();
   IntegerVector temp = IntegerVector::create();
 
   for (size_t i = 0; i < code.size(); ++i) {
@@ -255,4 +255,39 @@ Rcpp::List dissect_chunk(std::vector<std::string> code) {
   }
 
   return L;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::List dissect_repl_input(std::string input) {
+  int state = 0; 
+  int comment_count = 0;
+  size_t term_pos = 0;
+  std::string in = trim(input);
+  List out = List::create();
+
+  for (size_t i = 0; i < in.size(); ++i) {
+    state = checkInput(in[i], state, comment_count);
+
+    if (state == IN_COMMENT_START) {
+      comment_count++; 
+    } else if (state == IN_COMMENT_END) {
+      comment_count--;
+    }
+
+    // if(state == STATE_END) {
+    //   terminated = true;
+    // }
+
+    // skip empty lines
+    //if(terminated == true) {
+    if(state == STATE_END) {
+      // copy command to list
+      // terminated = false;
+      out.push_back(in.substr(term_pos, (i - term_pos) + 1));
+      term_pos = i + 1;
+      // temp.erase(0, temp.size());
+    }
+  }
+  return out;
 }

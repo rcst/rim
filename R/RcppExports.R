@@ -13,3 +13,7 @@ dissect_chunk <- function(code) {
     .Call(`_rim_dissect_chunk`, code)
 }
 
+dissect_repl_input <- function(input) {
+    .Call(`_rim_dissect_repl_input`, input)
+}
+
