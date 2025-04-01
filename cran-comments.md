@@ -1,7 +1,9 @@
 # Test environments
-* local debian 12 bookworm install, R 4.3.1
+* Debian 12 bookworm (local install), R 4.4.3
 * win-builder (devel, release and oldrel)
-* Fedora 36 (devel + clang)
+* Windows 10 (local install), R 4.4.3
+* Fedora 42 (devel + clang)
+* macOS 13.3.1
 
 # R CMD check results
 * There are no ERRORs or WARNINGs.
