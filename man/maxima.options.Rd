@@ -28,10 +28,10 @@ Function for globally setting and retrieving options.
 }
 \details{
 \describe{
-  \item{\code{format}: }{character vector of length 1 setting the output format for \code{maxima.get()}. Can be one of \code{"linear",} \code{"ascii",} \code{"latex"} or \code{"mathml"}.}
+  \item{\code{format}: }{character vector of length 1 setting the output format for \code{\link[=rim]{maxima.get()}} and \code{\link[=rim]{maxima.repl()}}. Can be one of \code{"linear",} \code{"ascii",} \code{"latex"} or \code{"mathml"}.}
   \item{\code{engine.format}: }{same as option \code{format}, but for outputs in \code{RMarkdown} documents.}
-  \item{\code{inline.format}: }{character string setting the output format for \code{maxima.inline()}, for knitting outputs inline into \code{RMarkdown} documents. Can be one of \code{"linear"}, \code{"latex"} or \code{"mathml"}, but \emph{not} \code{"ascii"}.}
-  \item{\code{label}: }{logical of length 1, whether reference labels should be printed for returned S3 objects from \code{\link{maxima.get}()} (TRUE, default), or not (FALSE). This also applies to printing of input commands using \code{\link{iprint}()}.}
+  \item{\code{inline.format}: }{character string setting the output format for \code{\link[=rim]{maxima.inline()}}, for knitting outputs inline into \code{RMarkdown} documents. Can be one of \code{"linear"}, \code{"latex"} or \code{"mathml"}, but \emph{not} \code{"ascii"}.}
+  \item{\code{label}: }{logical of length 1, whether reference labels should be printed for returned S3 objects from \code{\link[=rim]{maxima.get}()} and \code{\link[=rim]{maxima.repl()}} (TRUE, default), or not (FALSE). This also applies to printing of input commands using \code{\link{iprint}()}.}
   \item{\code{engine.label}: }{same as \code{label}, but for outputs in \code{RMarkdown} documents.}
   \item{\code{inline.label}: }{same as \code{label}, but for inline outputs in \code{RMarkdown} documents.}
 }
