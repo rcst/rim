@@ -1,5 +1,5 @@
 # Test environments
-* Debian 12 bookworm (local install), R 4.4.3
+* Debian 12 bookworm (local install), R 4.5.1
 * win-builder (devel, release and oldrel)
 * Windows 10 (local install), R 4.4.3
 * Fedora 42 (devel + clang)

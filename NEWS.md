@@ -1,3 +1,9 @@
+# rim 0.8.1
+## Modifications
+- removed test for plot3d() because of an error in Maxima calling gnuplot with an invalid argument, will be re-added with the next version of Maxima
+- The unit test for the engine now calls explicitly `rim_global()` to evaluate the parsed expressions from Maxima (added a note in the doc page as well)
+- changed the package startup message
+
 # rim 0.8.0
 ## Modifications
 - fixed NOTE for assigment into `globalenv()` when checking package

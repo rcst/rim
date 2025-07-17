@@ -10,5 +10,6 @@ rim_global()
 An environment, either the result of knitr::knit_global or maxima.env
 }
 \description{
-Returns knitr::knit_global() unless this returs the GlobalEnv() in which case it returns maxima.env, rim's internal environment
+Returns knitr::knit_global() unless this returs the GlobalEnv() in which case it returns maxima.env, rim's internal environment.
+Main purpose is to prevent `knitr::knit_global()` from returning `globalenv()`.
 }

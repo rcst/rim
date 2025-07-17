@@ -23,6 +23,17 @@
   if(requireNamespace("knitr", quietly = TRUE)) {
     knitr::knit_engines$set(maxima = maxima.engine)
     setup_hooks()
+    packageStartupMessage("\n\n\n
+                 _____                        
+                |  ___| __ ___  ___           
+                | |_ | '__/ _ \\/ _ \\          
+                |  _|| | |  __/  __/          
+      ____      |_|  |_|  \\___|\\___|          
+     |  _ \\ __ _| | ___  ___| |_(_)_ __   ___ 
+     | |_) / _` | |/ _ \\/ __| __| | '_ \\ / _ \\
+     |  __/ (_| | |  __/\\__ \\ |_| | | | |  __/
+     |_|   \\__,_|_|\\___||___/\\__|_|_| |_|\\___|\n\n\n")
+
     packageStartupMessage("Maxima successfully registered as knitr engine!")
   } else
     packageStartupMessage("Install package knitr if you want to register maxima a knitr engine first")

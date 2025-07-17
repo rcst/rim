@@ -37,8 +37,9 @@ maxima.engine <- function(options) {
       ccode <- append(ccode, unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE)))
       if (!attr(tt, "suppressed")) {
         ll <- append(ll, list(structure(list(src = ccode), class = "source")))
-        if (ov) 
+        if (ov) {
           output.data[[substring(attr(tt, "output.label"), 2L)]] <- attr(tt, "parsed")
+        }
 
         # +++ FIGURE OUTPUT +++
         if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc) &

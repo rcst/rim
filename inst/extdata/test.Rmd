@@ -43,8 +43,8 @@ log(%o1);
 ```
 
 ```{r using-output-var}
-moo
-eval(moo[[1]], list(R = 12))
+rim_global()$moo
+eval(rim_global()$moo[[1]], list(R = 12))
 ```
 
 ```{maxima comments}
@@ -62,8 +62,8 @@ fourier_elim([x^2-1>0], [x]);
 
 ```{r, eval = TRUE}
 # from previous chunk: output.var = "boollist"
-boollist
-eval(boollist[["o18"]], list(x = seq(-10, 10, 0.5)))
+rim_global()$boollist
+eval(rim_global()$boollist[["o18"]], list(x = seq(-10, 10, 0.5)))
 ```
 
 
@@ -74,7 +74,7 @@ r: (exp(cos(t))-2*cos(4*t)-sin(t/12)^5)$
 plot2d([parametric, r*sin(t), r*cos(t), [t,-8*%pi,8*%pi]]);
 ```
 
-```{maxima plot3d, fig.cap = "plot3d()", fig.align="center", fig.show='hide'}
+```{maxima plot3d, fig.cap = "plot3d()", fig.align="center", fig.show='hide', eval = FALSE}
 plot3d(log (x^2*y^2), [x, -2, 2], [y, -2, 2],[grid, 29, 29],
        [palette, [gradient, red, orange, yellow, green]],
        color_bar, [xtics, 1], [ytics, 1], [ztics, 4],
@@ -142,7 +142,7 @@ draw3d(
 ```{r image-count, warning=FALSE, results="markup"}
 pft <- list.files(pattern = "(?:plot|draw)(2d|3d)?-[[:print:]]{6}\\.png", full.names = TRUE)
 
-if(length(pft) == 5L)  {
+if(length(pft) == 4L)  {
   paste0("OK")
 } else {
   paste0("Error: Unexpected number of Maxima plots: ", 

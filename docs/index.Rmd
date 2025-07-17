@@ -145,14 +145,14 @@ The following chunk options are currently available:
 - `echo`: Should the code chunk be printed (default is `TRUE`). If `eval=FALSE`, individual code lines are printed without without input labels, since these are assigned by Maxima upon evaluation
 - `eval`: Should the code chunk be evaluated by Maxima (default is `TRUE`)
 - `include`:  whether code chunk and results should be printed (default is `TRUE`). If `FALSE`, code is still evaluated
-- `output.var`: A character string for a variable that caputures the parsed output expression(s) (i.e., translated into R-code), see example below.
+- `output.var`: A character string for a variable name that caputures the parsed output expression(s) (i.e., translated into R-code), see example below.
 
 **NOTE:** The `results` chunk option is explicitly ignored from chunk header and implicitly controlled via `maxima.options(engine.format = ...)`. 
 
 
 #### Capturing parsed Maxima output
 
-One of the above Maxima code chunk was actually set with option `output.var = "foo"`
+One of the above Maxima code chunks had the option `output.var = "foo"` set.
 
 ````
 
@@ -162,13 +162,19 @@ integrate(1 / (1 + x^4), x);
 
 ````
 
-which captured the Maxima result(s) as parsed R-code (unevaluated expressions) into a named list. Those expressions can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
+This options tells the Maxima engine to captured the Maxima result(s) as parsed R-code (unevaluated expressions) into a (named) list that in this case is assigned to the variable name `foo`. 
+Note, that this variable does **not** get assigned into the global environment i.e., `GlobalEnv` of the running R session. 
+Instead, depending on whether the code chunk was run interactively (e.g., via RStudio) or as part of a rendering/ knitting process, it will be assigned into a separate environment or into the environment returned from `knitr::knit_gloabal()`. 
+In any case, the environment used is the one returned by `rim_global()`.
+To make sure rendering and executing works, it's recommended to use the environment returned by `rim_global()`.
+
+The parsed expressions can subsequently be evaluated in R e.g., to evaluate an expression in the context of a data.frame
 
 ```{r using-output-var}
 df <- data.frame(x = 1:10, y = letters[1:10])
-df$z <- eval(foo[["o5"]], envir = df)
+df$z <- eval(rim_global()$foo[["o5"]], envir = df)
 df
-foo
+rim_global()$foo
 ```
 
 In this way, Maxima can assist us with symolic computations in our statistical modelling in R.
