@@ -2,7 +2,6 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   rmarkdown::render(input = "docs/index.Rmd", output_file = "index.html") 
   rmarkdown::render(input = "README.Rmd", output_file = "README.md") 
 
-
   Rcpp::compileAttributes() 
   devtools::document()
   devtools::load_all()
