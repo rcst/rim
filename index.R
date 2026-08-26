@@ -8,6 +8,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::test()
   devtools::test_active_file("tests/testthat/test-parser.R")
   devtools::test_active_file("tests/testthat/test-engine.R")
+  devtools::test_active_file("tests/testthat/test-ask-user.R")
   devtools::build()
   devtools::run_examples()
   devtools::check()
@@ -65,3 +66,5 @@ a
 names(rim_global())
 rim_global()$a
 parent.env(env = globalenv()) |> parent.env() |> parent.env()
+
+source("tests/testthat/fixtures/make-expected-list.R")
