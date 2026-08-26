@@ -12,13 +12,7 @@ test_that("ask prompts are returned", {
   expect_true(!attr(to, "suppressed"))
   # expect_match(maxima.get("y;"), "^[[:space:]|[:print:]]*$")
 
-  expect_length(to$wtl$linear, 1L)
-  expect_length(to$wtl$ascii, 1L)
-  expect_length(to$wtl$latex, 1L)
-  expect_length(to$wtl$mathml, 3L)
-
-  expect_length(to$wol$linear, 1L)
-  expect_length(to$wol$ascii, 1L)
-  expect_length(to$wol$latex, 1L)
-  expect_length(to$wol$mathml, 2L)
+  maxima.start(restart = TRUE)
+  expected_list <- readRDS(test_path("fixtures", "expected_list.rds"))
+  expect_equal(object = to, expected = expected_list)
 })
