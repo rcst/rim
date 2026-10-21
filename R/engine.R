@@ -92,10 +92,14 @@ maxima.engine.start <- function() {
     maxima.env$mx <- maxima.env$maxima
   } else {
     if (!exists("mx", envir = maxima.env)) {
-      maxima.env$mx <- RMaxima$new(
-                                   display = maxima.options$display,
-                                   preload = maxima.options$preload[knitr::is_latex_output() + 1]
-      )
+      # maxima.env$mx <- RMaxima$new(
+      #                              display = maxima.options$display,
+      #                              preload = maxima.options$preload[knitr::is_latex_output() + 1]
+      # )
+      maxima.env$mx <- RMaxima$new(display = maxima.options$display)
+      # session is up and version-read by now; load plot machinery over the socket
+      plot_lisp <- maxima.options$preload[knitr::is_latex_output() + 1]
+      res <- maxima.env$mx$loadLispFile(plot_lisp)
       maxima.env$plots <- character()
     }
   }

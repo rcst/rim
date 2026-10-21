@@ -237,7 +237,7 @@ RMaxima <- R6::R6Class("RMaxima",
                           workDir, 
                           utilsDir, 
                           display = "display", 
-                          preload,
+                          # preload,
                           port = 27182) {
 
       if(missing(maximaPath)) {
@@ -252,10 +252,10 @@ RMaxima <- R6::R6Class("RMaxima",
         else
           private$workDir
 
-        if(!missing(preload))
-          private$preload <- paste0("-p ", preload, ".lisp")
-        else
-          private$preload <- ""
+        # if(!missing(preload))
+        #   private$preload <- paste0("-p ", preload, ".lisp")
+        # else
+        #   private$preload <- ""
 
         if(missing(utilsDir)) {
           private$utilsDir <- dirname(system.file("extdata", 
@@ -274,10 +274,10 @@ RMaxima <- R6::R6Class("RMaxima",
         else
           private$utilsDir <- utilsDir
 
-          if(!missing(preload))
-            private$preload <- paste0("-p ", private$utilsDir, "/", preload, ".lisp")
-          else
-            private$preload <- ""
+          # if(!missing(preload))
+          #   private$preload <- paste0("-p ", private$utilsDir, "/", preload, ".lisp")
+          # else
+          #   private$preload <- ""
 
           private$display <- display
           private$port <- port
@@ -422,9 +422,47 @@ RMaxima <- R6::R6Class("RMaxima",
     getLastOutputLabel = function() {
       private$lastOutputLabel
     },
-    loadModule = function(module) {
-      if(length(module) > 0 && nchar(module))
-        self$get(paste0("load(", module, ")$")) 
+    getLisp = function(command) {
+      stopifnot(
+        is.character(command), 
+        length(command) == 1
+      )
+
+      command <- paste(":lisp", command)
+      self$get(command)
+
+    },
+    loadLispFile = function(file) {
+      stopifnot(
+        is.character(file), 
+        length(file) == 1, 
+        nchar(file) > 0
+      )
+
+      file <- system.file(
+        "extdata", 
+        paste0(file, ".lisp"), 
+        package = "rim", 
+        mustWork = TRUE
+      )
+
+      command <- paste0("(load \"", file, "\")")
+      self$getLisp(command)
+    },
+    loadModule = function(module, stuck = TRUE) {
+      if(length(module) > 0 && nchar(module)) {
+        module <- system.file(
+          "extdata", 
+          paste0(module, ".lisp"), 
+          package = "rim", 
+          mustWork = TRUE
+        )
+        if(stuck) {
+          self$get_stuck(paste0("load(", module, ")")) 
+        } else {
+          self$get(paste0("load(", module, ")$")) 
+        }
+      }
     },
     get_stuck = function(command) {
       # executes command without advancing reference labels
@@ -456,7 +494,7 @@ RMaxima <- R6::R6Class("RMaxima",
       utilsDir = character(),
       maximaPath = NA_character_,
       display = character(),
-      preload = character(),
+      # preload = character(),
       reply = NULL,
       running = FALSE,
       lastPromptID = integer(),
@@ -480,15 +518,18 @@ RMaxima <- R6::R6Class("RMaxima",
                 c(# "-q", 
                   paste0("-s ", private$port), 
                   paste0("--userdir=", private$utilsDir), 
-                  paste0("--init=", private$display),
-                  paste0(private$preload)), 
+                  paste0("--init=", private$display)),
+                  # paste0(private$preload)), 
                 wait = FALSE, 
                 stdout = FALSE, 
                 stderr = stdout())
 
-        private$maximaSocket <- socketAccept(socket = scon, 
-                                             blocking = FALSE, 
-                                             open = "r+b")
+      if(!socketSelect(socklist = list(scon), timeout = 10)) {
+        stop("Maxima did not connect within timeout")
+      }
+
+        private$maximaSocket <- socketAccept(socket = scon, blocking = FALSE, open = "r+b")
+
         close(scon)
 
         private$parseStartUp()
@@ -509,9 +550,10 @@ RMaxima <- R6::R6Class("RMaxima",
         if(grepl("\\$$", command))
           private$reply$suppressed <- TRUE
       },
-      parseStartUp = function(nmax = as.integer(1e6)) {
+      parseStartUp = function(timeout = 30) {
         # pid
         pidExpr <- "pid=(\\d+)"
+      deadline <- Sys.time() + timeout
         rdr <- MReader$new(private$maximaSocket)
         repeat {
           # z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
@@ -522,33 +564,40 @@ RMaxima <- R6::R6Class("RMaxima",
               break
             }
           }
-          if(rdr$trials > nmax)
+          if(Sys.time() > deadline)
             stop("Failed to read process ID - couldn't start Maxima.")
         }
 
         # version
-        rdr$trials <- 0L
         verExpr <- "Maxima ((\\d+\\.)?(\\d+\\.)?(\\d+))"
+      deadline <- Sys.time() + timeout
+      Nparsed <- 0L
+      seen <- character()
         repeat {
           # z <- readLines(private$maximaSocket, n = 1, warn = FALSE)
           z <- rdr$read
-          if(length(z)) {
+          if(length(z) && nchar(z)) {
+          seen <- c(seen, z)
             if(grepl(pattern = verExpr, x = z)) { 
               private$version <- numeric_version(regex(text = z, pattern = verExpr)[2])
               break
             }
           }
-          if(rdr$trials > nmax) {
-            stop("Failed to read version number - Maxima seems stuck.\n", 
-                 "Has read: ", z, "\n", 
-                 "Maxima call: ", paste0(private$maximaPath, 
-                                         " -s ", private$port, 
-                                         " --userdir=", private$utilsDir, 
-                                         " --init=", private$display, 
-                                         " ",  private$preload))
-          }
+          Nparsed <- Nparsed + 1L
+          if(Sys.time() > deadline) {
+            stop("Maxima stuck reading version number\n", 
+             "Maxima call: ", paste0(
+               private$maximaPath, " -s ", private$port, 
+               " --userdir=", private$utilsDir, 
+               " --init=", private$display),
+               # " ",  private$preload),
+            " complete=", rdr$wasComplete(),
+            " nlines=", length(seen),
+            " raw:\n", paste(seen, collapse = "\n")
+          ) 
         }
-      },
+      }
+    },
       finalize = function() {
         # in here no more method calls are possible
         # suppressMessages(self$stop())
