@@ -1,4 +1,4 @@
-load("parser.lisp")$
+load(sconcat(pathname_directory(load_pathname), "parser.lisp"));
 load("mactex-utilities")$
 load("alt-display.mac")$
 
@@ -37,30 +37,56 @@ define_alt_display(m2r_display_out(x),
 alt_display_text_prefix: "TEXT;>>";
 alt_display_text_suffix: "<<TEXT;";
 
-define_alt_display(multi_display_for_rim(x),
-  block([alt_display1d:false,alt_display2d:false,type:op(x)],
-  /* this is still needed for backwards compatibility */
-    if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
-    else (
-    printf(true,"~&out;>>"),
-    printf(true,"~&lab;>>~%~a~%<<lab;", first(x)),
-    printf(true,"~&wtl;>>"),
-    printf(true,"~&tex;>>~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&tin;>>~%")    ,tin_display(x)    ,printf(true,"~&<<tin;~%"),
-    printf(true,"~&htm;>>~%")    ,mathml_display(x) ,printf(true,"~&<<htm;~%"),
-    printf(true,"~&lin;>>~%")     ,oned_display(x)   ,printf(true,"~&<<lin;~%"),
-    printf(true,"~&two;>>~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
-    printf(true,"~&<<wtl;"),
-    printf(true,"~&wol;>>"),
-    printf(true,"~&tex;>>~%")    ,tex_display_noref(x)    ,printf(true,"~&<<tex;~%"),
-    printf(true,"~&tin;>>~%")    ,tin_display_noref(x)    ,printf(true,"~&<<tin;~%"),
-    printf(true,"~&htm;>>~%")    ,mathml_display_noref(x) ,printf(true,"~&<<htm;~%"),
-    printf(true,"~&lin;>>~%")     ,oned_display_noref(x)   ,printf(true,"~&<<lin;~%"),
-    printf(true,"~&two;>>~%")     ,twod_display_noref(x)   ,printf(true,"~&<<two;~%"),
-    printf(true,"~&m2r;>>~%")     ,m2r_display_out(x)   ,printf(true,"~&<<m2r;~%"),
-    printf(true,"~&<<wol;"),
-    printf(true,"~&<<out;~%")
-    )));
+/* Detect a function/macro definition, whether or not it's wrapped in mlabel.
+   Workaround for Maxima bug #4656 (lurkmathml segfaults on mdefine/mmacro
+   under GCL <= 5.47.0). */
+is_defn(x) := block([b: errcatch(?caddr(x))],
+  not atom(x) and (
+    member(op(x), [":=", "::="]) or
+    ( length(b) > 0 and not atom(first(b)) and member(op(first(b)), [":=", "::="]) ) ))$
 
-set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;")$
-set_alt_display(2, multi_display_for_rim)$
+/* Workaround for Maxima bug #4656 (lurkmathml segfaults on mdefine/mmacro
+   under GCL in <= 5.47.0). Emit MathML for everything except function/macro
+   definitions; for those, emit an empty but delimiter-complete htm block so
+   rim's Reply parser still finds its matched <<htm; pair. */
+mathml_safe(x) :=
+  if is_defn(x) then
+    printf(true, "~%<!-- MathML omitted for function/macro definition: Maxima bug #4656 (lurkmathml crashes on mdefine/mmacro) -->~%")
+  else
+    mathml_display(x)$
+
+mathml_safe_noref(x) :=
+  if is_defn(x) then
+    printf(true, "~%<!-- MathML omitted for function/macro definition: Maxima bug #4656 (lurkmathml crashes on mdefine/mmacro) -->~%")
+  else
+    mathml_display_noref(x)$
+
+define_alt_display(multi_display_for_rim(x),
+	block([alt_display1d:false,alt_display2d:false,type:op(x)],
+		/* temporarily, as the first line inside multi_display_for_rim's block */
+		/* printf(true, "~%DEBUG op=~a parts=~a~%", op(x), args(x)), */
+		/* this is still needed for backwards compatibility */
+		if type=?mtext then printf(true,"~%TEXT;>>~a<<TEXT;~%",first(x))
+		else (
+			printf(true,"~&out;>>"),
+			printf(true,"~&lab;>>~%~a~%<<lab;", first(x)),
+			printf(true,"~&wtl;>>"),
+			printf(true,"~&tex;>>~%")    ,tex_display(x)    ,printf(true,"~&<<tex;~%"),
+			printf(true,"~&tin;>>~%")    ,tin_display(x)    ,printf(true,"~&<<tin;~%"),
+			printf(true,"~&htm;>>~%")    ,mathml_safe(x) ,printf(true,"~&<<htm;~%"),
+			printf(true,"~&lin;>>~%")     ,oned_display(x)   ,printf(true,"~&<<lin;~%"),
+			printf(true,"~&two;>>~%")     ,twod_display(x)   ,printf(true,"~&<<two;~%"),
+			printf(true,"~&<<wtl;"),
+			printf(true,"~&wol;>>"),
+			printf(true,"~&tex;>>~%")    ,tex_display_noref(x)    ,printf(true,"~&<<tex;~%"),
+			printf(true,"~&tin;>>~%")    ,tin_display_noref(x)    ,printf(true,"~&<<tin;~%"),
+			printf(true,"~&htm;>>~%")    ,mathml_safe_noref(x) ,printf(true,"~&<<htm;~%"),
+			printf(true,"~&lin;>>~%")     ,oned_display_noref(x)   ,printf(true,"~&<<lin;~%"),
+			printf(true,"~&two;>>~%")     ,twod_display_noref(x)   ,printf(true,"~&<<two;~%"),
+			printf(true,"~&m2r;>>~%")     ,m2r_display_out(x)   ,printf(true,"~&<<m2r;~%"),
+			printf(true,"~&<<wol;"),
+			printf(true,"~&<<out;~%")
+		     )));
+
+			     set_prompt('prefix, "prompt;>>",'suffix, "<<prompt;")$
+			     set_alt_display(2, multi_display_for_rim)$

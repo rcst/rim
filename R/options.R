@@ -104,7 +104,7 @@ maxima.options <- set_opt(
     .visible = FALSE
   ),
   preload = list(
-    .value = c("plot-knitr-png", "plot-knitr-pdf"),
+    .value = c("plot-knitr-png.lisp", "plot-knitr-pdf.lisp"),
     .length = 1L,
     .class = "character",
     .private = TRUE,

@@ -2,6 +2,8 @@ test_that("parsing and evaluation of parsed results works", {
   if(!maxima.env$maxima$isInstalled()) 
     skip("Maxima not installed")
 
+  maxima.start(restart = TRUE)
+
   t1 <- maxima.get("integrate(1/(1 - x^3), x);")
   p1 <- maxima.eval(t1, code = TRUE, envir = list(x = 1:5))
   expect_s3_class(t1, "maxima")

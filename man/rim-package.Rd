@@ -22,7 +22,7 @@ maxima.stop(engine = FALSE)
 
 maxima.get(command)
 
-maxima.load(module)
+maxima.load(lib, quote = FALSE, stuck = TRUE, suppress = TRUE)
 
 maxima.apropos(keystring)
 
@@ -43,7 +43,13 @@ maxima.eval(x, code = FALSE, envir = globalenv())
 
 \item{command}{character string containing the Maxima command.}
 
-\item{module}{character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.}
+\item{lib}{character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.}
+
+\item{quote}{logical; whether \code{lib} should be quoted if it isn't already (default \code{FALSE}).}
+
+\item{stuck}{logical; whether the load command should avoid advancing Maxima's input/output labels (default \code{TRUE}).}
+
+\item{suppress}{logical; whether the load command should be run as a suppressed (default \code{TRUE}), suppressing any output.}
 
 \item{keystring}{character vector containing a search term.}
 
@@ -80,7 +86,7 @@ To send a single command to Maxima and receive the corresponding output use \cod
 
 \item \code{maxima.get()}: Executes a single Maxima command provided by \code{command}. If no command ending character (\code{;} or \code{$} is provided, \code{;} is appended.
 
-\item \code{maxima.load()}: A wrapper to load a Maxima module named by \code{module}
+\item \code{maxima.load()}: A convenience wrapper to load a Maxima library named by \code{lib}
 
 \item \code{maxima.apropos()}: A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
 
@@ -102,7 +108,7 @@ if(maxima.isInstalled()) {
   maxima.stop()
 }
 if(maxima.isInstalled()) maxima.get("2+2;")
-if(maxima.isInstalled()) maxima.load("ratpow")
+if(maxima.isInstalled()) maxima.load("ratpow", quote = FALSE, stuck = FALSE, suppress = FALSE)
 if(maxima.isInstalled()) maxima.apropos("integrate")
 maxima.version()
 maxima.isInstalled()

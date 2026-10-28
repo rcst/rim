@@ -1,3 +1,14 @@
+# rim 0.9.0
+## Modifications
+- removed political banner from in startup message
+- fixed failing tests, simplified and improved tests
+- removed preloading files for plotting leading to a more robust session startup process
+- plotting hook machinery is now dynamically loaded after session start and depending on the rendering output type
+- workaround for Maxima bug #4656 (lurkmathml segfaults on mdefine/mmacro under GCL <= 5.47.0) which causes MathML to disrupt the markup display in Maxima that is used for the interface
+
+## Minor
+- added detection of Lisp backend of the Maxima installation
+
 # rim 0.8.1
 ## Modifications
 - removed test for plot3d() because of an error in Maxima calling gnuplot with an invalid argument, will be re-added with the next version of Maxima

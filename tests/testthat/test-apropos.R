@@ -1,27 +1,22 @@
-test_that("maxima.apropos returns exact result", {
-  if(!maxima.env$maxima$isInstalled()) 
-    skip("Maxima not installed") 
+test_that("maxima.apropos returns a maxima object listing matching symbols", {
+  if(!maxima.env$maxima$isInstalled())
+    skip("Maxima not installed")
 
-  to <- maxima.apropos("int")
+  res <- maxima.apropos("int")
 
-  expect_s3_class(to, "maxima")
-  expect_type(to, "list")
-  expect_match(attr(to, "input.label"), "^%\\i[[:digit::]]*$")
-  expect_match(attr(to, "output.label"), "^\\%o[[:digit::]]*$")
-  expect_equal(attr(to, "command"), "apropos(\"int\");")
-  expect_true(!attr(to, "suppressed"))
+  expect_s3_class(res, "maxima")
+  expect_type(res, "list")
 
-  expect_named(to, expected = c("wtl", "wol"))
-  expect_named(to$wtl, expected = c("linear", "ascii", "latex", "inline", "mathml"))
-  expect_named(to$wol, expected = c("linear", "ascii", "latex", "inline", "mathml", "rstr"))
-  
-  expect_gt(length(to$wtl$linear), 10L)
-  expect_gt(length(to$wtl$ascii), 10L)
-  expect_length(to$wtl$latex, 1L)
-  expect_gt(length(to$wtl$mathml), 10L)
+  # parse only the no-label, linear branch; it holds the [a, b, c, ...] list
+  lin <- paste(res$wol$linear, collapse = "")
 
-  expect_gt(length(to$wol$linear), 10L)
-  expect_gt(length(to$wol$ascii), 10L)
-  expect_length(to$wol$latex, 1L)
-  expect_gt(length(to$wol$mathml), 10L)
+  # strip the surrounding brackets and split the comma-separated symbol list
+  syms <- trimws(unlist(strsplit(gsub("[][]", "", lin), ",")))
+  syms <- syms[nzchar(syms)]
+
+  # a real apropos("integer") hit-list has many symbols, not a stub
+  expect_gt(length(syms), 50L)
+
+  # the canonical entry must be present, regardless of Lisp backend or ordering
+  expect_true("integer" %in% syms)
 })

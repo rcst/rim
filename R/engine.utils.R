@@ -1,21 +1,3 @@
-#' Cluster a code chunk into commands
-#' @param code Character vector containing the code chunk, one line per element.
-#' @return A \code{list} where each element holds the indices of \code{code} that make up one command, i.e. terminates with either ';' or '$'
-#' @noRd
-gather <- function(code) {
-  hits <- grepl(pattern = ";|\\$", x = code)
-  comments <- grepl(pattern = "^[[:space:]]*/\\*.*?\\*/[[:space:]]*$", x = code)
-  hits <- hits | comments
-  marks <- rev(cumsum(rev(hits)))
-  marks[code == ""] <- NA
-  sapply(
-    X = unique(marks),
-    FUN = function(um, m) which(um == m),
-    m = marks,
-    simplify = FALSE
-  )
-}
-
 #' retry
 #' @param fun Character vector containing the code chunk, one line per element.
 #' @param ... Arguments to be passed on to \code{retry_expr} and \code{knitr::include_graphics}.
@@ -165,3 +147,11 @@ rim_global <- function() {
   else
     kg
 }
+
+# TRUE if a mathml field holds only the bug-#4656 omission placeholder
+is_mathml_omitted <- function(txt) {
+  length(txt) == 0L ||
+    all(!nzchar(trimws(txt))) ||
+    any(grepl("MathML omitted for function/macro definition", txt, fixed = TRUE))
+}
+

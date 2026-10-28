@@ -5,10 +5,15 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   Rcpp::compileAttributes() 
   devtools::document()
   devtools::load_all()
+
+  # source("tests/testthat/fixtures/make-expected-list.R")
   devtools::test()
   devtools::test_active_file("tests/testthat/test-parser.R")
+  devtools::test_active_file("tests/testthat/test-load.R")
+  devtools::test_active_file("tests/testthat/test-apropos.R")
   devtools::test_active_file("tests/testthat/test-engine.R")
   devtools::test_active_file("tests/testthat/test-ask-user.R")
+  devtools::test_active_file("tests/testthat/test-apropos.R")
   devtools::build()
   devtools::run_examples()
   devtools::check()
@@ -29,6 +34,7 @@ if (require(devtools) & require(roxygen2) & require(Rcpp) & require(drat)) {
   devtools::check_win_devel()
   devtools::check_mac_release()
   devtools::check_rhub()
+  devtools::check_rhub
 
   devtools::release()
 }

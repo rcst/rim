@@ -108,6 +108,10 @@ maxima.options()
 sqrt(3/4);
 ```
 
+```{r changing-options-back}
+maxima.options(engine.format = "latex")
+```
+
 ```{maxima differentiate}
 f(x) := e^(x^2)$
 diff(f(x), x);
@@ -122,10 +126,6 @@ Notice, that we can use the symbol `%` to refer to the last expression and that 
 You can also replay other previous expressions by referring to their output labels, as already demonstrated above. Whether or not reference labels are printed via the `knitr` engine has no influence on their existence in Maxima internally. 
 
 `rim` also supports printing Maxima output as inline. This works by putting an `r` inline code chunk and using `maxima.inline()`. Example: `` `r '\x60r maxima.inline("log(%o1);")\x60'` `` results in `r maxima.inline("log(%o1);")`. 
-
-```{r changing-options-back}
-maxima.options(engine.format = "latex")
-```
 
 Comments can be added to Maxima code as text between `/*` and `*/` (example taken from the [Maxima manual](https://maxima.sourceforge.io/docs/manual/maxima_73.html)).
 
@@ -292,7 +292,7 @@ assume(alpha > 0)$
 
 ### Laplace Distribution
 
-```{maxima laplace}
+```{maxima laplace, eval = FALSE}
 laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
 
 load("abs_integrate")$
@@ -306,7 +306,7 @@ variance(laplace(x));
 
 ### Exponential Distribution
 
-```{maxima exponential}
+```{maxima exponential, eval = FALSE}
 expo(x) := unit_step(x) * lambda * exp(-lambda * x);
 
 assume(lambda > 0)$

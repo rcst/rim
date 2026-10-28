@@ -1,8 +1,8 @@
 Package: rim
 Type: Package
 Title: Interface to 'Maxima', Enabling Symbolic Computation
-Version: 0.8.1
-Date: 2025-07-17
+Version: 0.9.0
+Date: 2026-10-28
 Authors@R: c(
     person("Eric", "Stemmler", email = "stemmler.eric@gmail.com", role = c("aut", "cre")),
     person("Kseniia", "Shumelchyk", email = "shumelchyk@gmail.com", role = c("aut")),
@@ -25,7 +25,9 @@ Imports:
     knitr,
     GlobalOptions
 LinkingTo: Rcpp
-RoxygenNote: 7.3.2
+Depends:
+    R (>= 3.5.0)
+RoxygenNote: 7.3.3
 Suggests: 
     testthat (>= 3.0.0),
     rmarkdown

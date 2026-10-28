@@ -60,14 +60,17 @@ maxima.get <- function(command) {
   return(maxima.env$maxima$get(command))
 }
 
-#' @describeIn rim-package A wrapper to load a Maxima module named by \code{module}
-#' @param module character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.
+#' @describeIn rim-package A convenience wrapper to load a Maxima library named by \code{lib}
+#' @param lib character vector naming the Maxima module (typically a *.mac or *.lisp file) to be loaded.
+#' @param quote logical; whether \code{lib} should be quoted if it isn't already (default \code{FALSE}).
+#' @param stuck logical; whether the load command should avoid advancing Maxima's input/output labels (default \code{TRUE}).
+#' @param suppress logical; whether the load command should be run as a suppressed (default \code{TRUE}), suppressing any output.
 #' @return invisibly returns NULL.
 #' @export
 #' @examples
-#' if(maxima.isInstalled()) maxima.load("ratpow")
-maxima.load <- function(module) {
-  maxima.env$maxima$loadModule(module) 
+#' if(maxima.isInstalled()) maxima.load("ratpow", quote = FALSE, stuck = FALSE, suppress = FALSE)
+maxima.load <- function(lib, quote = FALSE, stuck = TRUE, suppress = TRUE) {
+  maxima.env$maxima$loadLib(lib, quote = quote, stuck = stuck, suppress = suppress)
 }
 
 #' @describeIn rim-package A wrapper to the Maxima helper function \code{apropos} to lookup existing Maxima functions that match \code{keystring}.
@@ -94,6 +97,10 @@ maxima.version <- function() {
 #' maxima.isInstalled()
 maxima.isInstalled <- function() {
   maxima.env$maxima$isInstalled()
+}
+
+maxima.backend <- function() {
+  maxima.env$maxima$getLispBackend()
 }
 
 #' @describeIn rim-package Prints the input command of an maxima S3-object returned by \code{\link{maxima.get}()}
@@ -145,15 +152,24 @@ print.maxima <- function(x, ...) {
 
     txt <- x[[label_opt]][[format_opt]]
 
-    if(is_html_output()) {
-      txt <- gsub(pattern = "\\\\%", replacement = "%", x = txt)
-    }
+    if (identical(format_opt, "mathml") && is_mathml_omitted(txt)) {
+      warning("MathML output omitted for a function/macro definition ",
+        "(Maxima bug #4656; affects lurkmathml on GCL \u2264 5.47.0). ",
+        "Other output formats are unaffected.")
 
-    # if(!(attr(x, "from_engine") | is_interactive())) 
-    if(is_interactive())
-      cat(txt, sep = '\n')
-    invisible(txt)
+      # fall back so the user still sees *something* for this output:
+      txt <- x[[label_opt]][["linear"]]
+    }
   }
+
+  if(is_html_output()) {
+    txt <- gsub(pattern = "\\\\%", replacement = "%", x = txt)
+  }
+
+  # if(!(attr(x, "from_engine") | is_interactive())) 
+  if(is_interactive())
+  cat(txt, sep = '\n')
+  invisible(txt)
 }
 
 #' @describeIn rim-package Evaluates the parsed and quoted R-expression which is part of an S3 object returned by \code{\link{maxima.get}()}

@@ -29,12 +29,13 @@ maxima.engine <- function(options) {
       if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*\\$$", x = pc)) {
         pc <- gsub(pattern = "\\$", replacement = ";", x = pc)
       }
+
       tt <- maxima.env$mx$get(pc)
 
       attr(tt, "from_engine") <- TRUE
 
-      out_code[cmds[[i]]] <- unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE))
-      ccode <- append(ccode, unlist(strsplit(x = iprint(tt), split = '\n', fixed = TRUE)))
+      out_code[cmds[[i]]] <- unlist(strsplit(x = iprint(tt), split = "\n", fixed = TRUE))
+      ccode <- append(ccode, unlist(strsplit(x = iprint(tt), split = "\n", fixed = TRUE)))
       if (!attr(tt, "suppressed")) {
         ll <- append(ll, list(structure(list(src = ccode), class = "source")))
         if (ov) {
@@ -43,9 +44,11 @@ maxima.engine <- function(options) {
 
         # +++ FIGURE OUTPUT +++
         if (grepl(pattern = "^(?:plot|draw)(?:2d|3d)?\\([[:print:]|[:space:]]+\\)[[:space:]]*;", x = pc) &
-            !is.null(knitr::all_labels(engine == "maxima"))) {
+          !is.null(knitr::all_labels(engine == "maxima"))) {
           tt$wol$ascii <- paste0(tt$wol$ascii, collapse = "")
-          pm <- regexec(pattern = "\\[?([[:graph:]]*/?\\.?(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", text = tt$wol$ascii)
+          pm <- regexec(
+            pattern = "\\[?([[:graph:]]*/?\\.?(?:plot|draw)(?:2d|3d)?-[a-z0-9]+\\.(?:png|pdf))\\]$", 
+            text = tt$wol$ascii)
           pm <- trim(unlist(regmatches(m = pm, x = tt$wol$ascii))[2])
 
           # possibly image not yet written to disk
@@ -54,7 +57,7 @@ maxima.engine <- function(options) {
           out_res <- c(out_res, list(pm))
           maxima.env$plots <- append(maxima.env$plots, normalizePath(pm, mustWork = FALSE))
         } else {
-        # +++ TEXT OUTPUT +++
+          # +++ TEXT OUTPUT +++
           ll <- append(ll, ttt <- print(tt))
           out_res <- c(out_res, ttt)
         }
@@ -73,40 +76,44 @@ maxima.engine <- function(options) {
   }
 
   # special handling for RStudio
-  if(is_interactive()) {
-    knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
-                                                        lang = 'maxima',
-                                                        results = 'markup')),
-                         code = NULL,
-                         out = out_res)
+  if (is_interactive()) {
+    knitr::engine_output(
+      knitr::opts_current$merge(list(
+        engine = "maxima",
+        lang = "maxima",
+        results = "markup"
+      )),
+      code = NULL,
+      out = out_res
+    )
   } else {
-    knitr::engine_output(knitr::opts_current$merge(list(engine = 'maxima',
-                                                        lang = 'maxima',
-                                                        results = maxima.options$engine.results)), 
-                         out = ll)
+    knitr::engine_output(
+      knitr::opts_current$merge(list(
+        engine = "maxima",
+        lang = "maxima",
+        results = maxima.options$engine.results
+      )),
+      out = ll
+    )
   }
 }
 
 maxima.engine.start <- function() {
-  if(is.null(knitr::all_labels(engine == "maxima"))) {
+  if (is.null(knitr::all_labels(engine == "maxima"))) {
     maxima.env$mx <- maxima.env$maxima
   } else {
     if (!exists("mx", envir = maxima.env)) {
-      # maxima.env$mx <- RMaxima$new(
-      #                              display = maxima.options$display,
-      #                              preload = maxima.options$preload[knitr::is_latex_output() + 1]
-      # )
       maxima.env$mx <- RMaxima$new(display = maxima.options$display)
       # session is up and version-read by now; load plot machinery over the socket
-      plot_lisp <- maxima.options$preload[knitr::is_latex_output() + 1]
-      res <- maxima.env$mx$loadLispFile(plot_lisp)
+      plot_lisp_file <- maxima.options$preload[knitr::is_latex_output() + 1]
+      res <- maxima.env$mx$loadPackageFile(file = plot_lisp_file, quote = TRUE)
       maxima.env$plots <- character()
     }
   }
 }
 
 maxima.engine.stop <- function() {
-  if(!is.null(knitr::all_labels(engine == "maxima"))) {
+  if (!is.null(knitr::all_labels(engine == "maxima"))) {
     maxima.env$mx$stop()
     e <- sys.frame(which = 1)
     do.call("on.exit", list(quote(if (exists("maxima.env")) file.remove(maxima.env$plots)), add = TRUE), envir = e)
@@ -116,12 +123,11 @@ maxima.engine.stop <- function() {
 }
 
 last_label <- function(label = knitr::opts_current$get("label")) {
-  # if (knitr:::child_mode()) return(FALSE)
-  if(knitr::opts_knit$get("child")) {
+  if (knitr::opts_knit$get("child")) {
     return(FALSE)
   }
 
-  if(is_interactive()) {
+  if (is_interactive()) {
     return(TRUE)
   }
 
