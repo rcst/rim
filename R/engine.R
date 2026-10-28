@@ -65,6 +65,12 @@ maxima.engine <- function(options) {
       }
     }
 
+    # flush trailing suppressed-command source that never hit a non-suppressed flush
+    if (length(ccode)) {
+      ll <- append(ll, list(structure(list(src = ccode), class = "source")))
+      ccode <- character(0)
+    }
+
     if (ov) {
       assign(varname, output.data, envir = rim_global())
     }

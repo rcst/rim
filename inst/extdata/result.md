@@ -73,18 +73,33 @@ if(length(pft)) {
 }## [1] "OK"
 
 
-# Normal Distribution
+## Distributions
 
+(%i27) area(dist) := integrate(dist, x, minf, inf)$(%i28) mean(dist) := area(dist*x)$(%i29) EX2(dist) := area(dist*x^2)$(%i30) variance(dist) := EX2(dist) - mean(dist)^2$(%i31) mgf(dist) := area(dist*%e^(x*t))$
 
+### Normal Distribution
 
 (%i32) normal(x) :=       (2*%pi*sigma^2)^(-1/2) *       exp(-(x-mu)^2/(2*sigma^2));$$\mathtt{(\textit{\%o}_{32})}\quad \textit{normal}\left(x\right):=\left(2\,\pi\,\sigma^2\right)^{\frac{-1}{2}}\,\exp \left(\frac{-\left(x-\mu\right)^2}{2\,\sigma^2}\right)$$(%i33) assume(sigma > 0)$(%i34) area(normal(x));$$\mathtt{(\textit{\%o}_{34})}\quad 1$$(%i35) mean(normal(x));$$\mathtt{(\textit{\%o}_{35})}\quad \mu$$(%i36) variance(normal(x));$$\mathtt{(\textit{\%o}_{36})}\quad \frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$(%i37) mgf(normal(x));$$\mathtt{(\textit{\%o}_{37})}\quad e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
 
+### Pareto Distribution
+
+(%i38) pareto(x) := (alpha * (x[m])^alpha) / x^(alpha+1);$$\mathtt{(\textit{\%o}_{38})}\quad \textit{pareto}\left(x\right):=\frac{\alpha\,x_{m}^{\alpha}}{x^{\alpha+1}}$$(%i39) assume(x[m] > 0)$ (%i40) assume(alpha > 0)$(%i41) area(normal(x));$$\mathtt{(\textit{\%o}_{41})}\quad 1$$(%i42) mean(normal(x));$$\mathtt{(\textit{\%o}_{42})}\quad \mu$$(%i43) variance(normal(x));$$\mathtt{(\textit{\%o}_{43})}\quad \frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2$$(%i44) mgf(normal(x));$$\mathtt{(\textit{\%o}_{44})}\quad e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}$$
+
+
+### Laplace Distribution
+
+(%i45) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);$$\mathtt{(\textit{\%o}_{45})}\quad \textit{laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp \left(\frac{-\left| x-\mu\right| }{b}\right)$$(%i46) load(abs_integrate)$(%i47) assume(b > 0)$(%i48) area(laplace(x));$$\mathtt{(\textit{\%o}_{48})}\quad 1$$(%i49) mean(laplace(x));$$\mathtt{(\textit{\%o}_{49})}\quad \mu$$(%i50) variance(laplace(x));$$\mathtt{(\textit{\%o}_{50})}\quad \frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2$$
+
+### Exponential Distribution
+
+(%i51) expo(x) := unit_step(x) * lambda * exp(-lambda * x);$$\mathtt{(\textit{\%o}_{51})}\quad \textit{expo}\left(x\right):=\textit{unit\_step}\left(x\right)\,\lambda\,\exp \left(-\lambda\,x\right)$$(%i52) assume(lambda > 0)$(%i53) area(expo(x));$$\mathtt{(\textit{\%o}_{53})}\quad 1$$(%i54) mean(expo(x));$$\mathtt{(\textit{\%o}_{54})}\quad \frac{1}{\lambda}$$(%i55) variance(expo(x));$$\mathtt{(\textit{\%o}_{55})}\quad \frac{1}{\lambda^2}$$
+
 # Matrices
 
-(%i38) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);$$\mathtt{(\textit{\%o}_{38})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}$$(%i39) transpose(m);$$\mathtt{(\textit{\%o}_{39})}\quad \begin{pmatrix}0 & 1 & 1 \\ 1 & 0 & 1 \\ a & 1 & 0 \\ \end{pmatrix}$$(%i40) determinant(m);$$\mathtt{(\textit{\%o}_{40})}\quad a+1$$(%i41) f: invert(m), detout;$$\mathtt{(\textit{\%o}_{41})}\quad \frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}$$(%i42) m . f;$$\mathtt{(\textit{\%o}_{42})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}\right)$$(%i43) expand(%);$$\mathtt{(\textit{\%o}_{43})}\quad \begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} & 0 & 0 \\ 0 & \frac{a}{a+1}+\frac{1}{a+1} & 0 \\ 0 & 0 & \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}$$(%i44) factor(%);$$\mathtt{(\textit{\%o}_{44})}\quad \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{pmatrix}$$
+(%i56) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);$$\mathtt{(\textit{\%o}_{56})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}$$(%i57) transpose(m);$$\mathtt{(\textit{\%o}_{57})}\quad \begin{pmatrix}0 & 1 & 1 \\ 1 & 0 & 1 \\ a & 1 & 0 \\ \end{pmatrix}$$(%i58) determinant(m);$$\mathtt{(\textit{\%o}_{58})}\quad a+1$$(%i59) f: invert(m), detout;$$\mathtt{(\textit{\%o}_{59})}\quad \frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}$$(%i60) m . f;$$\mathtt{(\textit{\%o}_{60})}\quad \begin{pmatrix}0 & 1 & a \\ 1 & 0 & 1 \\ 1 & 1 & 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 & a & 1 \\ 1 & -a & a \\ 1 & 1 & -1 \\ \end{pmatrix}}{a+1}\right)$$(%i61) expand(%);$$\mathtt{(\textit{\%o}_{61})}\quad \begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} & 0 & 0 \\ 0 & \frac{a}{a+1}+\frac{1}{a+1} & 0 \\ 0 & 0 & \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}$$(%i62) factor(%);$$\mathtt{(\textit{\%o}_{62})}\quad \begin{pmatrix}1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ \end{pmatrix}$$
 
 # If-then-else
 
-(%i45) x: 1234;$$\mathtt{(\textit{\%o}_{45})}\quad 1234$$(%i46) y: 2345;$$\mathtt{(\textit{\%o}_{46})}\quad 2345$$
+(%i63) x: 1234;$$\mathtt{(\textit{\%o}_{63})}\quad 1234$$(%i64) y: 2345;$$\mathtt{(\textit{\%o}_{64})}\quad 2345$$
 
-(%i47) if x > y  then x  else y;$$\mathtt{(\textit{\%o}_{47})}\quad 2345$$
+(%i65) if x > y  then x  else y;$$\mathtt{(\textit{\%o}_{65})}\quad 2345$$

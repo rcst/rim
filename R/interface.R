@@ -76,11 +76,9 @@ Reply <- R6::R6Class("Reply",
             promptHit <- TRUE
             break
           } else if (grepl(pattern = promptDefault, x = z)) {
-            stop("Detected default prompt - failed to initialize Maxima.")
+            if (rdr$wasComplete()) break else next
           }
-          if (rdr$wasComplete()) {
-            break
-          }
+          if (rdr$wasComplete()) break
         }
         if (nchar(z)) {
           private$reply <- c(private$reply, z)
@@ -584,16 +582,25 @@ RMaxima <- R6::R6Class("RMaxima",
       system2(private$maximaPath,
         c( # "-q",
           paste0("-s ", private$port),
-          # paste0("--userdir=", private$utilsDir),
-          # paste0("--init=", private$display)),
           paste0("--init-mac=", private$macInitFile),
           paste0("--init-lisp=", private$lispInitFile)
         ),
         # paste0(private$preload)),
         wait = FALSE,
         stdout = FALSE,
-        stderr = stdout()
+        stderr = FALSE
       )
+      # args <- c(
+      #   paste0("-s ", private$port),
+      #   paste0("--init-mac=", private$macInitFile),
+      #   paste0("--init-lisp=", private$lispInitFile)
+      # )
+
+      # system2("/bin/sh",
+      #   c("-c", shQuote(sprintf("exec %s %s >/dev/null 2>&1",
+      #     private$maximaPath,
+      #     paste(args, collapse = " ")))),
+      #   wait = FALSE, stdout = FALSE, stderr = FALSE)
 
       if (!socketSelect(socklist = list(scon), timeout = 10)) {
         stop("Maxima did not connect within timeout")

@@ -691,6 +691,11 @@ draw3d()
 <p>This is basically a reproduced demo for <code>Sympy</code> from <a href="https://brianzhang01.github.io/2018/04/distributions-with-sympy/">Bryan
 Zhang’s Blog</a>.</p>
 <p>First we define some helper functions:</p>
+<pre class="maxima"><code>(%i25) area(dist) := integrate(dist, x, minf, inf)$
+(%i26) mean(dist) := area(dist*x)$
+(%i27) EX2(dist) := area(dist*x^2)$
+(%i28) variance(dist) := EX2(dist) - mean(dist)^2$
+(%i29) mgf(dist) := area(dist*%e^(x*t))$</code></pre>
 <div id="normal-distribution" class="section level3">
 <h3>Normal Distribution</h3>
 <pre class="maxima"><code>(%i30) normal(x) := 
@@ -718,59 +723,102 @@ e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}\]</span></p>
 <pre class="maxima"><code>(%i36) pareto(x) := (alpha * (x[m])^alpha) / x^(alpha+1);</code></pre>
 <p><span class="math display">\[\mathtt{(\textit{%o}_{36})}\quad
 \textit{pareto}\left(x\right):=\frac{\alpha\,x_{m}^{\alpha}}{x^{\alpha+1}}\]</span></p>
+<pre class="maxima"><code>(%i37) assume(x[m] &gt; 0)$ 
+(%i38) assume(alpha &gt; 0)$
+(%i39) area(normal(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{39})}\quad
+1\]</span></p>
+<pre class="maxima"><code>(%i40) mean(normal(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{40})}\quad
+\mu\]</span></p>
+<pre class="maxima"><code>(%i41) variance(normal(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{41})}\quad
+\frac{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma^3+2^{\frac{3}{2}}\,\sqrt{\pi}\,\mu^2\,\sigma}{2^{\frac{3}{2}}\,\sqrt{\pi}\,\sigma}-\mu^2\]</span></p>
+<pre class="maxima"><code>(%i42) mgf(normal(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{42})}\quad
+e^{\frac{\sigma^2\,t^2+2\,\mu\,t}{2}}\]</span></p>
 </div>
 <div id="laplace-distribution" class="section level3">
 <h3>Laplace Distribution</h3>
+<pre class="maxima"><code>(%i43) laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{43})}\quad
+\textit{laplace}\left(x\right):=\left(2\,b\right)^ {- 1 }\,\exp
+\left(\frac{-\left| x-\mu\right| }{b}\right)\]</span></p>
+<pre class="maxima"><code>(%i44) load(abs_integrate)$
+(%i45) assume(b &gt; 0)$
+(%i46) area(laplace(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{46})}\quad
+1\]</span></p>
+<pre class="maxima"><code>(%i47) mean(laplace(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{47})}\quad
+\mu\]</span></p>
+<pre class="maxima"><code>(%i48) variance(laplace(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{48})}\quad
+\frac{2\,b\,\mu^2+4\,b^3}{2\,b}-\mu^2\]</span></p>
 </div>
 <div id="exponential-distribution" class="section level3">
 <h3>Exponential Distribution</h3>
+<pre class="maxima"><code>(%i49) expo(x) := unit_step(x) * lambda * exp(-lambda * x);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{49})}\quad
+\textit{expo}\left(x\right):=\textit{unit\_step}\left(x\right)\,\lambda\,\exp
+\left(-\lambda\,x\right)\]</span></p>
+<pre class="maxima"><code>(%i50) assume(lambda &gt; 0)$
+(%i51) area(expo(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{51})}\quad
+1\]</span></p>
+<pre class="maxima"><code>(%i52) mean(expo(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{52})}\quad
+\frac{1}{\lambda}\]</span></p>
+<pre class="maxima"><code>(%i53) variance(expo(x));</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{53})}\quad
+\frac{1}{\lambda^2}\]</span></p>
 </div>
 </div>
 <div id="matrices" class="section level2">
 <h2>Matrices</h2>
-<pre class="maxima"><code>(%i39) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{39})}\quad
+<pre class="maxima"><code>(%i54) m: matrix([0, 1, a], [1, 0, 1], [1, 1, 0]);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{54})}\quad
 \begin{pmatrix}0 &amp; 1 &amp; a \\ 1 &amp; 0 &amp; 1 \\ 1 &amp; 1 &amp;
 0 \\ \end{pmatrix}\]</span></p>
-<pre class="maxima"><code>(%i40) transpose(m);</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{40})}\quad
+<pre class="maxima"><code>(%i55) transpose(m);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{55})}\quad
 \begin{pmatrix}0 &amp; 1 &amp; 1 \\ 1 &amp; 0 &amp; 1 \\ a &amp; 1 &amp;
 0 \\ \end{pmatrix}\]</span></p>
-<pre class="maxima"><code>(%i41) determinant(m);</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{41})}\quad
+<pre class="maxima"><code>(%i56) determinant(m);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{56})}\quad
 a+1\]</span></p>
-<pre class="maxima"><code>(%i42) f: invert(m), detout;</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{42})}\quad
+<pre class="maxima"><code>(%i57) f: invert(m), detout;</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{57})}\quad
 \frac{\begin{pmatrix}-1 &amp; a &amp; 1 \\ 1 &amp; -a &amp; a \\ 1 &amp;
 1 &amp; -1 \\ \end{pmatrix}}{a+1}\]</span></p>
-<pre class="maxima"><code>(%i43) m . f;</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{43})}\quad
+<pre class="maxima"><code>(%i58) m . f;</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{58})}\quad
 \begin{pmatrix}0 &amp; 1 &amp; a \\ 1 &amp; 0 &amp; 1 \\ 1 &amp; 1 &amp;
 0 \\ \end{pmatrix}\cdot \left(\frac{\begin{pmatrix}-1 &amp; a &amp; 1 \\
 1 &amp; -a &amp; a \\ 1 &amp; 1 &amp; -1 \\
 \end{pmatrix}}{a+1}\right)\]</span></p>
-<pre class="maxima"><code>(%i44) expand(%);</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{44})}\quad
+<pre class="maxima"><code>(%i59) expand(%);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{59})}\quad
 \begin{pmatrix}\frac{a}{a+1}+\frac{1}{a+1} &amp; 0 &amp; 0 \\ 0 &amp;
 \frac{a}{a+1}+\frac{1}{a+1} &amp; 0 \\ 0 &amp; 0 &amp;
 \frac{a}{a+1}+\frac{1}{a+1} \\ \end{pmatrix}\]</span></p>
-<pre class="maxima"><code>(%i45) factor(%);</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{45})}\quad
+<pre class="maxima"><code>(%i60) factor(%);</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{60})}\quad
 \begin{pmatrix}1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp;
 1 \\ \end{pmatrix}\]</span></p>
 </div>
 <div id="if-then-else" class="section level2">
 <h2>If-then-else</h2>
-<pre class="maxima"><code>(%i46) x: 1234;</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{46})}\quad
+<pre class="maxima"><code>(%i61) x: 1234;</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{61})}\quad
 1234\]</span></p>
-<pre class="maxima"><code>(%i47) y: 2345;</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{47})}\quad
+<pre class="maxima"><code>(%i62) y: 2345;</code></pre>
+<p><span class="math display">\[\mathtt{(\textit{%o}_{62})}\quad
 2345\]</span></p>
-<pre class="maxima"><code>(%i48) if x &gt; y
+<pre class="maxima"><code>(%i63) if x &gt; y
   then x
   else y;</code></pre>
-<p><span class="math display">\[\mathtt{(\textit{%o}_{48})}\quad
+<p><span class="math display">\[\mathtt{(\textit{%o}_{63})}\quad
 2345\]</span></p>
 </div>
 </div>

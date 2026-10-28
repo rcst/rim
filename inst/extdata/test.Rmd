@@ -161,15 +161,17 @@ if(length(pft)) {
 }
 ```
 
-# Normal Distribution
+## Distributions
 
-```{maxima summary-functions}
+```{maxima dist-functions}
 area(dist) := integrate(dist, x, minf, inf)$
 mean(dist) := area(dist*x)$
 EX2(dist) := area(dist*x^2)$
 variance(dist) := EX2(dist) - mean(dist)^2$
 mgf(dist) := area(dist*%e^(x*t))$
 ```
+
+### Normal Distribution
 
 ```{maxima normal}
 normal(x) := 
@@ -182,6 +184,47 @@ area(normal(x));
 mean(normal(x));
 variance(normal(x));
 mgf(normal(x));
+```
+
+### Pareto Distribution
+
+```{maxima pareto}
+pareto(x) := (alpha * (x[m])^alpha) / x^(alpha+1);
+
+assume(x[m] > 0)$ 
+assume(alpha > 0)$
+
+area(normal(x));
+mean(normal(x));
+variance(normal(x));
+mgf(normal(x));
+```
+
+
+### Laplace Distribution
+
+```{maxima laplace, error=TRUE}
+laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
+
+load(abs_integrate)$
+
+assume(b > 0)$
+
+area(laplace(x));
+mean(laplace(x));
+variance(laplace(x));
+```
+
+### Exponential Distribution
+
+```{maxima exponential, error = TRUE}
+expo(x) := unit_step(x) * lambda * exp(-lambda * x);
+
+assume(lambda > 0)$
+
+area(expo(x));
+mean(expo(x));
+variance(expo(x));
 ```
 
 # Matrices

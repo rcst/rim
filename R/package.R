@@ -139,36 +139,38 @@ iprint <- function(x) {
 #'   print(a)
 #' }
 print.maxima <- function(x, ...) {
-  if(!attr(x, "suppressed")) {
-    if(attr(x, "from_engine") & !is_interactive()) {
-      label_opt <- maxima.options$engine.label
-      format_opt <- maxima.options$engine.format
-    } else {
-      label_opt <- maxima.options$label
-      format_opt <- maxima.options$format
-    }
+  if(attr(x, "suppressed")) {
+    return(invisible(NULL))
+  }
 
-    label_opt <- ifelse(label_opt, "wtl", "wol")
+  if(attr(x, "from_engine") & !is_interactive()) {
+    label_opt <- maxima.options$engine.label
+    format_opt <- maxima.options$engine.format
+  } else {
+    label_opt <- maxima.options$label
+    format_opt <- maxima.options$format
+  }
 
-    txt <- x[[label_opt]][[format_opt]]
+  label_opt <- ifelse(label_opt, "wtl", "wol")
 
-    if (identical(format_opt, "mathml") && is_mathml_omitted(txt)) {
-      warning("MathML output omitted for a function/macro definition ",
-        "(Maxima bug #4656; affects lurkmathml on GCL \u2264 5.47.0). ",
-        "Other output formats are unaffected.")
+  txt <- x[[label_opt]][[format_opt]]
 
-      # fall back so the user still sees *something* for this output:
-      txt <- x[[label_opt]][["linear"]]
-    }
+  if (identical(format_opt, "mathml") && is_mathml_omitted(txt)) {
+    message("MathML output omitted for a function/macro definition ",
+      "(Maxima bug #4656; affects lurkmathml on GCL \u2264 5.47.0). ",
+      "Other output formats are unaffected.")
+
+    # fall back so the user still sees *something* for this output:
+    txt <- x[[label_opt]][["linear"]]
   }
 
   if(is_html_output()) {
     txt <- gsub(pattern = "\\\\%", replacement = "%", x = txt)
   }
 
-  # if(!(attr(x, "from_engine") | is_interactive())) 
-  if(is_interactive())
-  cat(txt, sep = '\n')
+  if(is_interactive()) {
+    cat(txt, sep = '\n')
+  }
   invisible(txt)
 }
 

@@ -285,17 +285,23 @@ mgf(normal(x));
 
 ```{maxima pareto}
 pareto(x) := (alpha * (x[m])^alpha) / x^(alpha+1);
+
 assume(x[m] > 0)$ 
 assume(alpha > 0)$
+
+area(normal(x));
+mean(normal(x));
+variance(normal(x));
+mgf(normal(x));
 ```
 
 
 ### Laplace Distribution
 
-```{maxima laplace, eval = FALSE}
+```{maxima laplace, error=TRUE}
 laplace(x) := (2*b)^-1 * exp(-abs(x - mu)/b);
 
-load("abs_integrate")$
+load(abs_integrate)$
 
 assume(b > 0)$
 
@@ -306,7 +312,7 @@ variance(laplace(x));
 
 ### Exponential Distribution
 
-```{maxima exponential, eval = FALSE}
+```{maxima exponential, error = TRUE}
 expo(x) := unit_step(x) * lambda * exp(-lambda * x);
 
 assume(lambda > 0)$
